@@ -4,9 +4,9 @@ type User struct {
 	ID int `json:"id"`
 	Name string `json:"name"`
 	Email string `json:"email"`
-	Cpf string `json:"cpf"`
 	Password string `json:"*"`
 	Age int `json:"age"`
+	Cpf string `json:"cpf"`
 	Role string `json:"role"`
 }
 
@@ -24,6 +24,27 @@ type TherapistProfile struct {
 type PsychiatristProfile struct {
 	ID int `json:"id"`
 	UserID int `json:"user_id"`
-	CRM       string `json:"crm"`
+	CRM string `json:"crm"`
+}
+
+type UserResponse struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Role string `json:"role"`
+	Token string `json:"token"`
+}
+
+
+type CreateUserRequest struct {
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+	Age int `json:"age"`
+	Cpf string `json:"cpf"`
+	Role string `json:"role"`
+
+	Specialty string `json:"specialty"`
+	CRM string `json:"crm"`
 }
 

@@ -6,6 +6,13 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	
+	"github.com/gattini0928/Equilibrium/internal/db"
+	userHandlerPkg  "github.com/gattini0928/Equilibrium/internal/handlers/users"
+	userRepositoryPkg "github.com/gattini0928/Equilibrium/internal/repositories/users"
+	"github.com/gattini0928/Equilibrium/internal/routes"
+	userServicePkg "github.com/gattini0928/Equilibrium/internal/services/users"
+	configs "github.com/gattini0928/Equilibrium/internal/configs"
 )
 
 func main() {
@@ -13,13 +20,27 @@ func main() {
     if err != nil {
 		log.Fatalf("Erro ao carregar .env: %v", err)
     }
+
+		conn := db.Connect()
+
 	
+	cfg := configs.LoadDBConfig()
+	secret := []byte(cfg.JWTSecret)
+
+	userRepo := userRepositoryPkg.NewUserRepository(conn)
+	userService := userServicePkg.NewUserService(userRepo, secret)
+	userHandler := userHandlerPkg.NewUserHandler(userService) 
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
-		w.Write([]byte("Welcome to Equilibrium"))
-	})
+
+	routes.UserRoutes(mux, userHandler)
+	
 	port := os.Getenv("API_PORT")
-	http.ListenAndServe(":"+port, mux)
+	err = http.ListenAndServe(":"+port, mux)
+	
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 
