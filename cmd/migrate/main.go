@@ -1,1 +1,49 @@
-package migrate
+package main
+
+import (
+	"log"
+	_ "github.com/lib/pq"
+	"github.com/joho/godotenv"
+	"github.com/gattini0928/Equilibrium/internal/db"
+)
+
+func CreateTables(){
+	godotenv.Load()
+	conn := db.Connect()
+	defer conn.Close()
+
+	query := `
+		CREATE TABLE IF NOT EXISTS users(
+			id SERIAL PRIMARY KEY,
+			name VARCHAR(100) NOT NULL,
+			email VARCHAR(200) NOT NULL UNIQUE,
+			password VARCHAR(255) NOT NULL,
+			age INTEGER NOT NULL,
+			cpf VARCHAR(11) NOT NULL,
+			role VARCHAR(20) CHECK (role IN ('patient', 'therapist', 'psychiatrist')) NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS patients(
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE
+		);
+
+		CREATE TABLE IF NOT EXISTS therapists(
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+			specialty VARCHAR(100) NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS psychiatrists(
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+			crm VARCHAR(20) NOT NULL
+		);
+	`
+	_, err := conn.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Tabelas criadas com sucesso")
+}
