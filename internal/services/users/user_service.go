@@ -9,11 +9,6 @@ import (
 	"github.com/gattini0928/Equilibrium/internal/services/validators"
 )
 
-type UserServiceInterface interface {
-	CreateUser(user models.User, p models.PatientProfile, t models.TherapistProfile, ps models.PsychiatristProfile) error
-	Login(email string, password string) (models.User, string, error)
-}
-
 var (
 	ErrInvalidInput = errors.New("invalid input")
 	ErrUserNotFound = errors.New("user not found")
