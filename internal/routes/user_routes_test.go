@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"strings"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -23,10 +24,13 @@ func (m *MockUserService) CreateUser(
 }
 
 func (m *MockUserService) Login(email string, password string) (models.User, string, error) {
-	return models.User{}, "", nil
+	return models.User{
+		ID: 1,
+		Email: email,
+	}, "fake-token-123", nil
 }
 
-func TestUserRoutes(t *testing.T) {
+func TestSignUpRoute(t *testing.T) {
 	userInput := map[string]any{
 		"name":     "Gabriel Gattini",
 		"email":    "teste123@gmail.com",
@@ -54,5 +58,39 @@ func TestUserRoutes(t *testing.T) {
 
 	if rec.Code != http.StatusCreated {
 		t.Errorf("expected 201, got %d", rec.Code)
+	}
+}
+
+func TestLoginRoute(t *testing.T) {
+	userInput := map[string]any{
+		"email":    "teste123@gmail.com",
+		"password": "Password123$",
+	}
+
+	body, _ := json.Marshal(userInput)
+
+	req := httptest.NewRequest("POST", "/login", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	rec := httptest.NewRecorder()
+
+	mockService := &MockUserService{}
+
+	handler := userHandlerPkg.NewUserHandler(mockService)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /login", handler.HandleLogin)
+
+	mux.ServeHTTP(rec, req)
+
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("expected 200, got %d", rec.Code)
+	}
+
+	respBody := rec.Body.String()
+
+	if !strings.Contains(respBody, "fake-token-123") {
+		t.Errorf("expected token in response, got %s", respBody)
 	}
 }
