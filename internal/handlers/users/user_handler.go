@@ -50,7 +50,11 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var input models.User
-	utils.ParseJSON(r, &input)
+	err := utils.ParseJSON(r, &input)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
 
 	user, token, err := h.Service.Login(input.Email, input.Password)
 	if err != nil {
