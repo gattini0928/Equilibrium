@@ -21,9 +21,8 @@ func main() {
 		log.Fatalf("Erro ao carregar .env: %v", err)
     }
 
-		conn := db.Connect()
+	conn := db.Connect()
 
-	
 	cfg := configs.LoadDBConfig()
 	secret := []byte(cfg.JWTSecret)
 
