@@ -7,7 +7,7 @@ import (
 	"github.com/gattini0928/Equilibrium/internal/db"
 )
 
-func CreateTables(){
+func main(){
 	godotenv.Load()
 	conn := db.Connect()
 	defer conn.Close()

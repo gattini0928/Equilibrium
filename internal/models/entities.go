@@ -1,13 +1,13 @@
 package models
 
 type User struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Password string `json:"*"`
-	Age int `json:"age"`
-	Cpf string `json:"cpf"`
-	Role string `json:"role"`
+	ID int
+	Name string
+	Email string
+	Password string
+	Age int
+	Cpf string 
+	Role string
 }
 
 type PatientProfile struct{
@@ -46,5 +46,10 @@ type CreateUserRequest struct {
 
 	Specialty string `json:"specialty"`
 	CRM string `json:"crm"`
+}
+
+type LoginRequest struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
 }
 
