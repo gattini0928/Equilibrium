@@ -74,6 +74,17 @@ type UserResponse struct {
 	Token string `json:"token"`
 }
 
+type DoctorWithUser struct {
+	ID          int
+	Name        string
+	Email       string
+	Image       string
+	Age         int
+	Specialty   string
+	CRM 		string
+	Description string
+}
+
 
 type CreateUserRequest struct {
 	Name string `json:"name"`

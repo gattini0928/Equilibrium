@@ -84,3 +84,26 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	utils.WriteJSON(w, http.StatusOK, res)
 }
+
+func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request) {
+
+	therapists, err := h.Service.ListAllTherapists()
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, therapists)
+}
+
+func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Request) {
+
+	psychiatrists, err := h.Service.ListAllPsychiatrists()
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, psychiatrists)
+}
+

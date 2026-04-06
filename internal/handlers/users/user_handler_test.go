@@ -29,6 +29,12 @@ func (m *MockUserService) Login(email string, password string) (models.User, str
 	}, "fake-token-123", nil
 }
 
+func (m *MockUserService) ListAllTherapists() ([]models.DoctorWithUser,error) {
+	return []models.DoctorWithUser{}, nil} 
+
+func (m *MockUserService) ListAllPsychiatrists() ([]models.DoctorWithUser,error) {
+	return []models.DoctorWithUser{}, nil} 
+
 func TestHandleSignUp(t *testing.T) {
 	userInput := map[string]any{
 		"name":     "Gabriel Gattini",

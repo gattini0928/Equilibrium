@@ -8,6 +8,8 @@ import (
 type UserServiceInterface interface {
 	CreateUser(user models.User, p models.Patient, t models.Therapist, ps models.Psychiatrist) error
 	Login(email string, password string) (models.User, string, error)
+    ListAllTherapists() ([]models.DoctorWithUser, error)
+    ListAllPsychiatrists() ([]models.DoctorWithUser, error)
 }
 
 type UserService struct {

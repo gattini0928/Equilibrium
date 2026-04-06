@@ -27,6 +27,14 @@ func (m *MockRepository) GetUserByEmail(email string) (models.User, error) {
 		Password: hash,
 	}, nil}
 
+func (m *MockRepository) GetAllTherapists() ([]models.DoctorWithUser, error) {
+	return []models.DoctorWithUser{}, nil
+}
+
+func (m *MockRepository) GetAllPsychiatrists() ([]models.DoctorWithUser, error) {
+	return []models.DoctorWithUser{}, nil
+}
+
 func TestCreateUser_Success(t *testing.T) {
 	service := NewUserService(&MockRepository{}, []byte("secret"))
 

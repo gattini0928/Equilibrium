@@ -8,6 +8,8 @@ import (
 type UserRepoInterface interface {
 	CreateUserWithProfile(user *models.User, patient *models.Patient, therapist *models.Therapist, psychiatrist *models.Psychiatrist) error
 	GetUserByEmail(email string) (models.User, error)
+	GetAllTherapists() ([]models.DoctorWithUser, error)
+	GetAllPsychiatrists() ([]models.DoctorWithUser, error)
 }
 
 type UserRepository struct {

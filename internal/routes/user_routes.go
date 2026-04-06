@@ -8,4 +8,6 @@ import (
 func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler) {
 	mux.HandleFunc("POST /signup", h.HandleSignup)
 	mux.HandleFunc("POST /login", h.HandleLogin)
+	mux.HandleFunc("GET /therapists", h.HandleAllTherapists)
+	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)
 }

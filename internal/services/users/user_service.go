@@ -74,3 +74,22 @@ func (s *UserService) Login(email string, password string) (models.User, string,
 
 	return user, token, nil
 }
+
+func (s *UserService) ListAllTherapists() ([]models.DoctorWithUser, error) {
+	therapists, err := s.Repo.GetAllTherapists()
+	if err != nil {
+		return nil, err
+	}
+
+	return therapists, nil
+}
+
+
+func (s *UserService) ListAllPsychiatrists() ([]models.DoctorWithUser, error) {
+	psychiatrists, err := s.Repo.GetAllPsychiatrists()
+	if err != nil {
+		return nil, err
+	}
+	
+	return psychiatrists, nil
+}

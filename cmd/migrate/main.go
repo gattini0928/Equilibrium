@@ -33,18 +33,32 @@ func main() {
 	}
 
 	query := `
-		CREATE TABLE users (
+		CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
 			name VARCHAR(100),
 			email VARCHAR(200) UNIQUE,
 			password VARCHAR(255),
 			age INTEGER,
-			cpf VARCHAR(11),
+			cpf VARCHAR(11) UNIQUE,
 			role VARCHAR(20),
 			image TEXT
 		);
 
-		CREATE TABLE patients (
+		CREATE TABLE IF NOT EXISTS therapists (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+			specialty TEXT,
+			description TEXT
+		);
+
+		CREATE TABLE IF NOT EXISTS psychiatrists (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+			crm TEXT,
+			description TEXT
+		);
+
+		CREATE TABLE IF NOT EXISTS patients (
 			id SERIAL PRIMARY KEY,
 			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
 			therapist_id INTEGER REFERENCES therapists(id),
@@ -52,21 +66,8 @@ func main() {
 			current_diagnosis TEXT
 		);
 
-		CREATE TABLE therapists (
-			id SERIAL PRIMARY KEY,
-			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-			specialty TEXT,
-			description TEXT
-		);
 
-		CREATE TABLE psychiatrists (
-			id SERIAL PRIMARY KEY,
-			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-			crm TEXT,
-			description TEXT
-		);
-
-		CREATE TABLE consultations (
+		CREATE TABLE IF NOT EXISTS consultations (
 			id SERIAL PRIMARY KEY,
 			patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
 			professional_id INTEGER,
@@ -76,30 +77,30 @@ func main() {
 			annotation TEXT
 		);
 
-		CREATE TABLE books (
+		CREATE TABLE IF NOT EXISTS books (
 			id SERIAL PRIMARY KEY,
 			author TEXT,
 			title TEXT
 		);
 
-		CREATE TABLE remedies (
+		CREATE TABLE IF NOT EXISTS remedies (
 			id SERIAL PRIMARY KEY,
 			name TEXT,
 			dosage TEXT,
 			quantity INTEGER
 		);
 
-		CREATE TABLE consultation_books (
+		CREATE TABLE IF NOT EXISTS consultation_books (
 			consultation_id INTEGER REFERENCES consultations(id) ON DELETE CASCADE,
 			book_id INTEGER REFERENCES books(id) ON DELETE CASCADE
 		);
 
-		CREATE TABLE consultation_remedies (
+		CREATE TABLE IF NOT EXISTS consultation_remedies (
 			consultation_id INTEGER REFERENCES consultations(id) ON DELETE CASCADE,
 			remedy_id INTEGER REFERENCES remedies(id) ON DELETE CASCADE
 		);
 
-		CREATE TABLE agendas (
+		CREATE TABLE IF NOT EXISTS agendas (
 			id SERIAL PRIMARY KEY,
 			professional_id INTEGER,
 			day INTEGER,
@@ -114,5 +115,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("Banco criado corretamente 🚀")
+	log.Println("Tabelas criadas com sucesso 🚀")
 }
