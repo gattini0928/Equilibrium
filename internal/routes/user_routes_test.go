@@ -16,9 +16,9 @@ type MockUserService struct{}
 
 func (m *MockUserService) CreateUser(
 	user models.User,
-	p models.PatientProfile,
-	t models.TherapistProfile,
-	ps models.PsychiatristProfile,
+	p models.Patient,
+	t models.Therapist,
+	ps models.Psychiatrist,
 ) error {
 	return nil
 }
@@ -38,6 +38,7 @@ func TestSignUpRoute(t *testing.T) {
 		"age":      24,
 		"cpf":      "09045108010",
 		"role":     "patient",
+		"image": "userimg.png",
 	}
 
 	body, _ := json.Marshal(userInput)

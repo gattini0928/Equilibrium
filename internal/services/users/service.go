@@ -6,7 +6,7 @@ import (
 )
 
 type UserServiceInterface interface {
-	CreateUser(user models.User, p models.PatientProfile, t models.TherapistProfile, ps models.PsychiatristProfile) error
+	CreateUser(user models.User, p models.Patient, t models.Therapist, ps models.Psychiatrist) error
 	Login(email string, password string) (models.User, string, error)
 }
 

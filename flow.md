@@ -20,7 +20,7 @@
         <!-- Psiquiatra ou Terapeuta -> 
             Agenda Dia e Agenda Horário (reserved) tirar do display -->
                 <!-- Quando clicar no botão de agendar começar consulta
-            <!-- Pega o consulta_id pra indentificar e comelar -->
+            <!-- Pega o consulta_id pra indentificar e começar -->
             <!-- Final da consulta pagar o valor da consulta ao psiquiatra ou terapeuta (balance += valor da consulta) -->
             
 <!-- Consulta -->

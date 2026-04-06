@@ -8,9 +8,9 @@ import (
 
 func (r *UserRepository) CreateUserWithProfile(
 	user *models.User,
-	patient *models.PatientProfile,
-	therapist *models.TherapistProfile,
-	psychiatrist *models.PsychiatristProfile,
+	patient *models.Patient,
+	therapist *models.Therapist,
+	psychiatrist *models.Psychiatrist,
 ) error {
 
 	tx, err := r.DB.Begin()
@@ -41,15 +41,15 @@ func (r *UserRepository) CreateUserWithProfile(
 
 	case "therapist":
 		_, err = tx.Exec(`
-			INSERT INTO therapists (user_id, specialty)
-			VALUES ($1, $2);
-		`, userID, therapist.Specialty)
+			INSERT INTO therapists (user_id, specialty, description)
+			VALUES ($1, $2, $3);
+		`, userID, therapist.Specialty, therapist.Description)
 
 	case "psychiatrist":
 		_, err = tx.Exec(`
-			INSERT INTO psychiatrists (user_id, crm)
-			VALUES ($1, $2);
-		`, userID, psychiatrist.CRM)
+			INSERT INTO psychiatrists (user_id, crm, description)
+			VALUES ($1, $2, $3);
+		`, userID, psychiatrist.CRM, psychiatrist.Description)
 
 	default:
 		tx.Rollback()

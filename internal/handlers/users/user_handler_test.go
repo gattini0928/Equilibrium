@@ -15,9 +15,9 @@ type MockUserService struct{}
 
 func (m *MockUserService) CreateUser(
 	user models.User,
-	p models.PatientProfile,
-	t models.TherapistProfile,
-	ps models.PsychiatristProfile,
+	p models.Patient,
+	t models.Therapist,
+	ps models.Psychiatrist,
 ) error {
 	return nil
 }
@@ -37,6 +37,7 @@ func TestHandleSignUp(t *testing.T) {
 		"age":      24,
 		"cpf":      "08041289099",
 		"role":     "patient",
+		"image": "userimage.png",
 	}
 
 	body, _ := json.Marshal(userInput)

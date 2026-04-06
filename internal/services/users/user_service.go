@@ -16,7 +16,7 @@ var (
 	ErrTokenFailed = errors.New("token failed")
 )
 
-func (u *UserService) CreateUser(user models.User, patient models.PatientProfile, therapist models.TherapistProfile, psychiatrist models.PsychiatristProfile) error {
+func (u *UserService) CreateUser(user models.User, patient models.Patient, therapist models.Therapist, psychiatrist models.Psychiatrist) error {
 	var err error
 
 	err = validators.ValidateName(user.Name)

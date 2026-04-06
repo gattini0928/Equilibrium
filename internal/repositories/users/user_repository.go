@@ -6,7 +6,7 @@ import (
 )
 
 type UserRepoInterface interface {
-	CreateUserWithProfile(user *models.User, patient *models.PatientProfile, therapist *models.TherapistProfile, psychiatrist *models.PsychiatristProfile) error
+	CreateUserWithProfile(user *models.User, patient *models.Patient, therapist *models.Therapist, psychiatrist *models.Psychiatrist) error
 	GetUserByEmail(email string) (models.User, error)
 }
 

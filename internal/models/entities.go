@@ -11,21 +11,58 @@ type User struct {
 	Image string
 }
 
-type PatientProfile struct{
-	ID int `json:"id"`
-	UserID int `json:"user_id"`
+type Patient struct {
+	ID               int    `json:"id"`
+	UserID           int    `json:"user_id"`
+	TherapistID      *int   `json:"therapist_id"`
+	PsychiatristID   *int   `json:"psychiatrist_id"`
+	CurrentDiagnosis string `json:"current_diagnosis"`
 }
 
-type TherapistProfile struct {
-	ID int `json:"id"`
-	UserID int `json:"user_id"`
-	Specialty string `json:"specialty"`
+type Therapist struct {
+	ID          int    `json:"id"`
+	UserID      int    `json:"user_id"`
+	Specialty   string `json:"specialty"`
+	Description string `json:"description"`
 }
 
-type PsychiatristProfile struct {
-	ID int `json:"id"`
-	UserID int `json:"user_id"`
-	CRM string `json:"crm"`
+type Psychiatrist struct {
+	ID     int    `json:"id"`
+	UserID int    `json:"user_id"`
+	CRM    string `json:"crm"`
+	Description string `json:"description"`
+}
+
+type Consultation struct {
+	ID               int     `json:"id"`
+	PatientID        int     `json:"patient_id"`
+	ProfessionalID   int     `json:"professional_id"`
+	ProfessionalType string  `json:"professional_type"`
+	Date             string  `json:"date"`
+	Price            float64 `json:"price"`
+	Annotation       string  `json:"annotation"`
+}
+
+type Book struct {
+	ID     int    `json:"id"`
+	Author string `json:"author"`
+	Title  string `json:"title"`
+}
+
+type Remedy struct {
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Dosage   string `json:"dosage"`
+	Quantity int    `json:"quantity"`
+}
+
+type Agenda struct {
+	ID             int    `json:"id"`
+	ProfessionalID int    `json:"professional_id"`
+	Day            int    `json:"day"`
+	Month          int    `json:"month"`
+	Hour           string `json:"hour"`
+	Reserved       bool   `json:"reserved"`
 }
 
 type UserResponse struct {
@@ -49,6 +86,7 @@ type CreateUserRequest struct {
  
 	Specialty string `json:"specialty"`
 	CRM string `json:"crm"`
+	Description string `json:"description"`
 }
 
 type LoginRequest struct {

@@ -27,15 +27,18 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		Image: req.Image,
 	}
 
-	var patient models.PatientProfile
-	var therapist models.TherapistProfile
-	var psychiatrist models.PsychiatristProfile
+	var patient models.Patient
+	var therapist models.Therapist
+	var psychiatrist models.Psychiatrist
 
 	switch req.Role {
 	case "therapist":
 		therapist.Specialty = req.Specialty
+		therapist.Description = req.Description
+
 	case "psychiatrist":
 		psychiatrist.CRM = req.CRM
+		psychiatrist.Description = req.Description
 	}
 
 	err = h.Service.CreateUser(user, patient, therapist, psychiatrist)

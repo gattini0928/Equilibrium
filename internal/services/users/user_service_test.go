@@ -12,9 +12,9 @@ type MockRepository struct {}
 
 func (m *MockRepository) CreateUserWithProfile(	
 	user *models.User,
-	patient *models.PatientProfile,
-	therapist *models.TherapistProfile,
-	psychiatrist *models.PsychiatristProfile) error {
+	patient *models.Patient,
+	therapist *models.Therapist,
+	psychiatrist *models.Psychiatrist) error {
 		return nil
 	}
 
@@ -39,9 +39,9 @@ func TestCreateUser_Success(t *testing.T) {
 		Role:     "patient",
 	}
 
-	var patient models.PatientProfile
-	var therapist models.TherapistProfile
-	var psychiatrist models.PsychiatristProfile
+	var patient models.Patient
+	var therapist models.Therapist
+	var psychiatrist models.Psychiatrist
 
 	err := service.CreateUser(user, patient, therapist, psychiatrist)
 
@@ -62,7 +62,7 @@ func TestCreateUser_InvalidName(t *testing.T) {
 		Role:     "patient",
 	}
 
-	err := service.CreateUser(user, models.PatientProfile{}, models.TherapistProfile{}, models.PsychiatristProfile{})
+	err := service.CreateUser(user, models.Patient{}, models.Therapist{}, models.Psychiatrist{})
 
 	if err == nil {
 		t.Errorf("expected error, got nil")
@@ -81,7 +81,7 @@ func TestCreateUser_InvalidEmail(t *testing.T) {
 		Role:     "patient",
 	}
 
-	err := service.CreateUser(user, models.PatientProfile{}, models.TherapistProfile{}, models.PsychiatristProfile{})
+	err := service.CreateUser(user, models.Patient{}, models.Therapist{}, models.Psychiatrist{})
 
 	if err == nil {
 		t.Errorf("expected error, got nil")
@@ -100,7 +100,7 @@ func TestCreateUser_InvalidPassword(t *testing.T) {
 		Role:     "patient",
 	}
 
-	err := service.CreateUser(user, models.PatientProfile{}, models.TherapistProfile{}, models.PsychiatristProfile{})
+	err := service.CreateUser(user, models.Patient{}, models.Therapist{}, models.Psychiatrist{})
 
 	if err == nil {
 		t.Errorf("expected error, got nil")
@@ -119,7 +119,7 @@ func TestCreateUser_InvalidCpf(t *testing.T) {
 		Role:     "patient",
 	}
 
-	err := service.CreateUser(user, models.PatientProfile{}, models.TherapistProfile{}, models.PsychiatristProfile{})
+	err := service.CreateUser(user, models.Patient{}, models.Therapist{}, models.Psychiatrist{})
 
 	if err == nil {
 		t.Errorf("expected error, got nil")
@@ -136,9 +136,10 @@ func TestCreateUser_InvalidAge(t *testing.T) {
 		Age:      18,
 		Cpf:      "12312441309",
 		Role:     "therapist",
+		Image: 		"userimage.png",
 	}
 
-	err := service.CreateUser(user, models.PatientProfile{}, models.TherapistProfile{}, models.PsychiatristProfile{})
+	err := service.CreateUser(user, models.Patient{}, models.Therapist{}, models.Psychiatrist{})
 
 	if err == nil {
 		t.Errorf("expected error, got nil")
