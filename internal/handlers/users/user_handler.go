@@ -24,6 +24,7 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		Age: req.Age,
 		Cpf: req.Cpf,
 		Role: req.Role,
+		Image: req.Image,
 	}
 
 	var patient models.PatientProfile

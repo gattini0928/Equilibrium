@@ -12,6 +12,18 @@ func main(){
 	conn := db.Connect()
 	defer conn.Close()
 
+	dropQuery := `
+		DROP TABLE IF EXISTS users CASCADE;
+		DROP TABLE IF EXISTS patients CASCADE;
+		DROP TABLE IF EXISTS therapists CASCADE;
+		DROP TABLE IF EXISTS psychiatrists CASCADE;
+	`
+
+	_, err := conn.Exec(dropQuery)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	query := `
 		CREATE TABLE IF NOT EXISTS users(
 			id SERIAL PRIMARY KEY,
@@ -20,7 +32,8 @@ func main(){
 			password VARCHAR(255) NOT NULL,
 			age INTEGER NOT NULL,
 			cpf VARCHAR(11) NOT NULL,
-			role VARCHAR(20) CHECK (role IN ('patient', 'therapist', 'psychiatrist')) NOT NULL
+			role VARCHAR(20) CHECK (role IN ('patient', 'therapist', 'psychiatrist')) NOT NULL,
+			image TEXT
 		);
 
 		CREATE TABLE IF NOT EXISTS patients(
@@ -31,7 +44,8 @@ func main(){
 		CREATE TABLE IF NOT EXISTS therapists(
 			id SERIAL PRIMARY KEY,
 			user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-			specialty VARCHAR(100) NOT NULL
+			specialty VARCHAR(100) NOT NULL,
+			description TEXT NOT NULL
 		);
 
 		CREATE TABLE IF NOT EXISTS psychiatrists(
@@ -40,7 +54,7 @@ func main(){
 			crm VARCHAR(20) NOT NULL
 		);
 	`
-	_, err := conn.Exec(query)
+	_, err = conn.Exec(query)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,7 +6,7 @@ import (
 
 func (r *UserRepository) GetUserByEmail(email string) (models.User, error) {
 	row := r.DB.QueryRow(`
-		SELECT id, name, email, password, age, cpf, role 
+		SELECT id, name, email, password, age, cpf, role, image 
 		FROM users 
 		WHERE email = $1
 	`, email)
@@ -20,6 +20,7 @@ func (r *UserRepository) GetUserByEmail(email string) (models.User, error) {
 		&user.Age,
 		&user.Cpf,
 		&user.Role,
+		&user.Image,
 	)
 	if err != nil {
 		return models.User{}, err

@@ -8,6 +8,7 @@ type User struct {
 	Age int
 	Cpf string 
 	Role string
+	Image string
 }
 
 type PatientProfile struct{
@@ -32,6 +33,7 @@ type UserResponse struct {
 	Name string `json:"name"`
 	Email string `json:"email"`
 	Role string `json:"role"`
+	Image string `json:"image"`
 	Token string `json:"token"`
 }
 
@@ -43,7 +45,8 @@ type CreateUserRequest struct {
 	Age int `json:"age"`
 	Cpf string `json:"cpf"`
 	Role string `json:"role"`
-
+	Image string `json:"image"`
+ 
 	Specialty string `json:"specialty"`
 	CRM string `json:"crm"`
 }

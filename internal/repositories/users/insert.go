@@ -21,10 +21,10 @@ func (r *UserRepository) CreateUserWithProfile(
 	var userID int
 
 	err = tx.QueryRow(`
-		INSERT INTO users (name, email, password, age, cpf, role)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO users (name, email, password, age, cpf, role, image)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id;
-	`, user.Name, user.Email, user.Password, user.Age, user.Cpf, user.Role).Scan(&userID)
+	`, user.Name, user.Email, user.Password, user.Age, user.Cpf, user.Role, user.Image).Scan(&userID)
 
 	if err != nil {
 		tx.Rollback()
