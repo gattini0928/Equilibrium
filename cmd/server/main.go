@@ -32,7 +32,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	routes.UserRoutes(mux, userHandler)
+	routes.UserRoutes(mux, userHandler, secret)
 	
 	port := os.Getenv("API_PORT")
 	err = http.ListenAndServe(":"+port, mux)

@@ -67,7 +67,12 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		return 
 	}
 
-	userID := r.Context().Value(auth.UserIDKey).(int)
+	val := r.Context().Value(auth.UserIDKey)
+	userID, ok := val.(int)
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
 
 	err = h.Service.CompleteTherapistSignUp(userID, therapist.Specialty, therapist.Description)
 	if err != nil {
@@ -96,7 +101,12 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		return 
 	}
 
-	userID := r.Context().Value(auth.UserIDKey).(int)
+	val := r.Context().Value(auth.UserIDKey)
+	userID, ok := val.(int)
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
 
 	err = h.Service.CompletePsychiatristSignUp(userID, psychiatrist.CRM, psychiatrist.Description)
 	if err != nil {
