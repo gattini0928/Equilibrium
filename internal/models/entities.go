@@ -69,6 +69,7 @@ type UserResponse struct {
 	ID int `json:"id"`
 	Name string `json:"name"`
 	Email string `json:"email"`
+	Age int `json:"age"`
 	Role string `json:"role"`
 	Image string `json:"image"`
 	Token string `json:"token"`

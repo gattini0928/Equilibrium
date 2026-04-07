@@ -148,7 +148,9 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		ID: user.ID,
 		Name: user.Name,
 		Email: user.Email,
+		Age: user.Age,
 		Role: user.Role,
+		Image: user.Image,
 		Token: token,
 	}
 
