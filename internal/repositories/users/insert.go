@@ -41,15 +41,15 @@ func (r *UserRepository) CreateUserWithProfile(
 
 	case "therapist":
 		_, err = tx.Exec(`
-			INSERT INTO therapists (user_id, specialty, description)
-			VALUES ($1, $2, $3);
-		`, userID, therapist.Specialty, therapist.Description)
+			INSERT INTO therapists (user_id)
+			VALUES ($1);
+		`, userID)
 
 	case "psychiatrist":
 		_, err = tx.Exec(`
-			INSERT INTO psychiatrists (user_id, crm, description)
-			VALUES ($1, $2, $3);
-		`, userID, psychiatrist.CRM, psychiatrist.Description)
+			INSERT INTO psychiatrists (user_id)
+			VALUES ($1);
+		`, userID)
 
 	default:
 		tx.Rollback()
@@ -62,4 +62,24 @@ func (r *UserRepository) CreateUserWithProfile(
 	}
 
 	return tx.Commit()
+}
+
+func (r *UserRepository) CompleteTherapist(userID int, specialty string, description string) error {
+	_, err := r.DB.Exec(`
+		UPDATE therapists
+		SET specialty = $1, description = $2
+		WHERE user_id = $3;
+	`, specialty, description, userID)
+
+	return err
+}
+
+func (r *UserRepository) CompletePsychiatrist(userID int, crm string, description string) error {
+	_, err := r.DB.Exec(`
+		UPDATE psychiatrists
+		SET crm = $1, description = $2
+		WHERE user_id = $3;
+	`, crm, description, userID)
+
+	return err
 }

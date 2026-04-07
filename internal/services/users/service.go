@@ -10,6 +10,8 @@ type UserServiceInterface interface {
 	Login(email string, password string) (models.User, string, error)
     ListAllTherapists() ([]models.DoctorWithUser, error)
     ListAllPsychiatrists() ([]models.DoctorWithUser, error)
+    CompleteTherapistSignUp(userID int, specialty string, description string) error 
+    CompletePsychiatristSignUp(userID int, crm string, description string) error
 }
 
 type UserService struct {

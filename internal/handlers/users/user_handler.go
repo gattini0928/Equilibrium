@@ -6,6 +6,7 @@ import (
 	"github.com/gattini0928/Equilibrium/internal/models"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
 	"github.com/gattini0928/Equilibrium/internal/utils"
+	"github.com/gattini0928/Equilibrium/internal/services/auth"
 )
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +51,65 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, map[string]string{
 		"message": "Usuário criado com sucesso",
 	})
+}
+
+
+func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Request) {
+	var therapist models.Therapist
+	err := utils.ParseJSON(r, &therapist)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if therapist.Specialty == "" || therapist.Description == "" {
+		utils.WriteJSON(w, http.StatusBadRequest, "especialidade e descrição são obrigatórios")
+		return 
+	}
+
+	userID := r.Context().Value(auth.UserIDKey).(int)
+
+	err = h.Service.CompleteTherapistSignUp(userID, therapist.Specialty, therapist.Description)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	resp := models.TherapistResponse {
+		Specialty: therapist.Specialty,
+		Description: therapist.Description,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, resp)
+}
+
+func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.Request) {
+	var psychiatrist models.Psychiatrist
+	err := utils.ParseJSON(r, &psychiatrist)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if psychiatrist.CRM == "" || psychiatrist.Description == "" {
+		utils.WriteJSON(w, http.StatusBadRequest, "CRM e descrição são obrigatórios")
+		return 
+	}
+
+	userID := r.Context().Value(auth.UserIDKey).(int)
+
+	err = h.Service.CompletePsychiatristSignUp(userID, psychiatrist.CRM, psychiatrist.Description)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	resp := models.PsychiatristResponse {
+		Crm: psychiatrist.CRM,
+		Description: psychiatrist.Description,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, resp)
 }
 
 func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {

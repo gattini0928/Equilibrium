@@ -10,6 +10,8 @@ type UserRepoInterface interface {
 	GetUserByEmail(email string) (models.User, error)
 	GetAllTherapists() ([]models.DoctorWithUser, error)
 	GetAllPsychiatrists() ([]models.DoctorWithUser, error)
+	CompleteTherapist(userID int, specialty string, description string) error
+	CompletePsychiatrist(userID int, crm string, description string) error
 }
 
 type UserRepository struct {

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"fmt"
-	
+	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -52,7 +52,13 @@ func JWTMiddleware(secret []byte, next http.Handler) http.Handler {
 		}
 		userIDStr := claims["userID"].(string)
 
-		ctx := context.WithValue(r.Context(), UserIDKey, userIDStr)
+		userID, err := strconv.Atoi(userIDStr)
+		if err != nil {
+			http.Error(w, "invalid userID", http.StatusUnauthorized)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), UserIDKey, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 
 	})

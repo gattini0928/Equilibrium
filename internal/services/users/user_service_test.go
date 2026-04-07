@@ -18,6 +18,14 @@ func (m *MockRepository) CreateUserWithProfile(
 		return nil
 	}
 
+func (m *MockRepository) CompleteTherapist(userID int, crm string, description string) error {
+	return nil
+}
+
+func (m *MockRepository) CompletePsychiatrist(userID int, specialty string, description string) error {
+	return nil
+}
+
 var hash, _ = validators.HashPassword("Password123$")
 
 func (m *MockRepository) GetUserByEmail(email string) (models.User, error) {

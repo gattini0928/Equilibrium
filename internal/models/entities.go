@@ -74,6 +74,16 @@ type UserResponse struct {
 	Token string `json:"token"`
 }
 
+type TherapistResponse struct {
+	Specialty string `json:"specialty"`
+	Description string `json:"description"`
+}
+
+type PsychiatristResponse struct {
+	Crm string `json:"crm"`
+	Description string `json:"description"`
+}
+
 type DoctorWithUser struct {
 	ID          int
 	Name        string

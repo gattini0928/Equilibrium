@@ -30,6 +30,14 @@ func (m *MockUserService) Login(email string, password string) (models.User, str
 	}, "fake-token-123", nil
 }
 
+func (m *MockUserService) CompleteTherapistSignUp(userID int, specialty string, description string) error {
+	return nil
+}
+
+func (m *MockUserService) CompletePsychiatristSignUp(userID int, specialty string, description string) error {
+	return nil
+}
+
 func (m *MockUserService) ListAllTherapists() ([]models.DoctorWithUser,error) {
 	return []models.DoctorWithUser{}, nil} 
 

@@ -75,6 +75,14 @@ func (s *UserService) Login(email string, password string) (models.User, string,
 	return user, token, nil
 }
 
+func (s *UserService) CompleteTherapistSignUp(userID int, specialty string, description string) error {
+	return s.Repo.CompleteTherapist(userID, specialty, description)
+}
+
+func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, description string) error {
+	return s.Repo.CompletePsychiatrist(userID, crm, description)
+}
+
 func (s *UserService) ListAllTherapists() ([]models.DoctorWithUser, error) {
 	therapists, err := s.Repo.GetAllTherapists()
 	if err != nil {
