@@ -101,3 +101,23 @@ func (s *UserService) ListAllPsychiatrists() ([]models.DoctorWithUser, error) {
 	
 	return psychiatrists, nil
 }
+
+func (s *UserService) TherapistDetail(userID int) (models.DoctorWithUser, error) {
+	therapist, err := s.Repo.GetTherapistById(userID)
+	if err != nil {
+		return models.DoctorWithUser{}, err
+	}
+
+	return therapist, nil
+
+}
+
+func (s *UserService) PsychiatristDetail(userID int) (models.DoctorWithUser, error) {
+	psychiatrist, err := s.Repo.GetPsychiatristById(userID)
+	if err != nil {
+		return models.DoctorWithUser{}, err
+	}
+
+	return psychiatrist, nil
+
+}

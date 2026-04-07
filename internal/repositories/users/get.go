@@ -117,3 +117,72 @@ func (r *UserRepository) GetAllPsychiatrists() ([]models.DoctorWithUser, error) 
 
 	return psychiatrists, nil
 }
+
+func (r *UserRepository) GetTherapistById(userID int) (models.DoctorWithUser, error) {
+	var therapist models.DoctorWithUser
+	query := 
+		`
+		SELECT 
+			t.id,
+			u.name,
+			u.email,
+			u.age,
+			u.image,
+			t.specialty,
+			t.description
+		FROM therapists t
+		JOIN users u ON t.user_id = u.id
+		WHERE t.user_id = $1;	
+		`
+	
+	row := r.DB.QueryRow(query, userID)
+		err := row.Scan(
+		&therapist.ID,
+		&therapist.Name,
+		&therapist.Email,
+		&therapist.Age,
+		&therapist.Image,
+		&therapist.Specialty,
+		&therapist.Description,
+	)
+
+	if err != nil {
+		return models.DoctorWithUser{}, err
+	}
+
+	return therapist, nil
+}
+
+func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser, error) {
+	var psychiatrist models.DoctorWithUser
+
+	query := `
+		SELECT p.id,
+			u.name,
+			u.email,
+			u.age,
+			u.image,
+			p.crm,
+			p.description
+		FROM psychiatrists p
+		JOIN users u ON p.user_id = u.id
+		WHERE p.user_id = $1;
+	`
+	row := r.DB.QueryRow(query, userID)
+	err := row.Scan(
+		&psychiatrist.ID,
+		&psychiatrist.Name,
+		&psychiatrist.Email,
+		&psychiatrist.Age,
+		&psychiatrist.Image,
+		&psychiatrist.CRM,
+		&psychiatrist.Description,
+
+	)
+
+	if err != nil {
+		return models.DoctorWithUser{}, err
+	}
+
+	return psychiatrist, nil
+}

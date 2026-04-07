@@ -116,3 +116,14 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+type DoctorDetailResponse struct {
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Age int `json:"age"`
+	Image string `json:"image"`
+ 
+	Specialty string `json:"specialty"`
+	CRM string `json:"crm"`
+	Description string `json:"description"`
+}
+

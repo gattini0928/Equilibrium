@@ -26,6 +26,14 @@ func (m *MockRepository) CompletePsychiatrist(userID int, specialty string, desc
 	return nil
 }
 
+func (m *MockRepository) GetTherapistById(userID int) (models.DoctorWithUser, error){
+	return models.DoctorWithUser{}, nil
+}
+
+func (m *MockRepository) GetPsychiatristById(userID int) (models.DoctorWithUser, error){
+	return models.DoctorWithUser{}, nil
+}
+
 var hash, _ = validators.HashPassword("Password123$")
 
 func (m *MockRepository) GetUserByEmail(email string) (models.User, error) {

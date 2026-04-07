@@ -1,12 +1,15 @@
 package users
 
 import (
-	"net/http"
 	"errors"
+	"net/http"
+	"strconv"
+	"database/sql"
+
 	"github.com/gattini0928/Equilibrium/internal/models"
+	"github.com/gattini0928/Equilibrium/internal/services/auth"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
 	"github.com/gattini0928/Equilibrium/internal/utils"
-	"github.com/gattini0928/Equilibrium/internal/services/auth"
 )
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
@@ -179,3 +182,67 @@ func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Requ
 	utils.WriteJSON(w, http.StatusOK, psychiatrists)
 }
 
+func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Request) {
+	userIdStr := r.PathValue("user_id")
+
+	if userIdStr == "" {
+		utils.WriteJSON(w, http.StatusBadGateway, "id é obrigatório")
+		return
+	}
+
+	userID, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	therapist, err := h.Service.TherapistDetail(userID)
+	if errors.Is(err, sql.ErrNoRows) {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	resp := models.DoctorDetailResponse {
+		Name: therapist.Name,
+		Email: therapist.Email,
+		Age: therapist.Age,
+		Image: therapist.Image,
+		Specialty: therapist.Specialty,
+		Description: therapist.Description,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, resp)
+}
+
+
+func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Request) {
+	userIdStr := r.PathValue("user_id")
+
+	if userIdStr == "" {
+		utils.WriteJSON(w, http.StatusBadRequest, "id é obrigatório")
+		return
+	}
+
+	userID, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	psychiatrist, err := h.Service.PsychiatristDetail(userID)
+	if errors.Is(err, sql.ErrNoRows) {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	resp := models.DoctorDetailResponse {
+		Name: psychiatrist.Name,
+		Email: psychiatrist.Email,
+		Age: psychiatrist.Age,
+		Image: psychiatrist.Image,
+		CRM: psychiatrist.CRM,
+		Description: psychiatrist.Description,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, resp)
+}

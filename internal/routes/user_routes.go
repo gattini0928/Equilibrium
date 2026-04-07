@@ -16,4 +16,6 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompletePsychiatrist)))
 	mux.HandleFunc("GET /therapists", h.HandleAllTherapists)
 	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)
+	mux.HandleFunc("GET /therapist-detail/{user_id}", h.HandleTherapistDetail)
+	mux.HandleFunc("GET /psychiatrist-detail/{user_id}", h.HandlePsychiatristDetail)
 }
