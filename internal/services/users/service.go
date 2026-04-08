@@ -14,6 +14,8 @@ type UserServiceInterface interface {
     CompletePsychiatristSignUp(userID int, crm string, description string) error
     TherapistDetail(userID int) (models.DoctorWithUser, error)
     PsychiatristDetail(userID int) (models.DoctorWithUser, error)
+    TherapistToPatient(patientID int, therapistID int) error
+    PsychiatristToPatient(patientID int, therapistID int) error
 }
 
 type UserService struct {

@@ -52,6 +52,14 @@ func (m *MockUserService) PsychiatristDetail(userID int) (models.DoctorWithUser,
 	return models.DoctorWithUser{}, nil
 }
 
+func (m *MockUserService) TherapistToPatient(patientID int, therapistID int) error {
+	return nil
+}
+
+func (m *MockUserService) PsychiatristToPatient(patientID int, therapistID int) error {
+	return nil
+}
+
 func TestSignUpRoute(t *testing.T) {
 	userInput := map[string]any{
 		"name":     "Gabriel Gattini",

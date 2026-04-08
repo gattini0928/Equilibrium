@@ -246,3 +246,67 @@ func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Re
 
 	utils.WriteJSON(w, http.StatusOK, resp)
 }
+
+func (h *UserHandler) HandleAddTherapistToPatient(w http.ResponseWriter, r *http.Request) {
+	patientIdStr := r.PathValue("patient_id")
+	therapistIdStr := r.PathValue("therapist_id")
+
+	if patientIdStr == "" || therapistIdStr == "" {
+		utils.WriteJSON(w, http.StatusBadRequest, "id é obrigatório")
+		return
+	}
+
+	patientID, err := strconv.Atoi(patientIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	therapistID, err := strconv.Atoi(therapistIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	err = h.Service.TherapistToPatient(patientID, therapistID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+	"message": "Terapeuta vinculado com sucesso",
+	})
+}
+
+func (h *UserHandler) HandleAddPsychiatristToPatient(w http.ResponseWriter, r *http.Request) {
+	patientIdStr := r.PathValue("patient_id")
+	psychiatristIdStr := r.PathValue("psychiatrist_id")
+
+	if patientIdStr == "" || psychiatristIdStr == "" {
+		utils.WriteJSON(w, http.StatusBadRequest, "id é obrigatório")
+		return
+	}
+
+	patientID, err := strconv.Atoi(patientIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	psychiatristID, err := strconv.Atoi(psychiatristIdStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	err = h.Service.PsychiatristToPatient(patientID, psychiatristID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+	"message": "Therapist vinculado com sucesso",
+	})
+}

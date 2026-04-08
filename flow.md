@@ -6,12 +6,12 @@
     <!-- Geração de token JWT --> ✅
     <!-- Testes de service, handler e routes --> ✅
 
-<!-- Construir get psiquiatras e get terapeutas -->
+<!-- Construir get psiquiatras e get terapeutas --> ✅
 <!-- Adicionar image para display no frontend -->
 <!-- selecionar por role buscando users para retornar:
- imagem, nome, email, idade, especialidade SE terapeuta -->
-<!-- imagem, nome, email, idade SE psiquiatra -->
-<!-- adicionar coluna image na tabela users -->
+ imagem, nome, email, idade, especialidade SE terapeuta --> ✅
+<!-- imagem, nome, email, idade SE psiquiatra --> ✅
+<!-- adicionar coluna image na tabela users --> ✅
 <!-- Pacientes podem ter apenas 1 psiquiatra e 1 terapeuta -->
 <!-- 1 terapeuta ou 1 psiquitra podem ter varios pacientes -->
 

@@ -18,4 +18,6 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)
 	mux.HandleFunc("GET /therapist-detail/{user_id}", h.HandleTherapistDetail)
 	mux.HandleFunc("GET /psychiatrist-detail/{user_id}", h.HandlePsychiatristDetail)
+	mux.HandleFunc("PUT /add-therapist-patient/{patient_id}/{therapist_id}", h.HandleAddTherapistToPatient)
+	mux.HandleFunc("PUT /add-psychiatrist-patient/{patient_id}/{psychiatrist_id}", h.HandleAddPsychiatristToPatient)
 }

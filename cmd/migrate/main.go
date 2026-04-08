@@ -66,7 +66,6 @@ func main() {
 			current_diagnosis TEXT
 		);
 
-
 		CREATE TABLE IF NOT EXISTS consultations (
 			id SERIAL PRIMARY KEY,
 			patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
@@ -109,7 +108,7 @@ func main() {
 			reserved BOOLEAN
 		);
 	`
-
+	
 	_, err = conn.Exec(query)
 	if err != nil {
 		log.Fatal(err)

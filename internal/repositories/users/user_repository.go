@@ -14,6 +14,8 @@ type UserRepoInterface interface {
 	CompletePsychiatrist(userID int, crm string, description string) error
 	GetTherapistById(userID int) (models.DoctorWithUser, error)
 	GetPsychiatristById(userID int) (models.DoctorWithUser, error)
+	AddTherapistToPatient(patientID int, therapistID int) error
+	AddPsychiatristToPatient(patientID int, therapistID int) error
 }
 
 type UserRepository struct {

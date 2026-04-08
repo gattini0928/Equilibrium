@@ -17,6 +17,8 @@ type Patient struct {
 	TherapistID      *int   `json:"therapist_id"`
 	PsychiatristID   *int   `json:"psychiatrist_id"`
 	CurrentDiagnosis string `json:"current_diagnosis"`
+	Therapist *TherapistInfo `json:"therapist_info"`
+	Psychiatrist *PsychiatristInfo `json:"psychiatrist_info"`
 }
 
 type Therapist struct {
@@ -30,6 +32,35 @@ type Psychiatrist struct {
 	ID     int    `json:"id"`
 	UserID int    `json:"user_id"`
 	CRM    string `json:"crm"`
+	Description string `json:"description"`
+}
+
+type TherapistInfo struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Age int `json:"age"`
+	Image string `json:"image"`
+	Specialty string `json:"specialty"`
+	Description string `json:"description"`
+}
+
+type PatientWithTherapistResponse struct {
+	Name      string              `json:"name"`
+	Therapist *TherapistInfo `json:"therapist"`
+}
+
+type PatientWithPsychiatristResponse struct {
+	Name      string              `json:"name"`
+	Psychiatrist *PsychiatristInfo `json:"psychiatrist"`
+}
+
+type PsychiatristInfo struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Age int `json:"age"`
+	Image string `json:"image"`
 	Description string `json:"description"`
 }
 
