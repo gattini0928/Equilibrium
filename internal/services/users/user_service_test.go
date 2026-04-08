@@ -59,6 +59,43 @@ func (m *MockRepository) GetAllPsychiatrists() ([]models.DoctorWithUser, error) 
 	return []models.DoctorWithUser{}, nil
 }
 
+func (m *MockRepository) GetTherapistPatientByID(userID int) (models.PatientWithUser, error) {
+	return models.PatientWithUser{
+		ID:               1,
+		Name:             "Gabriel Gattini",
+		Email:            "gabrielgattini659@gmail.com",
+		Age:              29,
+		Image:            "profile.png",
+		CurrentDiagnosis: "Severe Depression",
+		Books: []models.Book{
+			{
+				ID:     1,
+				Author: "Dan Brown",
+				Title:  "Ponto de Impacto",
+			},
+		},
+	}, nil
+}
+
+func (m *MockRepository) GetPsychiatristPatientByID(userID int) (models.PatientWithUser, error) {
+	return models.PatientWithUser{
+		ID:               1,
+		Name:             "Gabriel Gattini",
+		Email:            "gabrielgattini659@gmail.com",
+		Age:              29,
+		Image:            "profile.png",
+		CurrentDiagnosis: "Severe Depression",
+		Remedies: []models.Remedy{
+			{
+				ID:     1,
+				Name: "Clonazepam",
+				Dosage:  "10 mil dia",
+				Quantity: 1,
+			},
+		},
+	}, nil
+}
+
 func TestCreateUser_Success(t *testing.T) {
 	service := NewUserService(&MockRepository{}, []byte("secret"))
 

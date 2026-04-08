@@ -127,6 +127,17 @@ type DoctorWithUser struct {
 	Description string
 }
 
+type PatientWithUser struct {
+	ID          int
+	Name        string
+	Email       string
+	Image       string
+	Age         int
+	CurrentDiagnosis string
+	Books       []Book
+	Remedies []Remedy
+}
+
 
 type CreateUserRequest struct {
 	Name string `json:"name"`

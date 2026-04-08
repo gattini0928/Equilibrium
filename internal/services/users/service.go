@@ -16,6 +16,8 @@ type UserServiceInterface interface {
     PsychiatristDetail(userID int) (models.DoctorWithUser, error)
     TherapistToPatient(patientID int, therapistID int) error
     PsychiatristToPatient(patientID int, therapistID int) error
+    TherapistPatientDetail(userID int) (models.PatientWithUser, error)
+    PsychiatristPatientDetail(userID int) (models.PatientWithUser, error)
 }
 
 type UserService struct {

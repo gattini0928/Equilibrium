@@ -60,6 +60,43 @@ func (m *MockUserService) PsychiatristToPatient(patientID int, therapistID int) 
 	return nil
 }
 
+func (m *MockUserService) TherapistPatientDetail(userID int) (models.PatientWithUser, error) {
+	return models.PatientWithUser{
+		ID:               1,
+		Name:             "Gabriel Gattini",
+		Email:            "gabrielgattini659@gmail.com",
+		Age:              29,
+		Image:            "profile.png",
+		CurrentDiagnosis: "Severe Depression",
+		Books: []models.Book{
+			{
+				ID:     1,
+				Author: "Dan Brown",
+				Title:  "Ponto de Impacto",
+			},
+		},
+	}, nil
+}
+
+func (m *MockUserService) PsychiatristPatientDetail(userID int) (models.PatientWithUser, error) {
+	return models.PatientWithUser{
+		ID:               1,
+		Name:             "Gabriel Gattini",
+		Email:            "gabrielgattini659@gmail.com",
+		Age:              29,
+		Image:            "profile.png",
+		CurrentDiagnosis: "Severe Depression",
+		Remedies: []models.Remedy{
+			{
+				ID:     1,
+				Name: "Clonazepal",
+				Dosage:  "10 gotas dia",
+				Quantity: 1,
+			},
+		},
+	}, nil
+}
+
 func TestSignUpRoute(t *testing.T) {
 	userInput := map[string]any{
 		"name":     "Gabriel Gattini",

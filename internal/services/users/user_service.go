@@ -129,11 +129,26 @@ func (s *UserService) TherapistToPatient(patientID int, therapistID int) error {
 	return nil 
 }
 
-
 func (s *UserService) PsychiatristToPatient(patientID int, therapistID int) error {
 	err := s.Repo.AddPsychiatristToPatient(patientID, therapistID)
 	if err != nil {
 		return err
 	}
 	return nil 
+}
+
+func (s *UserService) TherapistPatientDetail(userID int) (models.PatientWithUser, error) {
+	patient, err := s.Repo.GetTherapistPatientByID(userID)
+	if err != nil {
+		return models.PatientWithUser{}, err
+	}
+	return patient, nil
+}
+
+func (s *UserService) PsychiatristPatientDetail(userID int) (models.PatientWithUser, error) {
+	patient, err := s.Repo.GetPsychiatristPatientByID(userID)
+	if err != nil {
+		return models.PatientWithUser{}, err
+	}
+	return patient, nil
 }
