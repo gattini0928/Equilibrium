@@ -190,14 +190,17 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 func (r *UserRepository) GetTherapistPatientByID(userID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `
-			SELECT 
-				p.name, p.email, p.age, p.image, p.current_diagnosis,
-				b.id, b.author, b.title
-			FROM patients p
-			JOIN consultations c ON c.patient_id = p.id
-			JOIN consultation_books cb ON cb.consultation_id = c.id
-			JOIN books b ON b.id = cb.book_id
-			WHERE p.user_id = $1;
+	SELECT 
+		p.id,
+		u.name, u.email, u.age, u.image,
+		p.current_diagnosis,
+		b.id, b.author, b.title
+		FROM patients p
+		JOIN users u ON u.id = p.user_id
+		JOIN consultations c ON c.patient_id = p.id
+		JOIN consultation_books cb ON cb.consultation_id = c.id
+		JOIN books b ON b.id = cb.book_id
+		WHERE p.user_id = $1;
 		`
 
 	rows, err := r.DB.Query(query, userID)
@@ -211,6 +214,7 @@ func (r *UserRepository) GetTherapistPatientByID(userID int) (models.PatientWith
 	for rows.Next(){
 		var b models.Book
 		err := rows.Scan(
+			&patient.ID,
 			&patient.Name,
 			&patient.Email,
 			&patient.Age,
@@ -233,10 +237,11 @@ func (r *UserRepository) GetTherapistPatientByID(userID int) (models.PatientWith
 func (r *UserRepository) GetPsychiatristPatientByID(userID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `
-		SELECT p.id, p.name, p.email, p.age, p.image, p.current_diagnosis,
+		SELECT p.id, u.name, u.email, u.age, u.image, p.current_diagnosis,
 		r.id, r.name, r.dosage, r.quantity
 		FROM patients p
-		JOIN consultation c ON c.patiend_id = p.id
+		JOIN users u ON u.id = p.id
+		JOIN consultation c ON c.patient_id = p.id
 		JOIN consultation_remedies cr ON consultation.id = cr.remedy_id
 		JOIN remedies r ON r.id = cr.id
 		WHERE user_id = $1;
@@ -253,6 +258,7 @@ func (r *UserRepository) GetPsychiatristPatientByID(userID int) (models.PatientW
 	for rows.Next() {
 		var r models.Remedy
 		err := rows.Scan(
+			&patient.ID,
 			&patient.Name,
 			&patient.Email,
 			&patient.Age,
