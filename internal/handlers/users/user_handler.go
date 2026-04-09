@@ -360,4 +360,41 @@ func (h *UserHandler) HandlePsychiatristPatientDetail(w http.ResponseWriter, r *
 	}
 
 	utils.WriteJSON(w, http.StatusOK, patient)
-}					
+}
+
+func (h *UserHandler) HandleTherapistAllPatients(w http.ResponseWriter, r *http.Request){
+	val := r.Context().Value(auth.UserIDKey)
+	therapist_id, ok := val.(int)
+
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
+
+	patients, err := h.Service.ListAllTherapistPatients(therapist_id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError,err)
+		return 
+	}
+
+	utils.WriteJSON(w, http.StatusOK, patients)
+
+}
+
+func (h *UserHandler) HandlePsychiatristAllPatients(w http.ResponseWriter, r *http.Request){
+	val := r.Context().Value(auth.UserIDKey)
+	psychiatrist_id, ok := val.(int)
+
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
+	
+	patients, err := h.Service.ListAllPsychiatristPatients(psychiatrist_id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError,err)
+		return 
+	}
+
+	utils.WriteJSON(w, http.StatusOK, patients)
+}

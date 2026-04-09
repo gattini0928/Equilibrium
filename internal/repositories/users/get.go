@@ -280,3 +280,84 @@ func (r *UserRepository) GetPsychiatristPatientByID(userID int) (models.PatientW
 
 	return patient, nil
 }
+
+func (r *UserRepository) GetAllTherapistPatients(therapist_id int) ([]models.PatientWithUser, error) {
+	query := `
+	SELECT 
+		p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
+	FROM patients p
+	JOIN users u ON u.id = p.user_id
+	WHERE p.therapist_id = (
+		SELECT id FROM therapists WHERE user_id = $1
+		)
+	`
+
+	rows, err := r.DB.Query(query, therapist_id)
+	if err != nil {
+		return []models.PatientWithUser{}, err
+	}
+	
+	defer rows.Close()
+
+	var patients []models.PatientWithUser
+
+	for rows.Next(){
+		var p models.PatientWithUser
+		err := rows.Scan(
+			&p.ID,
+			&p.Name,
+			&p.Email,
+			&p.Age,
+			&p.Image,
+			&p.CurrentDiagnosis,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		patients = append(patients, p)
+	}
+
+	return patients, nil
+}
+
+
+func (r *UserRepository) GetAllPsichiatristPatients(psychiatrist_id int) ([]models.PatientWithUser, error) {
+	query := `
+	SELECT 
+		p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
+	FROM patients p
+	JOIN users u ON u.id = p.user_id
+	WHERE p.psychiatris_id = (
+			SELECT id FROM therapists WHERE user_id = $1
+		)
+	`
+
+	rows, err := r.DB.Query(query, psychiatrist_id)
+	if err != nil {
+		return []models.PatientWithUser{}, err
+	}
+	
+	defer rows.Close()
+
+	var patients []models.PatientWithUser
+
+	for rows.Next(){
+		var p models.PatientWithUser
+		err := rows.Scan(
+			&p.ID,
+			&p.Name,
+			&p.Email,
+			&p.Age,
+			&p.Image,
+			&p.CurrentDiagnosis,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		patients = append(patients, p)
+	}
+
+	return patients, nil
+}

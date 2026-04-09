@@ -18,6 +18,8 @@ type UserRepoInterface interface {
 	AddPsychiatristToPatient(patientID int, therapistID int) error
 	GetTherapistPatientByID(userID int) (models.PatientWithUser, error)
 	GetPsychiatristPatientByID(userID int) (models.PatientWithUser, error)
+	GetAllTherapistPatients(therapist_id int) ([]models.PatientWithUser, error)
+	GetAllPsichiatristPatients(psychiatrist_id int) ([]models.PatientWithUser, error)
 }
 
 type UserRepository struct {

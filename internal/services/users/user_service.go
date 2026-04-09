@@ -152,3 +152,21 @@ func (s *UserService) PsychiatristPatientDetail(userID int) (models.PatientWithU
 	}
 	return patient, nil
 }
+
+func (s *UserService) ListAllTherapistPatients(therapist_id int) ([]models.PatientWithUser, error) {
+	patients, err := s.Repo.GetAllTherapistPatients(therapist_id)
+	if err != nil {
+		return nil, err
+	}
+
+	return patients, nil
+}
+
+func (s *UserService) ListAllPsychiatristPatients(psychiatrist_id int) ([]models.PatientWithUser, error) {
+	patients, err := s.Repo.GetAllTherapistPatients(psychiatrist_id)
+	if err != nil {
+		return nil, err
+	}
+	
+	return patients, nil
+}

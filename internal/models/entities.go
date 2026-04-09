@@ -133,11 +133,10 @@ type PatientWithUser struct {
 	Email       string
 	Image       string
 	Age         int
-	CurrentDiagnosis string
+	CurrentDiagnosis *string
 	Books       []Book
 	Remedies []Remedy
 }
-
 
 type CreateUserRequest struct {
 	Name string `json:"name"`

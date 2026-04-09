@@ -18,6 +18,8 @@ type UserServiceInterface interface {
     PsychiatristToPatient(patientID int, therapistID int) error
     TherapistPatientDetail(userID int) (models.PatientWithUser, error)
     PsychiatristPatientDetail(userID int) (models.PatientWithUser, error)
+    ListAllTherapistPatients(therapist_id int) ([]models.PatientWithUser, error)
+    ListAllPsychiatristPatients(psychiatrist_id int) ([]models.PatientWithUser, error)
 }
 
 type UserService struct {
