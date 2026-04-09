@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"errors"
 )
 
 func ParseJSON(r *http.Request, payload any) error {
@@ -22,4 +24,18 @@ func WriteJSON(w http.ResponseWriter, status int, v any) error {
 
 func WriteError(w http.ResponseWriter, status int, err error) {
 	WriteJSON(w, status, map[string]string{"error":err.Error()})
+}
+
+func CheckID(pathID string, r *http.Request) (int, error) {
+	idStr := r.PathValue(pathID)
+	if idStr == "" {
+		return 0, errors.New("id é obrigatório")
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }

@@ -187,7 +187,7 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 	return psychiatrist, nil
 }
 
-func (r *UserRepository) GetTherapistPatientByID(userID int) (models.PatientWithUser, error) {
+func (r *UserRepository) GetTherapistPatient(userID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `
 	SELECT 
@@ -234,7 +234,7 @@ func (r *UserRepository) GetTherapistPatientByID(userID int) (models.PatientWith
 	return patient, nil
 }
 
-func (r *UserRepository) GetPsychiatristPatientByID(userID int) (models.PatientWithUser, error) {
+func (r *UserRepository) GetPsychiatristPatient(userID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `
 		SELECT p.id, u.name, u.email, u.age, u.image, p.current_diagnosis,
@@ -361,3 +361,74 @@ func (r *UserRepository) GetAllPsichiatristPatients(psychiatrist_id int) ([]mode
 
 	return patients, nil
 }
+
+func (r *UserRepository) GetPatientTherapist(userID int) (models.DoctorWithUser, error) {
+	var therapist models.DoctorWithUser
+
+	query := `
+	SELECT 
+		t.id,
+		u.name,
+		u.email,
+		u.age,
+		u.image,
+		t.specialty,
+		t.description
+	FROM patients p
+	JOIN therapist t ON t.id = p.therapist_id
+	JOIN users u ON u.id = t.user_id
+	WHERE p.user_id = $1;
+	`
+
+	row := r.DB.QueryRow(query, userID)
+	err := row.Scan(
+		&therapist.ID,
+		&therapist.Name,
+		&therapist.Email,
+		&therapist.Age,
+		&therapist.Image,
+		&therapist.Specialty,
+		&therapist.Description,
+	)
+
+	if err != nil {
+		return models.DoctorWithUser{}, err
+	}
+
+	return therapist, nil
+}
+
+func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUser, error) {
+	var psychiatrist models.DoctorWithUser
+
+	query := `
+	SELECT 
+		p.id,
+		u.name,
+		u.email,
+		u.age,
+		u.image,
+		p.description
+	FROM patients pat
+	JOIN psychiatrist p ON p.id = pat.psychiatrist_id
+	JOIN users u ON u.id = p.user_id
+	WHERE pat.user_id = $1;
+	`
+
+	row := r.DB.QueryRow(query, userID)
+	err := row.Scan(
+		&psychiatrist.ID,
+		&psychiatrist.Name,
+		&psychiatrist.Email,
+		&psychiatrist.Age,
+		&psychiatrist.Image,
+		&psychiatrist.Description,
+	)
+
+	if err != nil {
+		return models.DoctorWithUser{}, err
+	}
+
+	return psychiatrist, nil
+}
+

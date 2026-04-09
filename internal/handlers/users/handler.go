@@ -5,9 +5,9 @@ import (
 )
 
 type UserHandler struct {
-	Service userService.UserServiceInterface
+	Service *userService.UserService
 }
 
-func NewUserHandler(s userService.UserServiceInterface ) *UserHandler {
-	return &UserHandler{Service: s}
+func NewUserHandler(service *userService.UserService) *UserHandler {
+	return &UserHandler{Service: service}
 }

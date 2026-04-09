@@ -311,55 +311,37 @@ func (h *UserHandler) HandleAddPsychiatristToPatient(w http.ResponseWriter, r *h
 	})
 }
 
-func (h *UserHandler) HandleTherapistPatientDetail(w http.ResponseWriter, r *http.Request) {
-	userIDStr := r.PathValue("user_id")
-	if userIDStr == "" {
-		utils.WriteJSON(w, http.StatusBadRequest, "id é obrigatório")
-		return
-	}
-	userID, err := strconv.Atoi(userIDStr)
+func (h *UserHandler) HandlePatientTherapistDetail(w http.ResponseWriter, r *http.Request) {
+	id, err := utils.CheckID("user_id", r)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
+		utils.WriteJSON(w, http.StatusBadRequest, err)
 		return
 	}
 
-	patient, err := h.Service.TherapistPatientDetail(userID)
+	therapist, err := h.Service.PatientTherapistDetail(id)
 	if err != nil {
-		utils.WriteError(w,http.StatusInternalServerError, err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, patient)
-
+	utils.WriteJSON(w, http.StatusOK, therapist)
 }
 
 
-func (h *UserHandler) HandlePsychiatristPatientDetail(w http.ResponseWriter, r *http.Request) {
-	userIDStr := r.PathValue("user_id")
-	if userIDStr == "" {
-		utils.WriteJSON(w, http.StatusBadRequest, "id é obrigatório")
-		return
-	}
-	userID, err := strconv.Atoi(userIDStr)
+func (h *UserHandler) HandlePatientPsychiatristDetail(w http.ResponseWriter, r *http.Request) {
+	id, err := utils.CheckID("user_id", r)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
+		utils.WriteJSON(w, http.StatusBadRequest, err)
 		return
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	userID, ok := val.(int)
-	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
-		return
-	}
-
-	patient, err := h.Service.PsychiatristPatientDetail(userID)
+	psychiatrist, err := h.Service.PatientPsiquiatristDetail(id)
 	if err != nil {
-		utils.WriteError(w,http.StatusInternalServerError, err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, patient)
+	utils.WriteJSON(w, http.StatusOK, psychiatrist)
 }
 
 func (h *UserHandler) HandleTherapistAllPatients(w http.ResponseWriter, r *http.Request){
@@ -389,7 +371,7 @@ func (h *UserHandler) HandlePsychiatristAllPatients(w http.ResponseWriter, r *ht
 		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
-	
+
 	patients, err := h.Service.ListAllPsychiatristPatients(psychiatrist_id)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError,err)
@@ -398,3 +380,37 @@ func (h *UserHandler) HandlePsychiatristAllPatients(w http.ResponseWriter, r *ht
 
 	utils.WriteJSON(w, http.StatusOK, patients)
 }
+
+func (h *UserHandler) HandleTherapistPatientDetail(w http.ResponseWriter, r *http.Request) {
+	id, err := utils.CheckID("user_id", r)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	patient, err := h.Service.TherapistPatientDetail(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, patient)
+
+} 
+
+func (h *UserHandler) HandlePsychiatristPatientDetail(w http.ResponseWriter, r *http.Request) {
+	id, err := utils.CheckID("user_id", r)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	patient, err := h.Service.PsychiatristPatientDetail(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, patient)
+
+} 

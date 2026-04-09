@@ -28,4 +28,8 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleTherapistAllPatients)))
 	mux.Handle("GET /psychiatrist-all-patients",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePsychiatristAllPatients)))
+	mux.Handle("GET /patient-therapist-detail/{user_id}",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientTherapistDetail)))
+	mux.Handle("GET /patient-therapist-detail/{user_id}",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientPsychiatristDetail)))
 }
