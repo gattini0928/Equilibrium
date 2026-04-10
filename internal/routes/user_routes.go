@@ -8,28 +8,41 @@ import (
 )
 
 func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) {
+	// AUTH
 	mux.HandleFunc("POST /signup", h.HandleSignup)
 	mux.HandleFunc("POST /login", h.HandleLogin)
-	mux.Handle("POST /complete-therapist-detail",
+
+	// COMPLETAR PERFIL (JWT)
+	mux.Handle("POST /therapists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompleteTherapist)))
-	mux.Handle("POST /complete-psychiatrist-detail",
+	mux.Handle("POST /psychiatrists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompletePsychiatrist)))
+
+	// LISTAGEM PÚBLICA
 	mux.HandleFunc("GET /therapists", h.HandleAllTherapists)
 	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)
-	mux.HandleFunc("GET /therapist-detail/{user_id}", h.HandleTherapistDetail)
-	mux.HandleFunc("GET /psychiatrist-detail/{user_id}", h.HandlePsychiatristDetail)
-	mux.HandleFunc("PUT /add-therapist-patient/{patient_id}/{therapist_id}", h.HandleAddTherapistToPatient)
-	mux.HandleFunc("PUT /add-psychiatrist-patient/{patient_id}/{psychiatrist_id}", h.HandleAddPsychiatristToPatient)
-	mux.Handle("GET /therapist-patient-detail/{user_id}",
-		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleTherapistPatientDetail)))
-	mux.Handle("GET /psychiatrist-patient-detail/{user_id}",
-		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePsychiatristPatientDetail)))
-	mux.Handle("GET /therapist-all-patients",
-		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleTherapistAllPatients)))
-	mux.Handle("GET /psychiatrist-all-patients",
-		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePsychiatristAllPatients)))
-	mux.Handle("GET /patient-therapist-detail/{user_id}",
+
+	// DETALHES(Clique no card)
+	mux.HandleFunc("GET /therapists/{id}", h.HandleTherapistDetail)
+	mux.HandleFunc("GET /psychiatrists/{id}", h.HandlePsychiatristDetail)
+
+	// VINCULAR (JWT)
+	mux.Handle("PUT /patients/{id}/therapist",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleAddTherapistToPatient)))
+	mux.Handle("PUT /patients/{id}/psychiatrist",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleAddPsychiatristToPatient)))
+
+	// PEFIL LOGADO (JWT) SEU TERAPEUTA
+	mux.Handle("GET /me/therapist",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientTherapistDetail)))
-	mux.Handle("GET /patient-therapist-detail/{user_id}",
+	mux.Handle("GET /me/psychiatrist",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientPsychiatristDetail)))
+
+	// TODOS PACIENTES TERAPEUTA / PSIQUIATRA
+	mux.Handle("GET /me/patients",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleMyPatients)))
+
+	// DETALHE DO PACIENTE (JWT)
+	mux.Handle("GET /patients/{id}",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientDetail)))
 }

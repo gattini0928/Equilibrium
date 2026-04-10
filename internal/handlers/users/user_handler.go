@@ -1,10 +1,10 @@
 package users
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 	"strconv"
-	"database/sql"
 
 	"github.com/gattini0928/Equilibrium/internal/models"
 	"github.com/gattini0928/Equilibrium/internal/services/auth"
@@ -312,13 +312,15 @@ func (h *UserHandler) HandleAddPsychiatristToPatient(w http.ResponseWriter, r *h
 }
 
 func (h *UserHandler) HandlePatientTherapistDetail(w http.ResponseWriter, r *http.Request) {
-	id, err := utils.CheckID("user_id", r)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
+	val := r.Context().Value(auth.UserIDKey)
+	patientID, ok := val.(int)
+
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
-	therapist, err := h.Service.PatientTherapistDetail(id)
+	therapist, err := h.Service.PatientTherapistDetail(patientID)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
@@ -329,13 +331,15 @@ func (h *UserHandler) HandlePatientTherapistDetail(w http.ResponseWriter, r *htt
 
 
 func (h *UserHandler) HandlePatientPsychiatristDetail(w http.ResponseWriter, r *http.Request) {
-	id, err := utils.CheckID("user_id", r)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
+	val := r.Context().Value(auth.UserIDKey)
+	patientID, ok := val.(int)
+
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
-	psychiatrist, err := h.Service.PatientPsiquiatristDetail(id)
+	psychiatrist, err := h.Service.PatientPsiquiatristDetail(patientID)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
