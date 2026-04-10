@@ -29,6 +29,27 @@ func (r *UserRepository) GetUserByEmail(email string) (models.User, error) {
 	return user, nil
 }
 
+func (r *UserRepository) GetUserByID(id int) (models.User, error) {
+	var user models.User
+	row := r.DB.QueryRow(
+		`SELECT id, name, email, age, image, role
+		FROM users 
+		WHERE user_id = $1`, id)
+	err := row.Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Age,
+		&user.Image,
+		&user.Role,
+	)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
 func (r *UserRepository) GetAllTherapists() ([]models.DoctorWithUser, error) {
 	query := `
 		SELECT 
@@ -187,7 +208,7 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 	return psychiatrist, nil
 }
 
-func (r *UserRepository) GetTherapistPatient(userID int) (models.PatientWithUser, error) {
+func (r *UserRepository) GetTherapistPatient(patiendID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `
 	SELECT 
@@ -203,7 +224,7 @@ func (r *UserRepository) GetTherapistPatient(userID int) (models.PatientWithUser
 		WHERE p.user_id = $1;
 		`
 
-	rows, err := r.DB.Query(query, userID)
+	rows, err := r.DB.Query(query, patiendID)
 	if err != nil {
 		return models.PatientWithUser{}, err
 	}
@@ -234,7 +255,7 @@ func (r *UserRepository) GetTherapistPatient(userID int) (models.PatientWithUser
 	return patient, nil
 }
 
-func (r *UserRepository) GetPsychiatristPatient(userID int) (models.PatientWithUser, error) {
+func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `
 		SELECT p.id, u.name, u.email, u.age, u.image, p.current_diagnosis,
@@ -247,7 +268,7 @@ func (r *UserRepository) GetPsychiatristPatient(userID int) (models.PatientWithU
 		WHERE user_id = $1;
 	`
 
-	rows, err := r.DB.Query(query,userID)
+	rows, err := r.DB.Query(query,patiendID)
 	if err != nil {
 		return models.PatientWithUser{}, err
 	}
@@ -281,40 +302,29 @@ func (r *UserRepository) GetPsychiatristPatient(userID int) (models.PatientWithU
 	return patient, nil
 }
 
-func (r *UserRepository) GetAllTherapistPatients(therapist_id int) ([]models.PatientWithUser, error) {
+ func (r *UserRepository) GetTherapistPatients(doctorID int) ([]models.PatientWithUser, error) {
 	query := `
-	SELECT 
-		p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
+	SELECT p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
 	FROM patients p
 	JOIN users u ON u.id = p.user_id
-	WHERE p.therapist_id = (
-		SELECT id FROM therapists WHERE user_id = $1
-		)
+	JOIN therapists t ON t.id = p.therapist_id
+	WHERE t.user_id = $1
 	`
 
-	rows, err := r.DB.Query(query, therapist_id)
+	rows, err := r.DB.Query(query, doctorID)
 	if err != nil {
-		return []models.PatientWithUser{}, err
+		return nil, err
 	}
-	
 	defer rows.Close()
 
 	var patients []models.PatientWithUser
 
-	for rows.Next(){
+	for rows.Next() {
 		var p models.PatientWithUser
-		err := rows.Scan(
-			&p.ID,
-			&p.Name,
-			&p.Email,
-			&p.Age,
-			&p.Image,
-			&p.CurrentDiagnosis,
-		)
+		err := rows.Scan(&p.ID, &p.Name, &p.Email, &p.Age, &p.Image, &p.CurrentDiagnosis)
 		if err != nil {
 			return nil, err
 		}
-
 		patients = append(patients, p)
 	}
 
@@ -322,36 +332,29 @@ func (r *UserRepository) GetAllTherapistPatients(therapist_id int) ([]models.Pat
 }
 
 
-func (r *UserRepository) GetAllPsichiatristPatients(psychiatrist_id int) ([]models.PatientWithUser, error) {
+ func (r *UserRepository) GetPsychiatristPatients(doctorID int) ([]models.PatientWithUser, error) {
 	query := `
-	SELECT 
-		p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
+	SELECT p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
 	FROM patients p
 	JOIN users u ON u.id = p.user_id
-	WHERE p.psychiatris_id = (
-			SELECT id FROM therapists WHERE user_id = $1
-		)
+	JOIN psychiatrists ps ON t.id = p.psychiastrid_id
+	WHERE ps.user_id = $1
 	`
 
-	rows, err := r.DB.Query(query, psychiatrist_id)
+	rows, err := r.DB.Query(query, doctorID)
 	if err != nil {
-		return []models.PatientWithUser{}, err
+		return nil, err
 	}
-	
 	defer rows.Close()
 
 	var patients []models.PatientWithUser
 
-	for rows.Next(){
+	for rows.Next() {
 		var p models.PatientWithUser
 		err := rows.Scan(
-			&p.ID,
-			&p.Name,
-			&p.Email,
-			&p.Age,
-			&p.Image,
-			&p.CurrentDiagnosis,
-		)
+			&p.ID, &p.Name, &p.Email, &p.Age, &p.Image, 
+			&p.CurrentDiagnosis)
+
 		if err != nil {
 			return nil, err
 		}

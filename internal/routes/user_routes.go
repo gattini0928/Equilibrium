@@ -26,13 +26,13 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	mux.HandleFunc("GET /therapists/{id}", h.HandleTherapistDetail)
 	mux.HandleFunc("GET /psychiatrists/{id}", h.HandlePsychiatristDetail)
 
-	// VINCULAR (JWT)
-	mux.Handle("PUT /patients/{id}/therapist",
+	// VINCULAR (JWT) PACIENTE -> SEU TERAPEUTA - PSIQUIATRA
+	mux.Handle("PUT /me/therapist/{id}",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleAddTherapistToPatient)))
-	mux.Handle("PUT /patients/{id}/psychiatrist",
+	mux.Handle("PUT /me/psyquiatrist/{id}",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleAddPsychiatristToPatient)))
 
-	// PEFIL LOGADO (JWT) SEU TERAPEUTA
+	// PEFIL LOGADO (JWT) PACIENTE -> SEU TERAPEUTA
 	mux.Handle("GET /me/therapist",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientTherapistDetail)))
 	mux.Handle("GET /me/psychiatrist",

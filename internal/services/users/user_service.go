@@ -75,97 +75,106 @@ func (s *UserService) Login(email string, password string) (models.User, string,
 	return user, token, nil
 }
 
+// Completar cadastro do therapeuta
 func (s *UserService) CompleteTherapistSignUp(userID int, specialty string, description string) error {
 	return s.Repo.CompleteTherapist(userID, specialty, description)
 }
 
+// Completar cadastro do psiquiatra
 func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, description string) error {
 	return s.Repo.CompletePsychiatrist(userID, crm, description)
 }
 
+// Listagem de todos terapeutas
 func (s *UserService) ListAllTherapists() ([]models.DoctorWithUser, error) {
-	therapists, err := s.Repo.GetAllTherapists()
-	if err != nil {
-		return nil, err
-	}
-
-	return therapists, nil
+	return s.Repo.GetAllTherapists()
 }
-
-
+// Listagem de todos psiquiatras
 func (s *UserService) ListAllPsychiatrists() ([]models.DoctorWithUser, error) {
-	psychiatrists, err := s.Repo.GetAllPsychiatrists()
-	if err != nil {
-		return nil, err
-	}
-	
-	return psychiatrists, nil
+	return s.Repo.GetAllPsychiatrists()
 }
 
+// Detalhes do terapeuta
 func (s *UserService) TherapistDetail(userID int) (models.DoctorWithUser, error) {
-	therapist, err := s.Repo.GetTherapistById(userID)
-	if err != nil {
-		return models.DoctorWithUser{}, err
-	}
-
-	return therapist, nil
-
+	return s.Repo.GetTherapistById(userID)
 }
 
+// Detalhes do psiquiatra
 func (s *UserService) PsychiatristDetail(userID int) (models.DoctorWithUser, error) {
-	psychiatrist, err := s.Repo.GetPsychiatristById(userID)
-	if err != nil {
-		return models.DoctorWithUser{}, err
-	}
-
-	return psychiatrist, nil
+	return s.Repo.GetPsychiatristById(userID)
 }
 
-func (s *UserService) TherapistToPatient(patientID int, therapistID int) error {
-	err := s.Repo.AddTherapistToPatient(patientID, therapistID)
+func (s *UserService) TherapistToPatient(patientID, therapistID int) error {
+	user, err := s.Repo.GetUserByID(patientID)
 	if err != nil {
 		return err
 	}
-	return nil 
+
+	if user.Role != "patient" {
+		return errors.New("forbidden")
+	}
+
+	return s.Repo.AddTherapistToPatient(patientID, therapistID)
 }
 
-func (s *UserService) PsychiatristToPatient(patientID int, therapistID int) error {
-	err := s.Repo.AddPsychiatristToPatient(patientID, therapistID)
+func (s *UserService) PsychiatristToPatient(patientID, psychiatristID int) error {
+	user, err := s.Repo.GetUserByID(patientID)
 	if err != nil {
 		return err
 	}
-	return nil 
+
+	if user.Role != "patient" {
+		return errors.New("forbidden")
+	}
+
+	return s.Repo.AddPsychiatristToPatient(patientID, psychiatristID)
+
 }
 
-func (s *UserService) TherapistPatientDetail(userID int) (models.PatientWithUser, error) {
-	return s.Repo.GetTherapistPatient(userID)
-}
+// Terapeuta ou Psiquiatra vê os detalhes do paciente
+func (s *UserService) GetPatientDetail(patientID, doctorID int) (models.PatientWithUser, error) {
+	user, err := s.Repo.GetUserByID(doctorID)
+	if err != nil {
+		return models.PatientWithUser{}, err
+	}
 
-func (s *UserService) PsychiatristPatientDetail(userID int) (models.PatientWithUser, error) {
-	return s.Repo.GetPsychiatristPatient(userID)
-}
+	if user.Role == "therapist" {
+		return s.Repo.GetTherapistPatient(patientID)
+	}
+
+	if user.Role == "psychiatrist" {
+		return s.Repo.GetPsychiatristPatient(patientID)
+	}
+
+	return models.PatientWithUser{}, errors.New("forbidden")
+}	
+
+// Detalhes do Terapeuta do Paciente
 func (s *UserService) PatientTherapistDetail(userID int) (models.DoctorWithUser, error) {
 	return s.Repo.GetPatientTherapist(userID)
 }
 
+// Detalhes do Psiquiatra do Paciente
 func (s *UserService) PatientPsiquiatristDetail(userID int) (models.DoctorWithUser, error) {
-	return s.Repo.GetPatientTherapist(userID) 
+	return s.Repo.GetPatientPsychiatrist(userID) 
 }
 
-func (s *UserService) ListAllTherapistPatients(therapist_id int) ([]models.PatientWithUser, error) {
-	patients, err := s.Repo.GetAllTherapistPatients(therapist_id)
+// Listar pacientes do terapeuta ou psiquiatra
+func (s *UserService) ListMyPatients(userID int) ([]models.PatientWithUser, error) {
+	user, err := s.Repo.GetUserByID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	return patients, nil
+	switch user.Role {
+	case "therapist":
+		return s.Repo.GetTherapistPatients(userID)
+
+	case "psychiatrist":
+		return s.Repo.GetPsychiatristPatients(userID)
+
+	default:
+		return nil, errors.New("forbidden")
+	}
 }
 
-func (s *UserService) ListAllPsychiatristPatients(psychiatrist_id int) ([]models.PatientWithUser, error) {
-	patients, err := s.Repo.GetAllTherapistPatients(psychiatrist_id)
-	if err != nil {
-		return nil, err
-	}
-	
-	return patients, nil
-}
