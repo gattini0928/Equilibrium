@@ -1,4 +1,4 @@
-APP_NAME=jwt-auth
+APP_NAME=equilibrium
 
 build:
 	@go build -o bin/$(APP_NAME) cmd/server/main.go

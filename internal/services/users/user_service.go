@@ -106,6 +106,7 @@ func (s *UserService) PsychiatristDetail(userID int) (models.DoctorWithUser, err
 
 func (s *UserService) TherapistToPatient(patientID, therapistID int) error {
 	user, err := s.Repo.GetUserByID(patientID)
+
 	if err != nil {
 		return err
 	}
@@ -113,7 +114,7 @@ func (s *UserService) TherapistToPatient(patientID, therapistID int) error {
 	if user.Role != "patient" {
 		return errors.New("forbidden")
 	}
-
+	
 	return s.Repo.AddTherapistToPatient(patientID, therapistID)
 }
 

@@ -31,10 +31,12 @@ func (r *UserRepository) GetUserByEmail(email string) (models.User, error) {
 
 func (r *UserRepository) GetUserByID(id int) (models.User, error) {
 	var user models.User
-	row := r.DB.QueryRow(
-		`SELECT id, name, email, age, image, role
+
+	row := r.DB.QueryRow(`
+		SELECT id, name, email, age, image, role
 		FROM users 
-		WHERE user_id = $1`, id)
+		WHERE id = $1`, id)
+
 	err := row.Scan(
 		&user.ID,
 		&user.Name,
@@ -61,7 +63,8 @@ func (r *UserRepository) GetAllTherapists() ([]models.DoctorWithUser, error) {
 			t.specialty,
 			t.description
 		FROM therapists t
-		JOIN users u ON t.user_id = u.id; 
+		JOIN users u ON t.user_id = u.id;
+		WHERE t.description IS NOT NULL AND t.crm IS NOT NULL 
 	`
 
 	rows, err := r.DB.Query(query)
@@ -107,6 +110,7 @@ func (r *UserRepository) GetAllPsychiatrists() ([]models.DoctorWithUser, error) 
 			p.crm
 		FROM psychiatrists p
 		JOIN users u ON p.user_id = u.id
+		WHERE p.description IS NOT NULL AND p.crm IS NOT NULL
 	`
 
 	rows, err := r.DB.Query(query)
@@ -330,7 +334,6 @@ func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWi
 
 	return patients, nil
 }
-
 
  func (r *UserRepository) GetPsychiatristPatients(doctorID int) ([]models.PatientWithUser, error) {
 	query := `

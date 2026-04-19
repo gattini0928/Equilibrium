@@ -2,7 +2,6 @@ package users
 
 import (
 	"errors"
-
 	"github.com/gattini0928/Equilibrium/internal/models"
 )
 
@@ -86,11 +85,16 @@ func (r *UserRepository) CompletePsychiatrist(userID int, crm string, descriptio
 
 func (r *UserRepository) AddTherapistToPatient(patientID int, therapistID int) error {
 	_, err := r.DB.Exec(`
-		UPDATE patients 
+		UPDATE public.patients 
 		SET therapist_id = $1
 		WHERE user_id = $2;
 	`, therapistID, patientID)
-	return err
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *UserRepository) AddPsychiatristToPatient(patientID int, psychiatristID int) error {

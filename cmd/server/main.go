@@ -16,6 +16,7 @@ import (
 )
 
 func main() {
+
 	err := godotenv.Load()
     if err != nil {
 		log.Fatalf("Erro ao carregar .env: %v", err)
@@ -36,6 +37,8 @@ func main() {
 	
 	port := os.Getenv("API_PORT")
 	err = http.ListenAndServe(":"+port, mux)
+
+	log.Println("🔥 SERVER NOVO SUBIU")
 	
 	if err != nil {
 		log.Fatal(err)

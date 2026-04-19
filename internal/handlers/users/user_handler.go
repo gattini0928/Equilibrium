@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
+	"fmt"
 
 	"github.com/gattini0928/Equilibrium/internal/models"
 	"github.com/gattini0928/Equilibrium/internal/services/auth"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
 	"github.com/gattini0928/Equilibrium/internal/utils"
 )
+
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateUserRequest
@@ -247,14 +249,18 @@ func (h *UserHandler) HandleAddTherapistToPatient(w http.ResponseWriter, r *http
 		return
 	}
 
+	fmt.Println("ANTES DO SERVICE")
+
 	err = h.Service.TherapistToPatient(patientID, id)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
+	
+	fmt.Println("DPS DO SERVICE")
 
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
-		"message": "Terapeuta escolhido com sucesso",
+		"message": "Terapeuta vinculado com sucesso",
 	})
 }
 
