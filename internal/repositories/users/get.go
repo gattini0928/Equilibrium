@@ -381,7 +381,7 @@ func (r *UserRepository) GetPatientTherapist(userID int) (models.DoctorWithUser,
 		t.specialty,
 		t.description
 	FROM patients p
-	JOIN therapist t ON t.id = p.therapist_id
+	JOIN therapists t ON t.id = p.therapist_id
 	JOIN users u ON u.id = t.user_id
 	WHERE p.user_id = $1;
 	`
@@ -416,7 +416,7 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUs
 		u.image,
 		p.description
 	FROM patients pat
-	JOIN psychiatrist p ON p.id = pat.psychiatrist_id
+	JOIN psychiatrists p ON p.id = pat.psychiatrist_id
 	JOIN users u ON u.id = p.user_id
 	WHERE pat.user_id = $1;
 	`
