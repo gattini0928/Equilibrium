@@ -500,3 +500,33 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUs
 	return psychiatrist, nil
 }
 
+func (r *UserRepository) GetTherapistIDByUserID(userID int) (int, error) {
+	var therapistID int
+
+	query := `
+		SELECT id FROM therapists WHERE user_id = $1
+	`
+
+	err := r.DB.QueryRow(query, userID).Scan(&therapistID)
+	if err != nil {
+		return 0, err
+	}
+
+	return therapistID, nil
+}
+
+
+func (r *UserRepository) GetPsychiatristIDByUserID(userID int) (int, error) {
+	var psychiatristID int
+
+	query := `
+		SELECT id FROM psychiatrists WHERE user_id = $1
+	`
+
+	err := r.DB.QueryRow(query, userID).Scan(&psychiatristID)
+	if err != nil {
+		return 0, err
+	}
+
+	return psychiatristID, nil
+}

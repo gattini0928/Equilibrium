@@ -3,8 +3,8 @@ package users
 import (
 	"database/sql"
 	"errors"
-	"net/http"
 	"fmt"
+	"net/http"
 
 	"github.com/gattini0928/Equilibrium/internal/models"
 	"github.com/gattini0928/Equilibrium/internal/services/auth"
@@ -367,4 +367,29 @@ func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request
 	}
 
 	utils.WriteJSON(w, http.StatusOK, patient)
+}
+
+func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {
+	var agenda models.Agenda
+
+	err := utils.ParseJSON(r, &agenda)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return 
+	}
+
+	val := r.Context().Value(auth.UserIDKey)
+	userID, ok := val.(int)
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
+
+	createdAgenda, err := h.Service.AddAgenda(userID, agenda.Day, agenda.Month, agenda.Hour)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusCreated, createdAgenda)
 }

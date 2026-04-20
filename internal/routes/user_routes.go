@@ -45,4 +45,7 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	// DETALHE DO PACIENTE (JWT)
 	mux.Handle("GET /patients/{id}",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePatientDetail)))
+	
+	mux.Handle("POST /me/agenda",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleAddAgenda)))
 }

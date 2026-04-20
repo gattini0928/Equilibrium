@@ -106,3 +106,28 @@ func (r *UserRepository) AddPsychiatristToPatient(patientID int, psychiatristID 
 
 	return err
 }
+
+func (r *UserRepository) InsertAgenda(professionalID int, day int, month int, hour string) (models.Agenda, error) {
+	var agenda models.Agenda
+
+	query := `
+		INSERT INTO agendas (professional_id, day, month, hour, reserved)
+		VALUES ($1, $2, $3, $4, false)
+		RETURNING id, professional_id, day, month, hour, reserved;
+	`
+
+	err := r.DB.QueryRow(query, professionalID, day, month, hour).Scan(
+		&agenda.ID,
+		&agenda.ProfessionalID,
+		&agenda.Day,
+		&agenda.Month,
+		&agenda.Hour,
+		&agenda.Reserved,
+	)
+
+	if err != nil {
+		return models.Agenda{}, err
+	}
+
+	return agenda, nil
+}

@@ -201,3 +201,30 @@ func (s *UserService) ListMyPatients(userID int) ([]models.PatientWithUser, erro
 	}
 }
 
+func (s *UserService) AddAgenda(userID int, day int, month int, hour string) (models.Agenda, error) {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return models.Agenda{}, err
+	}
+
+	var professionalID int
+
+	switch user.Role {
+
+	case "therapist":
+		professionalID, err = s.Repo.GetTherapistIDByUserID(userID)
+
+	case "psychiatrist":
+		professionalID, err = s.Repo.GetPsychiatristIDByUserID(userID)
+
+	default:
+		return models.Agenda{}, errors.New("forbidden")
+	}
+
+	if err != nil {
+		return models.Agenda{}, err
+	}
+
+	return s.Repo.InsertAgenda(professionalID, day, month, hour)
+}
+
