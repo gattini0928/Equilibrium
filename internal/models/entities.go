@@ -166,5 +166,6 @@ type DoctorDetailResponse struct {
 	Specialty string `json:"specialty"`
 	CRM string `json:"crm"`
 	Description string `json:"description"`
+	Agendas []Agenda `json:"agendas"`
 }
 

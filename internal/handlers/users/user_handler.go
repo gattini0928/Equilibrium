@@ -191,7 +191,7 @@ func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	therapist, err := h.Service.TherapistDetail(id)
+	therapist, agendas,err := h.Service.TherapistDetail(id)
 	if errors.Is(err, sql.ErrNoRows) {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
@@ -204,6 +204,7 @@ func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Reque
 		Image: therapist.Image,
 		Specialty: therapist.Specialty,
 		Description: therapist.Description,
+		Agendas: agendas,
 	}
 
 	utils.WriteJSON(w, http.StatusOK, resp)

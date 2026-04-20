@@ -48,14 +48,16 @@ func main() {
 			id SERIAL PRIMARY KEY,
 			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
 			specialty TEXT,
-			description TEXT
+			description TEXT,
+			price REAL
 		);
 
 		CREATE TABLE IF NOT EXISTS psychiatrists (
 			id SERIAL PRIMARY KEY,
 			user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
 			crm TEXT,
-			description TEXT
+			description TEXT,
+			price REAL
 		);
 
 		CREATE TABLE IF NOT EXISTS patients (

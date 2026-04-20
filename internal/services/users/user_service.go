@@ -95,8 +95,19 @@ func (s *UserService) ListAllPsychiatrists() ([]models.DoctorWithUser, error) {
 }
 
 // Detalhes do terapeuta
-func (s *UserService) TherapistDetail(userID int) (models.DoctorWithUser, error) {
-	return s.Repo.GetTherapistById(userID)
+func (s *UserService) TherapistDetail(userID int) (models.DoctorWithUser, []models.Agenda, error) {
+
+	therapist, err := s.Repo.GetTherapistById(userID)
+	if err != nil {
+		return models.DoctorWithUser{}, nil, err
+	}
+
+	agendas, err := s.Repo.GetTherapistAgenda(therapist.ID)
+	if err != nil {
+		return models.DoctorWithUser{}, nil, err
+	}
+
+	return therapist, agendas, nil
 }
 
 // Detalhes do psiquiatra
