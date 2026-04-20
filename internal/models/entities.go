@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type User struct {
 	ID int
 	Name string
@@ -69,9 +71,10 @@ type Consultation struct {
 	PatientID        int     `json:"patient_id"`
 	ProfessionalID   int     `json:"professional_id"`
 	ProfessionalType string  `json:"professional_type"`
-	Date             string  `json:"date"`
+	Date             time.Time  `json:"date"`
 	Price            float64 `json:"price"`
 	Annotation       string  `json:"annotation"`
+	Status 			string `json:"status"`
 }
 
 type Book struct {

@@ -75,7 +75,9 @@ func main() {
 			professional_type TEXT,
 			date TIMESTAMP,
 			price REAL,
-			annotation TEXT
+			annotation TEXT,
+			agenda_id INTEGER REFERENCES agendas(id),
+			status CHECK (status IN ('scheduled', 'in_progress', 'finished', 'cancelled'))
 		);
 
 		CREATE TABLE IF NOT EXISTS books (
