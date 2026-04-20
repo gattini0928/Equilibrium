@@ -111,8 +111,19 @@ func (s *UserService) TherapistDetail(userID int) (models.DoctorWithUser, []mode
 }
 
 // Detalhes do psiquiatra
-func (s *UserService) PsychiatristDetail(userID int) (models.DoctorWithUser, error) {
-	return s.Repo.GetPsychiatristById(userID)
+func (s *UserService) PsychiatristDetail(userID int) (models.DoctorWithUser, []models.Agenda, error) {
+
+	psychiatrist, err := s.Repo.GetPsychiatristById(userID)
+	if err != nil {
+		return models.DoctorWithUser{}, nil, err
+	}
+
+	agendas, err := s.Repo.GetTherapistAgenda(psychiatrist.ID)
+	if err != nil {
+		return models.DoctorWithUser{}, nil, err
+	}
+
+	return psychiatrist, agendas, nil
 }
 
 func (s *UserService) TherapistToPatient(patientID, therapistID int) error {

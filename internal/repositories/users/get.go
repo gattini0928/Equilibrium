@@ -243,6 +243,37 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 	return psychiatrist, nil
 }
 
+func (r *UserRepository) GetPsychiatristAgenda(psychiatristID int) ([]models.Agenda, error ) {
+	query := `
+		SELECT day, month, hour, reserved
+		FROM agendas
+		WHERE professional_id = $1
+	`
+	rows, err := r.DB.Query(query,psychiatristID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var agendas []models.Agenda
+
+	for rows.Next() {
+		var a models.Agenda
+		err := rows.Scan(
+			&a.Day,
+			&a.Month,
+			&a.Hour,
+			&a.Reserved,
+		)
+		if err != nil {
+			return nil, err
+		}
+		agendas = append(agendas, a)
+	}
+
+	return agendas, nil
+}
+
 func (r *UserRepository) GetTherapistPatient(patiendID int) (models.PatientWithUser, error) {
 	var patient models.PatientWithUser
 	query := `

@@ -210,7 +210,6 @@ func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Reque
 	utils.WriteJSON(w, http.StatusOK, resp)
 }
 
-
 func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.CheckID("id", r)
 	if err != nil {
@@ -218,7 +217,7 @@ func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	psychiatrist, err := h.Service.PsychiatristDetail(id)
+	psychiatrist, agendas,  err := h.Service.PsychiatristDetail(id)
 	if errors.Is(err, sql.ErrNoRows) {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
@@ -231,6 +230,7 @@ func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Re
 		Image: psychiatrist.Image,
 		CRM: psychiatrist.CRM,
 		Description: psychiatrist.Description,
+		Agendas: agendas,
 	}
 
 	utils.WriteJSON(w, http.StatusOK, resp)
