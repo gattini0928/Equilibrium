@@ -148,4 +148,8 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+type DoctorDashboard struct {
+	Perfil   UserPerfil   `json:"perfil"`
+	Agendas  []Agenda     `json:"agendas"`
+}
 

@@ -156,19 +156,20 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, res)
 }
 
+
 func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return
 	}
 
-	userPerfil, err := h.Service.Perfil(userID)
+	perfil, err := h.Service.Perfil(userID)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-
-	utils.WriteJSON(w, http.StatusOK, userPerfil)
+	
+	utils.WriteJSON(w, http.StatusOK, perfil)
 }
 
 func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request) {

@@ -85,38 +85,6 @@ func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, descrip
 	return s.Repo.CompletePsychiatrist(userID, crm, description)
 }
 
-func (s *UserService) Perfil(userID int) (models.UserPerfil ,error) {
-	user, err := s.Repo.GetUserByID(userID)
-	if err != nil {
-		return models.UserPerfil{}, err
-	}
-
-	switch user.Role {
-	case "patient":
-		patient, err := s.Repo.GetPatientPerfil(userID)
-		if err != nil {
-			return models.UserPerfil{}, err
-		}
-		return patient, nil
-
-	case "therapist":
-		therapist, err := s.Repo.GetTherapistPerfil(userID)
-		if err != nil {
-			return models.UserPerfil{}, err
-		}
-		return therapist, nil
-
-	case "psychiatrist":
-		psychiatrist, err := s.Repo.GetPsychiatristPerfil(userID)
-		if err != nil {
-			return models.UserPerfil{}, err
-		}
-		return psychiatrist, nil
-	}
-	
-	return models.UserPerfil{}, err
-}
-
 // Listagem de todos terapeutas
 func (s *UserService) ListAllTherapists() ([]models.DoctorWithUser, error) {
 	return s.Repo.GetAllTherapists()
@@ -266,5 +234,49 @@ func (s *UserService) UpdatePrice(userID int, price float64) error {
 
 	default:
 		return errors.New("invalid role")
+	}
+}
+
+func (s *UserService) Perfil(userID int) (any, error) {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	switch user.Role {
+
+	case "patient":
+		return s.Repo.GetPatientPerfil(userID)
+
+	case "therapist":
+		perfil, err := s.Repo.GetTherapistPerfil(userID)
+		if err != nil {
+			return nil, err
+		}
+		agendas, err := s.Repo.GetTherapistPrivateAgenda(userID)
+		if err != nil {
+			return nil, err
+		}
+		return models.DoctorDashboard{
+			Perfil: perfil,
+			Agendas: agendas,
+		}, nil
+
+	case "psychiatrist":
+		perfil, err := s.Repo.GetPsychiatristPerfil(userID)
+		if err != nil {
+			return nil, err
+		}
+		agendas, err := s.Repo.GetPsychiatristPrivateAgenda(userID)
+		if err != nil {
+			return nil, err
+		}
+		return models.DoctorDashboard{
+			Perfil: perfil,
+			Agendas: agendas,
+		}, nil
+
+	default:
+		return nil, errors.New("invalid role")
 	}
 }

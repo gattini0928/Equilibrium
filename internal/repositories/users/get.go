@@ -267,8 +267,41 @@ func (r *UserRepository) GetTherapistAgenda(therapistID int) ([]models.Agenda, e
 		SELECT day, month, hour, reserved
 		FROM agendas
 		WHERE professional_id = $1
+		AND reserved = false
 	`
 	rows, err := r.DB.Query(query,therapistID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var agendas []models.Agenda
+
+	for rows.Next() {
+		var a models.Agenda
+		err := rows.Scan(
+			&a.Day,
+			&a.Month,
+			&a.Hour,
+			&a.Reserved,
+		)
+		if err != nil {
+			return nil, err
+		}
+		agendas = append(agendas, a)
+	}
+
+	return agendas, nil
+}
+
+
+func (r *UserRepository) GetTherapistPrivateAgenda(userID int) ([]models.Agenda, error ) {
+	query := `
+		SELECT day, month, hour, reserved
+		FROM agendas
+		WHERE professional_id = $1
+	`
+	rows, err := r.DB.Query(query,userID)
 	if err != nil {
 		return nil, err
 	}
@@ -332,8 +365,40 @@ func (r *UserRepository) GetPsychiatristAgenda(psychiatristID int) ([]models.Age
 		SELECT day, month, hour, reserved
 		FROM agendas
 		WHERE professional_id = $1
+		AND reserved = false
 	`
 	rows, err := r.DB.Query(query,psychiatristID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var agendas []models.Agenda
+
+	for rows.Next() {
+		var a models.Agenda
+		err := rows.Scan(
+			&a.Day,
+			&a.Month,
+			&a.Hour,
+			&a.Reserved,
+		)
+		if err != nil {
+			return nil, err
+		}
+		agendas = append(agendas, a)
+	}
+
+	return agendas, nil
+}
+
+func (r *UserRepository) GetPsychiatristPrivateAgenda(userID int) ([]models.Agenda, error ) {
+	query := `
+		SELECT day, month, hour, reserved
+		FROM agendas
+		WHERE professional_id = $1
+	`
+	rows, err := r.DB.Query(query,userID)
 	if err != nil {
 		return nil, err
 	}
@@ -584,33 +649,3 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUs
 	return psychiatrist, nil
 }
 
-// func (r *UserRepository) GetTherapistIDByUserID(userID int) (int, error) {
-// 	var therapistID int
-
-// 	query := `
-// 		SELECT id FROM therapists WHERE user_id = $1
-// 	`
-
-// 	err := r.DB.QueryRow(query, userID).Scan(&therapistID)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return therapistID, nil
-// }
-
-
-// func (r *UserRepository) GetPsychiatristIDByUserID(userID int) (int, error) {
-// 	var psychiatristID int
-
-// 	query := `
-// 		SELECT id FROM psychiatrists WHERE user_id = $1
-// 	`
-
-// 	err := r.DB.QueryRow(query, userID).Scan(&psychiatristID)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return psychiatristID, nil
-// }
