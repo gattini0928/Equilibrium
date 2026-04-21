@@ -201,30 +201,38 @@ func (s *UserService) ListMyPatients(userID int) ([]models.PatientWithUser, erro
 	}
 }
 
+// Funções para agenda e preço
 func (s *UserService) AddAgenda(userID int, day int, month int, hour string) (models.Agenda, error) {
 	user, err := s.Repo.GetUserByID(userID)
 	if err != nil {
 		return models.Agenda{}, err
 	}
 
-	var professionalID int
-
-	switch user.Role {
-
-	case "therapist":
-		professionalID, err = s.Repo.GetTherapistIDByUserID(userID)
-
-	case "psychiatrist":
-		professionalID, err = s.Repo.GetPsychiatristIDByUserID(userID)
-
-	default:
+	if user.Role != "therapist" && user.Role != "psychiatrist" {
 		return models.Agenda{}, errors.New("forbidden")
 	}
 
-	if err != nil {
-		return models.Agenda{}, err
-	}
-
-	return s.Repo.InsertAgenda(professionalID, day, month, hour)
+	return s.Repo.InsertAgenda(userID, day, month, hour)
 }
 
+func (s *UserService) RemoveAgenda(userID int, agendaID int) error {
+	return s.Repo.DeleteAgenda(userID, agendaID)
+}
+
+func (s *UserService) UpdatePrice(userID int, price float64) error {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	switch user.Role {
+	case "therapist":
+		return s.Repo.UpdateTherapistPrice(userID, price)
+
+	case "psychiatrist":
+		return s.Repo.UpdatePsychiatristPrice(userID, price)
+
+	default:
+		return errors.New("invalid role")
+	}
+}

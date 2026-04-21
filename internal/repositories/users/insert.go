@@ -107,7 +107,7 @@ func (r *UserRepository) AddPsychiatristToPatient(patientID int, psychiatristID 
 	return err
 }
 
-func (r *UserRepository) InsertAgenda(professionalID int, day int, month int, hour string) (models.Agenda, error) {
+func (r *UserRepository) InsertAgenda(userID int, day int, month int, hour string) (models.Agenda, error) {
 	var agenda models.Agenda
 
 	query := `
@@ -116,7 +116,7 @@ func (r *UserRepository) InsertAgenda(professionalID int, day int, month int, ho
 		RETURNING id, professional_id, day, month, hour, reserved;
 	`
 
-	err := r.DB.QueryRow(query, professionalID, day, month, hour).Scan(
+	err := r.DB.QueryRow(query, userID, day, month, hour).Scan(
 		&agenda.ID,
 		&agenda.ProfessionalID,
 		&agenda.Day,
@@ -130,4 +130,22 @@ func (r *UserRepository) InsertAgenda(professionalID int, day int, month int, ho
 	}
 
 	return agenda, nil
+}
+
+func (r *UserRepository) UpdateTherapistPrice(userID int, price float64) error {
+	_, err := r.DB.Exec(`
+		UPDATE therapists 
+		SET price = $1 
+		WHERE user_id = $2
+	`, price, userID)
+	return err
+}
+
+func (r *UserRepository) UpdatePsychiatristPrice(userID int, price float64) error {
+	_, err := r.DB.Exec(`
+		UPDATE psychiatrists 
+		SET price = $1 
+		WHERE user_id = $2
+	`, price, userID)
+	return err
 }

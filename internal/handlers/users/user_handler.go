@@ -393,3 +393,53 @@ func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {
 
 	utils.WriteJSON(w, http.StatusCreated, createdAgenda)
 }
+
+func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request) {
+	agendaID, err := utils.CheckID("agenda_id", r)
+	if err != nil {
+		utils.WriteJSON(w, http.StatusBadRequest, err)
+		return 
+	}
+
+	val := r.Context().Value(auth.UserIDKey)
+	userID, ok := val.(int)
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
+	err = h.Service.RemoveAgenda(userID, agendaID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return 
+	}
+	
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "Agenda Deletada com sucesso"})
+}
+
+func (h *UserHandler) HandleUpdatePrice(w http.ResponseWriter, r *http.Request) {
+	var req models.UpdatePriceRequest
+
+	err := utils.ParseJSON(r, &req)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	val := r.Context().Value(auth.UserIDKey)
+	userID, ok := val.(int)
+	if !ok {
+		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return
+	}
+
+	err = h.Service.UpdatePrice(userID, req.Price)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]float64{
+		"price": req.Price,
+	})
+}
