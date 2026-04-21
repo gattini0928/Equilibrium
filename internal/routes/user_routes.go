@@ -30,6 +30,11 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	mux.HandleFunc("GET /therapists/{id}", h.HandleTherapistDetail)
 	mux.HandleFunc("GET /psychiatrists/{id}", h.HandlePsychiatristDetail)
 
+	mux.Handle("POST /therapists/{therapist_id}/agendas/{agenda_id}/reserve", 
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleReserveTherapistAgenda)))
+	mux.Handle("POST /psychiatrists/{psychiatrist_id}/agendas/{agenda_id}/reserve", 
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleReservePsychiatristAgenda)))
+
 	// VINCULAR (JWT) PACIENTE -> SEU TERAPEUTA - PSIQUIATRA
 	mux.Handle("PUT /me/therapist/{id}",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleAddTherapistToPatient)))

@@ -429,3 +429,40 @@ func (h *UserHandler) HandleUpdatePrice(w http.ResponseWriter, r *http.Request) 
 		"price": req.Price,
 	})
 }
+
+func (h *UserHandler) HandleReserveTherapistAgenda(w http.ResponseWriter, r *http.Request) {
+	therapistID, _ := utils.CheckID("therapist_id", r)
+	agendaID, _ := utils.CheckID("agenda_id", r)
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	err := h.Service.ReserveTherapistAgenda(userID, therapistID, agendaID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, "reservado")
+}
+
+
+func (h *UserHandler) HandleReservePsychiatristAgenda(w http.ResponseWriter, r *http.Request) {
+	psychiatristID, _ := utils.CheckID("psychiatrist_id", r)
+	agendaID, _ := utils.CheckID("agenda_id", r)
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	err := h.Service.ReservePsychiatristAgenda(userID, psychiatristID, agendaID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, "reservado")
+}

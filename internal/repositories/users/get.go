@@ -52,6 +52,22 @@ func (r *UserRepository) GetUserByID(id int) (models.User, error) {
 	return user, nil
 }
 
+func (r *UserRepository) GetPatientIDByUserID(userID int) (int, error) {
+	var patientID int
+
+	err := r.DB.QueryRow(`
+		SELECT id
+		FROM patients
+		WHERE user_id = $1	
+	`, userID).Scan(&patientID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return patientID, nil
+}
+
 func (r *UserRepository) GetPatientPerfil(userID int) (models.UserPerfil, error) {
 	query := `
 		SELECT u.id, u.name, u.email, u.age, u.image, p.current_diagnosis
@@ -649,3 +665,48 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUs
 	return psychiatrist, nil
 }
 
+func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error){
+	var agenda models.Agenda
+
+	query := `
+		SELECT id, professional_id, reserved
+		FROM agendas
+		WHERE id = $1
+	`
+
+	row := r.DB.QueryRow(query, agendaID)
+	err := row.Scan(
+		&agenda.ID,
+		&agenda.ProfessionalID,
+		&agenda.Reserved,
+	)
+	if err != nil {
+		return models.Agenda{}, err
+	}  
+	return agenda, nil
+}
+
+func (r *UserRepository) GetTherapistPrice(therapistID int) (float64, error) {
+	var price float64
+
+	err := r.DB.QueryRow(`
+		SELECT price
+		FROM therapists
+		WHERE id = $1
+	`, therapistID).Scan(&price)
+
+	return price, err
+}
+
+func (r *UserRepository) GetPsychiatristPrice(psychiastridID int) (float64, error) {
+	var price float64
+	err := r.DB.QueryRow(
+		`SELECT price
+			FROM psychiatrists WHERE id = $1
+			`, psychiastridID).Scan(&price)
+	if err != nil {
+		return 0, err
+	}
+
+	return price, nil
+}

@@ -3,6 +3,7 @@ package users
 import (
 	"errors"
 	"github.com/gattini0928/Equilibrium/internal/models"
+		"database/sql"
 )
 
 func (r *UserRepository) CreateUserWithProfile(
@@ -86,4 +87,30 @@ func (r *UserRepository) InsertAgenda(userID int, day int, month int, hour strin
 	}
 
 	return agenda, nil
+}
+
+func (r *UserRepository) CreateTherapistConsultation(tx *sql.Tx, patientID, therapistID, agendaID int, price float64) error {
+	query := `
+		INSERT INTO consultations (patient_id, professional_id, agenda_id, price, status)
+		VALUES ($1, $2, $3, $4, 'scheduled')
+		`
+	_, err := tx.Exec(query, patientID, therapistID, agendaID, price)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *UserRepository) CreatePsychiatristConsultation(tx *sql.Tx, patientID, psychiatristID, agendaID int, price float64) error {
+	query := `
+		INSERT INTO consultations (patient_id, professional_id, agenda_id, price, status)
+		VALUES ($1, $2, $3, $4, 'scheduled')
+		`
+	_, err := tx.Exec(query, patientID, psychiatristID, agendaID, price)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

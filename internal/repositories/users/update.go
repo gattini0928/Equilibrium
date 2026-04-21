@@ -1,5 +1,7 @@
 package users
 
+import "database/sql"
+
 func (r *UserRepository) CompleteTherapist(userID int, specialty string, description string) error {
 	_, err := r.DB.Exec(`
 		UPDATE therapists
@@ -44,7 +46,6 @@ func (r *UserRepository) AddPsychiatristToPatient(patientID int, psychiatristID 
 	return err
 }
 
-
 func (r *UserRepository) UpdateTherapistPrice(userID int, price float64) error {
 	_, err := r.DB.Exec(`
 		UPDATE therapists 
@@ -60,5 +61,14 @@ func (r *UserRepository) UpdatePsychiatristPrice(userID int, price float64) erro
 		SET price = $1 
 		WHERE user_id = $2
 	`, price, userID)
+	return err
+}
+
+func (r *UserRepository) MarkAgendaReserved(tx *sql.Tx, agendaID int) error {
+	_, err := r.DB.Exec(`
+		UPDATE agendas
+		SET reserved = true
+		WHERE id = $1
+	`, agendaID)
 	return err
 }

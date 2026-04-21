@@ -244,7 +244,6 @@ func (s *UserService) Perfil(userID int) (any, error) {
 	}
 
 	switch user.Role {
-
 	case "patient":
 		return s.Repo.GetPatientPerfil(userID)
 
@@ -279,4 +278,93 @@ func (s *UserService) Perfil(userID int) (any, error) {
 	default:
 		return nil, errors.New("invalid role")
 	}
+}
+
+
+func (s *UserService) ReserveTherapistAgenda(patientUserID, therapistID, agendaID int) error {
+	patientID, err := s.Repo.GetPatientIDByUserID(patientUserID)
+	if err != nil {
+		return err
+	}
+
+	agenda, err := s.Repo.GetAgendaByID(agendaID)
+	if err != nil {
+		return err
+	}
+
+	if agenda.Reserved {
+		return errors.New("agenda já reservada")
+	}
+
+	if agenda.ProfessionalID != therapistID {
+		return errors.New("agenda inválida")
+	}
+
+	price, err := s.Repo.GetTherapistPrice(therapistID)
+	if err != nil {
+		return err
+	}
+
+	tx, err := s.Repo.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	err = s.Repo.CreateTherapistConsultation(tx, patientID, therapistID, agendaID, price)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = s.Repo.MarkAgendaReserved(tx, agendaID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func (s *UserService) ReservePsychiatristAgenda(patientUserID, psychiatristID, agendaID int) error {
+	patientID, err := s.Repo.GetPatientIDByUserID(patientUserID)
+	if err != nil {
+		return err
+	}
+
+	agenda, err := s.Repo.GetAgendaByID(agendaID)
+	if err != nil {
+		return err
+	}
+
+	if agenda.Reserved {
+		return errors.New("agenda já reservada")
+	}
+
+	if agenda.ProfessionalID != psychiatristID {
+		return errors.New("agenda inválida")
+	}
+
+	price, err := s.Repo.GetPsychiatristPrice(psychiatristID)
+	if err != nil {
+		return err
+	}
+
+	tx, err := s.Repo.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	err = s.Repo.CreatePsychiatristConsultation(tx, patientID, psychiatristID, agendaID, price)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = s.Repo.MarkAgendaReserved(tx, agendaID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
 }
