@@ -85,6 +85,38 @@ func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, descrip
 	return s.Repo.CompletePsychiatrist(userID, crm, description)
 }
 
+func (s *UserService) Perfil(userID int) (models.UserPerfil ,error) {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return models.UserPerfil{}, err
+	}
+
+	switch user.Role {
+	case "patient":
+		patient, err := s.Repo.GetPatientPerfil(userID)
+		if err != nil {
+			return models.UserPerfil{}, err
+		}
+		return patient, nil
+
+	case "therapist":
+		therapist, err := s.Repo.GetTherapistPerfil(userID)
+		if err != nil {
+			return models.UserPerfil{}, err
+		}
+		return therapist, nil
+
+	case "psychiatrist":
+		psychiatrist, err := s.Repo.GetPsychiatristPerfil(userID)
+		if err != nil {
+			return models.UserPerfil{}, err
+		}
+		return psychiatrist, nil
+	}
+	
+	return models.UserPerfil{}, err
+}
+
 // Listagem de todos terapeutas
 func (s *UserService) ListAllTherapists() ([]models.DoctorWithUser, error) {
 	return s.Repo.GetAllTherapists()

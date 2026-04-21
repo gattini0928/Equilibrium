@@ -3,11 +3,9 @@ package users
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gattini0928/Equilibrium/internal/models"
-	"github.com/gattini0928/Equilibrium/internal/services/auth"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
 	"github.com/gattini0928/Equilibrium/internal/utils"
 )
@@ -72,10 +70,8 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		return 
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	userID, ok := val.(int)
+	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -106,10 +102,8 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		return 
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	userID, ok := val.(int)
+	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -160,6 +154,21 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, res)
+}
+
+func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	userPerfil, err := h.Service.Perfil(userID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, userPerfil)
 }
 
 func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request) {
@@ -243,22 +252,16 @@ func (h *UserHandler) HandleAddTherapistToPatient(w http.ResponseWriter, r *http
 		return 
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	patientID, ok := val.(int)
+	patientID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
-
-	fmt.Println("ANTES DO SERVICE")
 
 	err = h.Service.TherapistToPatient(patientID, id)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-	
-	fmt.Println("DPS DO SERVICE")
 
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "Terapeuta vinculado com sucesso",
@@ -272,10 +275,8 @@ func (h *UserHandler) HandleAddPsychiatristToPatient(w http.ResponseWriter, r *h
 		return 
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	patientID, ok := val.(int)
+	patientID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -291,11 +292,8 @@ func (h *UserHandler) HandleAddPsychiatristToPatient(w http.ResponseWriter, r *h
 }
 
 func (h *UserHandler) HandlePatientTherapistDetail(w http.ResponseWriter, r *http.Request) {
-	val := r.Context().Value(auth.UserIDKey)
-	patientID, ok := val.(int)
-
+	patientID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -310,11 +308,8 @@ func (h *UserHandler) HandlePatientTherapistDetail(w http.ResponseWriter, r *htt
 
 
 func (h *UserHandler) HandlePatientPsychiatristDetail(w http.ResponseWriter, r *http.Request) {
-	val := r.Context().Value(auth.UserIDKey)
-	patientID, ok := val.(int)
-
+	patientID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -328,11 +323,8 @@ func (h *UserHandler) HandlePatientPsychiatristDetail(w http.ResponseWriter, r *
 }
 
 func (h *UserHandler) HandleMyPatients(w http.ResponseWriter, r *http.Request) {
-	val := r.Context().Value(auth.UserIDKey)
-	id, ok := val.(int)
-
+	id, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -353,10 +345,8 @@ func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	doctorID, ok := val.(int)
+	doctorID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -378,10 +368,8 @@ func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {
 		return 
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	userID, ok := val.(int)
+	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 
@@ -401,12 +389,11 @@ func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request)
 		return 
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	userID, ok := val.(int)
+	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
+
 	err = h.Service.RemoveAgenda(userID, agendaID)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
@@ -426,10 +413,8 @@ func (h *UserHandler) HandleUpdatePrice(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	val := r.Context().Value(auth.UserIDKey)
-	userID, ok := val.(int)
+	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
-		utils.WriteJSON(w, http.StatusUnauthorized, "não autorizado")
 		return
 	}
 

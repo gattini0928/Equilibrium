@@ -52,6 +52,90 @@ func (r *UserRepository) GetUserByID(id int) (models.User, error) {
 	return user, nil
 }
 
+func (r *UserRepository) GetPatientPerfil(userID int) (models.UserPerfil, error) {
+	query := `
+		SELECT u.id, u.name, u.email, u.age, u.image, p.current_diagnosis
+		FROM patients p
+		JOIN users u ON p.user_id = u.id
+		WHERE p.user_id = $1
+	`
+	var patient models.UserPerfil
+
+	row := r.DB.QueryRow(query, userID)
+	err := row.Scan(
+		&patient.ID,
+		&patient.Name,
+		&patient.Email,
+		&patient.Age,
+		&patient.Image,
+		&patient.CurrentDiagnosis,
+	)
+
+	if err != nil {
+		return models.UserPerfil{}, err
+	}
+
+	return patient, nil
+}
+
+func (r *UserRepository) GetTherapistPerfil(userID int) (models.UserPerfil, error) {
+	query := `
+		SELECT u.id, u.name, u.email, u.age, u.image, u.role, t.specialty, t.description, t.price
+		FROM therapists t
+		JOIN users u ON t.user_id = u.id
+		WHERE t.user_id = $1
+	`
+	var therapist models.UserPerfil
+
+	row := r.DB.QueryRow(query, userID)
+	err := row.Scan(
+		&therapist.ID,
+		&therapist.Name,
+		&therapist.Email,
+		&therapist.Age,
+		&therapist.Image,
+		&therapist.Role,
+		&therapist.Specialty,
+		&therapist.Description,
+		&therapist.Price,
+	)
+
+	if err != nil {
+		return models.UserPerfil{}, err
+	}
+
+	return therapist, nil
+}
+
+func (r *UserRepository) GetPsychiatristPerfil(userID int) (models.UserPerfil, error) {
+	query := `
+		SELECT u.id, u.name, u.email, u.age, u.image, u.role, p.crm, p.description, p.price
+		FROM psychiatrists p
+		JOIN users u ON p.user_id = u.id
+		WHERE p.user_id = $1
+	`
+	var psychiatrist models.UserPerfil
+
+	row := r.DB.QueryRow(query, userID)
+	err := row.Scan(
+		&psychiatrist.ID,
+		&psychiatrist.Name,
+		&psychiatrist.Email,
+		&psychiatrist.Age,
+		&psychiatrist.Image,
+		&psychiatrist.Role,
+		&psychiatrist.CRM,
+		&psychiatrist.Description,
+		&psychiatrist.Price,
+	)
+
+	if err != nil {
+		return models.UserPerfil{}, err
+	}
+
+	return psychiatrist, nil
+}
+
 func (r *UserRepository) GetAllTherapists() ([]models.DoctorWithUser, error) {
 	query := `
 		SELECT 

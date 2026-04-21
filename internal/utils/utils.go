@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"errors"
+	"context"
+	"github.com/gattini0928/Equilibrium/internal/services/auth"
 )
 
 func ParseJSON(r *http.Request, payload any) error {
@@ -38,4 +40,16 @@ func CheckID(pathID string, r *http.Request) (int, error) {
 	}
 
 	return id, nil
+}
+
+func CheckJWT(w http.ResponseWriter, ctx context.Context) (int, bool) {
+	val := ctx.Value(auth.UserIDKey)
+
+	userID, ok := val.(int)
+	if !ok {
+		WriteJSON(w, http.StatusUnauthorized, "não autorizado")
+		return 0, false
+	}
+
+	return userID, true
 }

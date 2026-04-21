@@ -18,6 +18,10 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	mux.Handle("POST /psychiatrists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompletePsychiatrist)))
 
+	// Perfil
+	mux.Handle("GET /me",
+	auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePerfil)))
+
 	// LISTAGEM PÚBLICA
 	mux.HandleFunc("GET /therapists", h.HandleAllTherapists)
 	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)

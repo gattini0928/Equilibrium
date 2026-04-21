@@ -13,6 +13,20 @@ type User struct {
 	Image string
 }
 
+type UserPerfil struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Age int `json:"age"`
+	Role string `json:"role"`
+	Image string `json:"image"`
+	CurrentDiagnosis string `json:"current_diagnosis"`
+	Specialty   string `json:"specialty"`
+	CRM string `json:"crm"`
+	Description string `json:"description"`
+	Price float64 `json:"price"`
+}
+
 type Patient struct {
 	ID               int    `json:"id"`
 	UserID           int    `json:"user_id"`
