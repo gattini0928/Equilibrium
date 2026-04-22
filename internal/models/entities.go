@@ -84,6 +84,20 @@ type Consultation struct {
 	Status 			string `json:"status"`
 }
 
+type ConsultationDetail struct {
+	ID              int
+	PatientID       int
+	TherapistID     *int
+	PsychiatristID  *int
+	Date            time.Time
+	Price           float64
+	Annotation      string
+	Status          string
+
+	Books    []Book
+	Remedies []Remedy
+}
+
 type Book struct {
 	ID     int    `json:"id"`
 	Author string `json:"author"`

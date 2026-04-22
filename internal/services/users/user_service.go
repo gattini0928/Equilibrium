@@ -381,3 +381,79 @@ func (s *UserService) ReservePsychiatristAgenda(patientUserID, psychiatristID, a
 
 	return tx.Commit()
 }
+
+func (s *UserService) ShowConsultations(userID int) ([]models.Consultation, error) {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	switch user.Role {
+	case "patient":
+		patientID, err := s.Repo.GetPatientIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+		return s.Repo.GetPatientConsultations(patientID)
+	case "therapist":
+		therapistID, err := s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+		return s.Repo.GetTherapistsConsultations(therapistID)
+	case "psychiatrist":
+		psychiatristID, err := s.Repo.GetPsychiatristIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+		return s.Repo.GetPsychiatristConsultations(psychiatristID)
+	}
+	return nil, errors.New("invalid role")
+}
+
+func (s *UserService) ShowConsultation(userID, consultationID int) (models.ConsultationDetail, error) {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return models.ConsultationDetail{}, err
+	}
+
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return models.ConsultationDetail{}, err
+	}
+
+	switch user.Role {
+
+	case "patient":
+		patientID, err := s.Repo.GetPatientIDByUserID(userID)
+		if err != nil {
+			return models.ConsultationDetail{}, err
+		}
+		if c.PatientID != patientID {
+			return models.ConsultationDetail{}, errors.New("forbidden")
+		}
+
+	case "therapist":
+		therapistID, err := s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return models.ConsultationDetail{}, err
+		}
+		if c.TherapistID == nil || *c.TherapistID != therapistID {
+			return models.ConsultationDetail{}, errors.New("forbidden")
+		}
+
+	case "psychiatrist":
+		psychiatristID, err := s.Repo.GetPsychiatristIDByUserID(userID)
+		if err != nil {
+			return models.ConsultationDetail{}, err
+		}
+		if c.PsychiatristID == nil || *c.PsychiatristID != psychiatristID {
+			return models.ConsultationDetail{}, errors.New("forbidden")
+		}
+
+	default:
+		return models.ConsultationDetail{}, errors.New("invalid role")
+	}
+
+	return c, nil
+}

@@ -739,34 +739,164 @@ func (r *UserRepository) GetPsychiatristIDByUserID(userID int) (int, error) {
 	return id, nil
 }
 
-func (r *UserRepository) GetConsultationByID(id int) (models.Consultation, error) {
-	var consultation models.Consultation
-	var professionalID int
-	var price float64
-
-	err := r.DB.QueryRow(`
-		SELECT 
-			c.id,
-			c.patient_id,
-			c.agenda_id,
-			a.professional_id,
-			c.price
-		FROM consultations c
-		JOIN agendas a ON c.agenda_id = a.id
-		WHERE c.id = $1
-	`, id).Scan(
-		&consultation.ID,
-		&consultation.PatientID,
-		&consultation.AgendaID,
-		&professionalID,
-		&price,
-	)
-
+func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consultation,error) {
+	query := `
+		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation, agenda_id
+		FROM consultations
+		WHERE patient_id = $1
+	`
+	rows, err := r.DB.Query(query, patientID)
 	if err != nil {
-		return models.Consultation{}, err
+		return nil, err
+	}
+	defer rows.Close()
+
+	var consultations []models.Consultation
+	for rows.Next() {
+		var consultation models.Consultation
+		err := rows.Scan(
+			&consultation.ID,
+			&consultation.PatientID,
+			&consultation.TherapistID,
+			&consultation.PsychiatristID,
+			&consultation.Date,
+			&consultation.Price,
+			&consultation.Annotation,
+			&consultation.AgendaID,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		consultations = append(consultations, consultation)
 	}
 
-	consultation.Price = price
+	return consultations, nil
 
-	return consultation, nil
+}
+
+func (r *UserRepository) GetTherapistsConsultations(therapistID int) ([]models.Consultation,error) {
+	query := `
+		SELECT id, patient_id, date
+		FROM consultations
+		WHERE therapist_id = $1
+	`
+	rows, err := r.DB.Query(query, therapistID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var consultations []models.Consultation
+	for rows.Next() {
+		var consultation models.Consultation
+		err := rows.Scan(
+			&consultation.ID,
+			&consultation.PatientID,
+			&consultation.Date,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		consultations = append(consultations, consultation)
+	}
+	return consultations, nil
+
+}
+
+func (r *UserRepository) GetPsychiatristConsultations(psychiatristID int) ([]models.Consultation,error) {
+	query := `
+		SELECT id, patient_id, date, annotation
+		FROM consultations
+		WHERE psychiatrist_id = $1
+	`
+	rows, err := r.DB.Query(query, psychiatristID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var consultations []models.Consultation
+	for rows.Next() {
+		var consultation models.Consultation
+		err := rows.Scan(
+			&consultation.ID,
+			&consultation.PatientID,
+			&consultation.Date,
+			&consultation.Annotation,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		consultations = append(consultations, consultation)
+	}
+
+	return consultations, nil
+
+}
+
+func (r *UserRepository) GetConsultationByID(consultationID int) (models.ConsultationDetail, error) {
+	var c models.ConsultationDetail
+
+	err := r.DB.QueryRow(`
+		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation, status
+		FROM consultations
+		WHERE id = $1
+	`, consultationID).Scan(
+		&c.ID,
+		&c.PatientID,
+		&c.TherapistID,
+		&c.PsychiatristID,
+		&c.Date,
+		&c.Price,
+		&c.Annotation,
+		&c.Status,
+	)
+	if err != nil {
+		return models.ConsultationDetail{}, err
+	}
+
+	bookRows, err := r.DB.Query(`
+		SELECT b.id, b.author, b.title
+		FROM consultation_books cb
+		JOIN books b ON b.id = cb.book_id
+		WHERE cb.consultation_id = $1
+	`, consultationID)
+	if err != nil {
+		return models.ConsultationDetail{}, err
+	}
+	defer bookRows.Close()
+
+	for bookRows.Next() {
+		var b models.Book
+		err := bookRows.Scan(&b.ID, &b.Author, &b.Title)
+		if err != nil {
+			return models.ConsultationDetail{}, err
+		}
+		c.Books = append(c.Books, b)
+	}
+
+	remedyRows, err := r.DB.Query(`
+		SELECT r.id, r.name, r.dosage, r.quantity
+		FROM consultation_remedies cr
+		JOIN remedies r ON r.id = cr.remedy_id
+		WHERE cr.consultation_id = $1
+	`, consultationID)
+	if err != nil {
+		return models.ConsultationDetail{}, err
+	}
+	defer remedyRows.Close()
+
+	for remedyRows.Next() {
+		var rm models.Remedy
+		err := remedyRows.Scan(&rm.ID, &rm.Name, &rm.Dosage, &rm.Quantity)
+		if err != nil {
+			return models.ConsultationDetail{}, err
+		}
+		c.Remedies = append(c.Remedies, rm)
+	}
+
+	return c, nil
 }

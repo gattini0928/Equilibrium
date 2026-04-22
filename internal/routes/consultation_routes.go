@@ -9,9 +9,9 @@ import (
 )
 
 func ConsultationRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) {
-	// Tela da consulta
-	mux.Handle("GET /consultations",
-		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleConsultation)))
+	// Entrar na consulta
+	mux.Handle("GET /consultations/live/{id}",
+	auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleConsultation)))
 	// Salvar Infos da Consulta 
 	mux.Handle("PUT /consultations/{id}",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleSaveConsultationInfos)))

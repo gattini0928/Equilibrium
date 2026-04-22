@@ -466,3 +466,40 @@ func (h *UserHandler) HandleReservePsychiatristAgenda(w http.ResponseWriter, r *
 
 	utils.WriteJSON(w, http.StatusOK, "reservado")
 }
+
+func (h *UserHandler) HandleAllConsultations(w http.ResponseWriter, r *http.Request) {
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	consultations, err := h.Service.ShowConsultations(userID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, consultations)
+}
+
+func (h *UserHandler) HandleConsultationDetail(w http.ResponseWriter, r *http.Request) {
+	consultationID, err := utils.CheckID("id", r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	consultation, err := h.Service.ShowConsultation(userID, consultationID)
+	if err != nil {
+		utils.WriteError(w, http.StatusForbidden, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, consultation)
+}
+
