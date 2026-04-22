@@ -75,11 +75,12 @@ type PsychiatristInfo struct {
 type Consultation struct {
 	ID               int     `json:"id"`
 	PatientID        int     `json:"patient_id"`
-	ProfessionalID   int     `json:"professional_id"`
-	ProfessionalType string  `json:"professional_type"`
+	TherapistID   int     `json:"therapist_id"`
+	PsychiatristID string  `json:"psychiatrist_id"`
 	Date             time.Time  `json:"date"`
 	Price            float64 `json:"price"`
 	Annotation       string  `json:"annotation"`
+	AgendaID int `json:"agenda_id"`
 	Status 			string `json:"status"`
 }
 

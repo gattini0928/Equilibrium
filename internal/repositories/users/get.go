@@ -710,3 +710,63 @@ func (r *UserRepository) GetPsychiatristPrice(psychiastridID int) (float64, erro
 
 	return price, nil
 }
+
+func (r *UserRepository) GetTherapistIDByUserID(userID int) (int, error) {
+	var id int
+	err := r.DB.QueryRow(`
+		SELECT id 
+		FROM therapists
+		WHERE user_id = $1
+	`, userID).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (r *UserRepository) GetPsychiatristIDByUserID(userID int) (int, error) {
+	var id int
+	err := r.DB.QueryRow(`
+		SELECT id 
+		FROM psychiatrists
+		WHERE user_id = $1
+	`, userID).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (r *UserRepository) GetConsultationByID(id int) (models.Consultation, error) {
+	var consultation models.Consultation
+	var professionalID int
+	var price float64
+
+	err := r.DB.QueryRow(`
+		SELECT 
+			c.id,
+			c.patient_id,
+			c.agenda_id,
+			a.professional_id,
+			c.price
+		FROM consultations c
+		JOIN agendas a ON c.agenda_id = a.id
+		WHERE c.id = $1
+	`, id).Scan(
+		&consultation.ID,
+		&consultation.PatientID,
+		&consultation.AgendaID,
+		&professionalID,
+		&price,
+	)
+
+	if err != nil {
+		return models.Consultation{}, err
+	}
+
+	consultation.Price = price
+
+	return consultation, nil
+}

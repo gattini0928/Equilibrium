@@ -71,6 +71,8 @@ func main() {
 		CREATE TABLE IF NOT EXISTS consultations (
 			id SERIAL PRIMARY KEY,
 			patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
+			therapist_id INTEGER REFERENCES therapists(id) ON DELETE CASCADE,
+			psychiatrist_id INTEGER REFERENCES psychiatrists(id) ON DELETE CASCADE,
 			CHECK (
 				(therapist_id IS NOT NULL AND psychiatrist_id IS NULL)
 				OR

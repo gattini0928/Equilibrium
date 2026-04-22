@@ -2,8 +2,6 @@ package users
 
 import "errors"
 
-// "github.com/gattini0928/Equilibrium/internal/models"
-
 func (r *UserRepository) DeleteAgenda(userID int, agendaID int) error {
 	query := `
 		DELETE FROM agendas 

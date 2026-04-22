@@ -208,11 +208,24 @@ func (s *UserService) AddAgenda(userID int, day int, month int, hour string) (mo
 		return models.Agenda{}, err
 	}
 
-	if user.Role != "therapist" && user.Role != "psychiatrist" {
+	var professionalID int
+
+	switch user.Role {
+	case "therapist":
+		professionalID, err = s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return models.Agenda{}, err
+		}
+	case "psychiatrist":
+		professionalID, err = s.Repo.GetPsychiatristIDByUserID(userID)
+		if err != nil {
+			return models.Agenda{}, err
+		}
+	default:
 		return models.Agenda{}, errors.New("forbidden")
 	}
 
-	return s.Repo.InsertAgenda(userID, day, month, hour)
+	return s.Repo.InsertAgenda(professionalID, day, month, hour)
 }
 
 func (s *UserService) RemoveAgenda(userID int, agendaID int) error {
