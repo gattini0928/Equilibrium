@@ -900,3 +900,4 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 
 	return c, nil
 }
+

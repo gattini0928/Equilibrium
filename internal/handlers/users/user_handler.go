@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
+	"strconv"
+
+	"html/template"
 
 	"github.com/gattini0928/Equilibrium/internal/models"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
@@ -483,7 +486,7 @@ func (h *UserHandler) HandleAllConsultations(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *UserHandler) HandleConsultationDetail(w http.ResponseWriter, r *http.Request) {
-	consultationID, err := utils.CheckID("id", r)
+	consultationID, err := utils.CheckID("consultation_id", r)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
@@ -503,3 +506,117 @@ func (h *UserHandler) HandleConsultationDetail(w http.ResponseWriter, r *http.Re
 	utils.WriteJSON(w, http.StatusOK, consultation)
 }
 
+func (h *UserHandler) HandleConsultation(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("templates/consultation.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+
+func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Request) {
+	consultationID, err := utils.CheckID("consultation_id", r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	err = h.Service.StartConsultation(userID, consultationID)
+	if err != nil {
+		utils.WriteError(w, http.StatusForbidden, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "consulta em progresso",
+	})
+
+}
+
+func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http.Request) {
+	consultationID, err := utils.CheckID("consultation_id", r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	annotation := r.FormValue("annotation")
+	if annotation != "" {
+		err = h.Service.SaveConsultationAnnotation(userID, consultationID, annotation)
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	remedyName := r.FormValue("remedy-name")
+	remedyDosage := r.FormValue("remedy-dosage")
+	remedyQuantityStr := r.FormValue("remedy-quantity")
+
+	if remedyName != "" && remedyDosage != "" && remedyQuantityStr != "" {
+		remedyQuantity, err := strconv.Atoi(remedyQuantityStr)
+		if err != nil {
+			utils.WriteError(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err = h.Service.SaveConsultationRemedy(userID, consultationID, remedyName, remedyDosage, remedyQuantity)
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	author := r.FormValue("author")
+	title := r.FormValue("title")
+
+	if author != "" && title != "" {
+		err = h.Service.SaveConsultationBook(userID, consultationID, author, title)
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "dados da consulta salvos",
+	})
+}
+
+func (h *UserHandler) HandleFinishConsultation(w http.ResponseWriter, r *http.Request) {
+	consultationID, err := utils.CheckID("consultation_id", r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	err = h.Service.FinishConsultation(userID, consultationID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "consulta finalizada!",
+	})
+}

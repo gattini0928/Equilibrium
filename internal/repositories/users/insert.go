@@ -114,3 +114,53 @@ func (r *UserRepository) CreatePsychiatristConsultation(tx *sql.Tx, patientID, p
 
 	return nil
 }
+
+func (r *UserRepository) InsertRemedy(name, dosage string, quantity int) (int, error) {
+	var id int
+
+	err := r.DB.QueryRow(`
+		INSERT INTO remedies (name, dosage, quantity)
+		VALUES ($1, $2, $3)
+		RETURNING id
+	`, name, dosage, quantity).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (r *UserRepository) LinkRemedyToConsultation(consultationID, remedyID int) error {
+	_, err := r.DB.Exec(`
+		INSERT INTO consultation_remedies (consultation_id, remedy_id)
+		VALUES ($1, $2)
+	`, consultationID, remedyID)
+
+	return err
+}
+
+func(r *UserRepository) InsertBook(author, title string) (int, error) {
+	var id int
+	err := r.DB.QueryRow(`
+		INSERT INTO books (author, title)
+		VALUES ($1, $2) RETURNING id
+	`, author, title).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+
+}
+
+func (r *UserRepository) LinkBookToConsultation(consultationID, bookID int) error {
+	_, err := r.DB.Exec(`
+		INSERT INTO consultation_books (consultation_id, book_id)
+		VALUES ($1, $2)
+	`, consultationID, bookID)
+
+	return err
+}
+

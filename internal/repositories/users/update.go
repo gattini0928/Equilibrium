@@ -1,6 +1,9 @@
 package users
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 func (r *UserRepository) CompleteTherapist(userID int, specialty string, description string) error {
 	_, err := r.DB.Exec(`
@@ -70,5 +73,38 @@ func (r *UserRepository) MarkAgendaReserved(tx *sql.Tx, agendaID int) error {
 		SET reserved = true
 		WHERE id = $1
 	`, agendaID)
+	return err
+}
+
+func (r *UserRepository) UpdateConsultationInProgress(consultationID int) error {
+	_, err := r.DB.Exec(`
+		UPDATE consultations
+		SET status = 'in_progress'
+		WHERE id = $1
+	
+	`, consultationID)
+
+	return err
+}
+
+func (r *UserRepository) UpdateConsultationFinished(consultationID int) error {
+	_, err := r.DB.Exec(`
+		UPDATE consultations
+		SET status = 'finished',
+			date = $1
+		WHERE id = $2
+	
+	`, time.Now(), consultationID)
+
+	return err
+}
+
+func (r *UserRepository) UpdateAnnotationConsultation(consultationID int, annotation string) error {
+	_, err := r.DB.Exec(`
+		UPDATE consultations
+		SET annotation = $1
+		WHERE id = $2
+	`, annotation, consultationID)
+
 	return err
 }

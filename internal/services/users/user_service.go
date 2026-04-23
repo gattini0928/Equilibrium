@@ -16,6 +16,43 @@ var (
 	ErrTokenFailed = errors.New("token failed")
 )
 
+func (s *UserService) validateConsultationAccess(userID int, c models.ConsultationDetail, role string) error {
+	switch role {
+
+	case "therapist":
+		id, err := s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return err
+		}
+		if c.TherapistID == nil || *c.TherapistID != id {
+			return errors.New("forbidden")
+		}
+
+	case "psychiatrist":
+		id, err := s.Repo.GetPsychiatristIDByUserID(userID)
+		if err != nil {
+			return err
+		}
+		if c.PsychiatristID == nil || *c.PsychiatristID != id {
+			return errors.New("forbidden")
+		}
+
+	case "patient":
+		id, err := s.Repo.GetPatientIDByUserID(userID)
+		if err != nil {
+			return err
+		}
+		if c.PatientID != id {
+			return errors.New("forbidden")
+		}
+
+	default:
+		return errors.New("invalid role")
+	}
+
+	return nil
+}
+
 func (u *UserService) CreateUser(user models.User, patient models.Patient, therapist models.Therapist, psychiatrist models.Psychiatrist) error {
 	var err error
 
@@ -456,4 +493,128 @@ func (s *UserService) ShowConsultation(userID, consultationID int) (models.Consu
 	}
 
 	return c, nil
+}
+
+func (s *UserService) StartConsultation(userID, consultationID int) error {
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	err = s.validateConsultationAccess(userID, c, user.Role)
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.UpdateConsultationInProgress(consultationID)
+}
+
+func (s *UserService) FinishConsultation(userID, consultationID int) error {
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	err = s.validateConsultationAccess(userID, c, user.Role)
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.UpdateConsultationFinished(consultationID)
+}
+
+func (s *UserService) SaveConsultationRemedy(userID, consultationID int, remedyName, remedyDosage string, remedyQuantity int) error {
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	switch user.Role {
+	case "psychiatrist":
+		id, err := s.Repo.GetPsychiatristIDByUserID(userID)
+		if err != nil {
+			return err
+		}
+
+		if c.PsychiatristID == nil || *c.PsychiatristID != id {
+			return errors.New("forbidden")
+		}
+
+		remedyID, err := s.Repo.InsertRemedy(remedyName, remedyDosage, remedyQuantity)
+		if err != nil {
+			return err
+		}
+
+		return s.Repo.LinkRemedyToConsultation(consultationID, remedyID)
+
+	default:
+		return errors.New("forbidden")
+	}
+}
+
+func (s *UserService) SaveConsultationBook(userID, consultationID int, author, title string) error {
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	switch user.Role {
+	case "therapist":
+		id, err := s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return err
+		}
+
+		if c.TherapistID == nil || *c.TherapistID != id {
+			return errors.New("forbidden")
+		}
+
+		bookID, err := s.Repo.InsertBook(author, title)
+		if err != nil {
+			return err
+		}
+
+			return s.Repo.LinkBookToConsultation(consultationID, bookID)
+	default:
+		return errors.New("forbidden")
+	}
+}
+
+func (s *UserService) SaveConsultationAnnotation(userID, consultationID int, annotation string) error {
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	err = s.validateConsultationAccess(userID, c, user.Role)
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.UpdateAnnotationConsultation(consultationID, annotation)
 }

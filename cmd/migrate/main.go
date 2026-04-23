@@ -100,12 +100,14 @@ func main() {
 
 		CREATE TABLE IF NOT EXISTS consultation_books (
 			consultation_id INTEGER REFERENCES consultations(id) ON DELETE CASCADE,
-			book_id INTEGER REFERENCES books(id) ON DELETE CASCADE
+			book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
+			UNIQUE (consultation_id, book_id)
 		);
 
 		CREATE TABLE IF NOT EXISTS consultation_remedies (
 			consultation_id INTEGER REFERENCES consultations(id) ON DELETE CASCADE,
-			remedy_id INTEGER REFERENCES remedies(id) ON DELETE CASCADE
+			remedy_id INTEGER REFERENCES remedies(id) ON DELETE CASCADE,
+			UNIQUE (consultation_id, remedy_id)
 		);
 
 		CREATE TABLE IF NOT EXISTS agendas (

@@ -53,3 +53,4 @@ func CheckJWT(w http.ResponseWriter, ctx context.Context) (int, bool) {
 
 	return userID, true
 }
+
