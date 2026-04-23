@@ -68,6 +68,15 @@ func main() {
 			current_diagnosis TEXT
 		);
 
+		CREATE TABLE IF NOT EXISTS agendas (
+			id SERIAL PRIMARY KEY,
+			professional_id INTEGER,
+			day INTEGER,
+			month INTEGER,
+			hour TEXT,
+			reserved BOOLEAN
+		);
+
 		CREATE TABLE IF NOT EXISTS consultations (
 			id SERIAL PRIMARY KEY,
 			patient_id INTEGER REFERENCES patients(id) ON DELETE CASCADE,
@@ -77,12 +86,12 @@ func main() {
 				(therapist_id IS NOT NULL AND psychiatrist_id IS NULL)
 				OR
 				(therapist_id IS NULL AND psychiatrist_id IS NOT NULL)
-			)
+			),
 			date TIMESTAMP,
 			price REAL,
 			annotation TEXT,
 			agenda_id INTEGER REFERENCES agendas(id),
-			status CHECK (status IN ('scheduled', 'in_progress', 'finished', 'cancelled'))
+			status VARCHAR(20) CHECK (status IN ('scheduled', 'in_progress', 'finished', 'cancelled'))
 		);
 
 		CREATE TABLE IF NOT EXISTS books (
@@ -110,14 +119,6 @@ func main() {
 			UNIQUE (consultation_id, remedy_id)
 		);
 
-		CREATE TABLE IF NOT EXISTS agendas (
-			id SERIAL PRIMARY KEY,
-			professional_id INTEGER,
-			day INTEGER,
-			month INTEGER,
-			hour TEXT,
-			reserved BOOLEAN
-		);
 	`
 	
 	_, err = conn.Exec(query)

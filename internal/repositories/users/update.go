@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"time"
+	"errors"
 )
 
 func (r *UserRepository) CompleteTherapist(userID int, specialty string, description string) error {
@@ -68,12 +69,26 @@ func (r *UserRepository) UpdatePsychiatristPrice(userID int, price float64) erro
 }
 
 func (r *UserRepository) MarkAgendaReserved(tx *sql.Tx, agendaID int) error {
-	_, err := r.DB.Exec(`
+	res, err := tx.Exec(`
 		UPDATE agendas
 		SET reserved = true
-		WHERE id = $1
+		WHERE id = $1 AND reserved = false
 	`, agendaID)
-	return err
+	
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return errors.New("agenda já reservada")
+	}
+
+	return nil
 }
 
 func (r *UserRepository) UpdateConsultationInProgress(consultationID int) error {

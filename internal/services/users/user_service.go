@@ -360,13 +360,13 @@ func (s *UserService) ReserveTherapistAgenda(patientUserID, therapistID, agendaI
 		return err
 	}
 
-	err = s.Repo.CreateTherapistConsultation(tx, patientID, therapistID, agendaID, price)
+	err = s.Repo.MarkAgendaReserved(tx, agendaID)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	err = s.Repo.MarkAgendaReserved(tx, agendaID)
+	err = s.Repo.CreateTherapistConsultation(tx, patientID, therapistID, agendaID, price)
 	if err != nil {
 		tx.Rollback()
 		return err
