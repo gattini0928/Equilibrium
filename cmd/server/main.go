@@ -38,8 +38,6 @@ func main() {
 	port := os.Getenv("API_PORT")
 	err = http.ListenAndServe(":"+port, mux)
 
-	log.Println("🔥 SERVER NOVO SUBIU")
-	
 	if err != nil {
 		log.Fatal(err)
 	}
