@@ -163,8 +163,8 @@ func (r *UserRepository) GetAllTherapists() ([]models.DoctorWithUser, error) {
 			t.specialty,
 			t.description
 		FROM therapists t
-		JOIN users u ON t.user_id = u.id;
-		WHERE t.description IS NOT NULL AND t.crm IS NOT NULL 
+		JOIN users u ON t.user_id = u.id
+		WHERE t.description IS NOT NULL AND t.specialty IS NOT NULL 
 	`
 
 	rows, err := r.DB.Query(query)

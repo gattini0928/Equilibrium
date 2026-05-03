@@ -42,22 +42,22 @@ func Layout(title string, isAuth bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/static/css/base.css\"><link rel=\"stylesheet\" href=\"/static/css/homepage.css\"></head><body><header><div class=\"img-wrapper\"><img src=\"/static/images/equilibrium.png\"></div><nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css\"><link rel=\"stylesheet\" href=\"/static/css/base.css\"><link rel=\"stylesheet\" href=\"/static/css/homepage.css\"></head><body><header><div class=\"img-wrapper\"><img src=\"/static/images/equilibriumclean.png\" alt=\"Equilibrium Logo\" class=\"logo\"></div><nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if isAuth {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<a href=\"/me\">Perfil</a> <a href=\"/logout\">Logout</a> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"nav-link-icon\"><i class=\"fa-solid fa-address-card\" id=\"nav-icon\"></i> <a href=\"/me\" class=\"nav-link\">Perfil</a></div><div class=\"nav-link-icon\"><i class=\"fa-solid fa-arrow-right-from-bracket\" id=\"nav-icon\"></i> <a href=\"/logout\" class=\"nav-link\">Logout</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"/login\">Login</a> <a href=\"/signup\">Criar Conta</a> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"nav-link-icon\"><i class=\"fa-brands fa-openid\" id=\"nav-icon\"></i> <a href=\"/login\" class=\"nav-link\">Login</a></div><div class=\"nav-link-icon\"><i class=\"fa-solid fa-user-plus\" id=\"nav-icon\"></i> <a href=\"/signup\" class=\"nav-link\">Criar Conta</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a href=\"/therapists\">Terapeutas</a> <a href=\"/psychiatrists\">Psiquiatras</a></nav></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"nav-link-icon\"><i class=\"fa-solid fa-user-doctor\" id=\"nav-icon\"></i> <a href=\"/therapists\" class=\"nav-link\">Terapeutas</a></div><div class=\"nav-link-icon\"><i class=\"fa-solid fa-user-doctor\" id=\"nav-icon\"></i> <a href=\"/psychiatrists\" class=\"nav-link\">Psiquiatras</a></div></nav></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

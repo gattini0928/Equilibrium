@@ -10,12 +10,72 @@ html {
 }
 
 body {
-    font-family: 'Courier New', Courier, monospace;
     font-size: 1.6rem;
     color: rgb(34, 34, 34);
-    background-color: white;
+    line-height: 1.4;
 }
 
-h1 {
-    color: red;
+header {
+    background-color: #134040;
+    font-family: 'Playfair Display', serif;
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    border-bottom: solid 1px rgba(32, 32, 32, 0.50);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.img-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    border-radius: 1rem;
+    height: auto;
+    width: 20rem;
+    object-fit: contain;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+#nav-icon {
+    color: #95f7b1;
+}
+
+.nav-link {
+    color: #87e9a4;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.nav-link-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.5rem;
+    border: solid 2px transparent;
+}
+
+.nav-link-icon:hover,
+.nav-link-icon:focus {
+    border-color: #87e9a4;
+    background-color: #144c44;
+}
+
+main {
+    font-family: 'Lora', serif;  
 }

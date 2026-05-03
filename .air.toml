@@ -2,8 +2,9 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "templ generate && go build -o ./tmp/main.exe ./cmd/server"
+cmd = "templ generate; go build -o ./tmp/main.exe ./cmd/server"
 bin = "tmp/main.exe"
 full_bin = "tmp/main.exe"
 include_ext = ["go", "templ"]
 exclude_dir = ["tmp", "vendor"]
+exclude_regex = [".*_templ.go"]
