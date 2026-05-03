@@ -11,8 +11,20 @@ import (
 	"github.com/gattini0928/Equilibrium/internal/models"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
 	"github.com/gattini0928/Equilibrium/internal/utils"
+	"github.com/gattini0928/Equilibrium/internal/views"
+	"github.com/gattini0928/Equilibrium/internal/configs"
+
+
 )
 
+func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
+	isAuth := true 
+
+	err := views.IndexPage(isAuth).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "erro", 500)
+	}
+}
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 	var req models.CreateUserRequest
@@ -155,6 +167,16 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		Image: user.Image,
 		Token: token,
 	}
+
+	cfg := configs.LoadDBConfig()
+
+	http.SetCookie(w, &http.Cookie{
+    Name:     "token",
+    Value:    token,
+    Path:     "/",
+    HttpOnly: true,
+    MaxAge:   int(cfg.JWTExpirationInSeconds),
+	})
 
 	utils.WriteJSON(w, http.StatusOK, res)
 }
@@ -619,4 +641,14 @@ func (h *UserHandler) HandleFinishConsultation(w http.ResponseWriter, r *http.Re
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "consulta finalizada!",
 	})
+}
+
+func (h *UserHandler) HandleLogout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+        Name:   "token",
+        Value:  "",
+        Path:   "/",
+        MaxAge: -1,
+    })
+    http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

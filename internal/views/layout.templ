@@ -1,0 +1,33 @@
+package views
+
+templ Layout(title string, isAuth bool) {
+  <html>
+    <head>
+      <title>{ title }</title>
+      <link rel="stylesheet" href="/static/css/base.css">
+      <link rel="stylesheet" href="/static/css/homepage.css">
+    </head>
+    <body>
+      <header>
+        <div class="img-wrapper">
+          <img src="/static/images/equilibrium.png">
+        </div>
+
+        <nav>
+          if isAuth {
+            <a href="/me">Perfil</a>
+            <a href="/logout">Logout</a>
+          } else {
+            <a href="/login">Login</a>
+            <a href="/signup">Criar Conta</a>
+          }
+
+          <a href="/therapists">Terapeutas</a>
+          <a href="/psychiatrists">Psiquiatras</a>
+        </nav>
+      </header>
+
+      { children... }
+    </body>
+  </html>
+}

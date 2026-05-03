@@ -7,7 +7,17 @@ import (
 	"github.com/gattini0928/Equilibrium/internal/services/auth"
 )
 
+
 func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) {
+
+	mux.Handle("/static/",
+	http.StripPrefix("/static/",
+		http.FileServer(http.Dir("static")),
+		),
+	)			
+
+	mux.HandleFunc("GET /{$}", h.HandleHome)
+
 	// AUTH
 	mux.HandleFunc("POST /signup", h.HandleSignup)
 	mux.HandleFunc("POST /login", h.HandleLogin)
@@ -62,4 +72,7 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleDeleteAgenda)))
 	mux.Handle("PUT /me/price",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleUpdatePrice)))
+
+	mux.Handle("GET /logout",
+		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleLogout)))
 }
