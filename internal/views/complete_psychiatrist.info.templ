@@ -1,0 +1,24 @@
+package views
+
+templ CompletePsychiatristInfoPage() {
+    @Layout("Completar Informações", false) {
+    <h2>Complete suas informações</h2>
+    <form 
+        hx-post="/psychiatrist/profile" 
+        hx-target="body" 
+        hx-swap="outerHTML">
+
+        <div>
+            <label for="crm">CRM:</label>
+            <input type="text" name="crm" placeholder="Seu CRM" required>
+        </div>
+
+        <div>
+            <label for="description">Breve descrição sobre você:</label>
+            <input type="text" name="description" placeholder="Descrição" required>
+        </div>
+
+        <button type="submit">Completar Cadastro</button>
+    </form>
+    }
+}

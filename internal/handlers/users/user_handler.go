@@ -145,13 +145,21 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			_ = views.SignupPage(form).Render(r.Context(), w)
 			return
 		}
+		
 
-		err = h.Service.CreateUser(user, patient, therapist, psychiatrist)
+		token, err := h.Service.CreateUser(user, patient, therapist, psychiatrist)
 		if err != nil {
 			form.General = err.Error()
 			_ = views.SignupPage(form).Render(r.Context(), w)
 			return
-		}
+		}	
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "token",
+			Value:    token,
+			Path:     "/",
+			HttpOnly: true,
+		})
 
 		switch user.Role {
 		case "therapist":
@@ -173,78 +181,52 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			return
 
 		default:
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/me", http.StatusSeeOther)
 			return
 		}
 	}
 }
 
-
 func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Request) {
-	var therapist models.Therapist
-
-	err := utils.ParseJSON(r, &therapist)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
-		return
+	switch r.Method {
+	case http.MethodGet:
+		_ = views.CompleteTherapistInfoPage().Render(r.Context(), w)
+	case http.MethodPost:
+		specialty := r.FormValue("specialty")
+		description := r.FormValue("description")
+		userID, ok := utils.CheckJWT(w, r.Context())
+		if !ok {
+			return
+		}
+		err := h.Service.CompleteTherapistSignUp(userID, specialty , description)
+		if err != nil {
+			_ = views.CompleteTherapistInfoPage().Render(r.Context(), w)
+			return
+		}
 	}
 
-	if therapist.Specialty == "" || therapist.Description == "" {
-		utils.WriteJSON(w, http.StatusBadRequest, "especialidade e descrição são obrigatórios")
-		return 
-	}
-
-	userID, ok := utils.CheckJWT(w, r.Context())
-	if !ok {
-		return
-	}
-
-	err = h.Service.CompleteTherapistSignUp(userID, therapist.Specialty, therapist.Description)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
-		return
-	}
-
-	resp := models.TherapistResponse {
-		Specialty: therapist.Specialty,
-		Description: therapist.Description,
-	}
-
-	utils.WriteJSON(w, http.StatusOK, resp)
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
 }
 
 func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.Request) {
-	var psychiatrist models.Psychiatrist
-	err := utils.ParseJSON(r, &psychiatrist)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
-		return
+	switch r.Method {
+	case http.MethodGet:
+		_ = views.CompletePsychiatristInfoPage().Render(r.Context(), w)
+	case http.MethodPost:
+		crm := r.FormValue("crm")
+		description := r.FormValue("description")
+		userID, ok := utils.CheckJWT(w, r.Context())
+		if !ok {
+			return
+		}
+		err := h.Service.CompletePsychiatristSignUp(userID, crm , description)
+		if err != nil {
+			_ = views.CompletePsychiatristInfoPage().Render(r.Context(), w)
+			return
+		}
 	}
-
-	if psychiatrist.CRM == "" || psychiatrist.Description == "" {
-		utils.WriteJSON(w, http.StatusBadRequest, "CRM e descrição são obrigatórios")
-		return 
-	}
-
-	userID, ok := utils.CheckJWT(w, r.Context())
-	if !ok {
-		return
-	}
-
-	err = h.Service.CompletePsychiatristSignUp(userID, psychiatrist.CRM, psychiatrist.Description)
-	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
-		return
-	}
-
-	resp := models.PsychiatristResponse {
-		Crm: psychiatrist.CRM,
-		Description: psychiatrist.Description,
-	}
-
-	utils.WriteJSON(w, http.StatusOK, resp)
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
 }
-
 
 func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	form := models.LoginForm{

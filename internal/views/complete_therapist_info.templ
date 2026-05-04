@@ -1,0 +1,24 @@
+package views
+
+templ CompleteTherapistInfoPage() {
+    @Layout("Completar Informações", false) {
+    <h2>Complete suas informações</h2>
+    <form 
+        hx-post="/therapists/profile" 
+        hx-target="body" 
+        hx-swap="outerHTML">
+
+        <div>
+            <label for="specialty">Especialidade:</label>
+            <input type="text" name="specialty" placeholder="Sua Especialidade" required>
+        </div>
+
+        <div>
+            <label for="description">Breve descrição sobre você:</label>
+            <input type="text" name="description" placeholder="Descrição" required>
+        </div>
+
+        <button type="submit">Completar Cadastro</button>
+    </form>
+    }
+}

@@ -53,43 +53,56 @@ func (s *UserService) validateConsultationAccess(userID int, c models.Consultati
 	return nil
 }
 
-func (u *UserService) CreateUser(user models.User, patient models.Patient, therapist models.Therapist, psychiatrist models.Psychiatrist) error {
+func (s *UserService) CreateUser(user models.User, patient models.Patient, therapist models.Therapist, psychiatrist models.Psychiatrist) (string, error) {
 	var err error
 
 	err = validators.ValidateName(user.Name)
 	if err != nil {
-		return err
+		return "", err
 	}
 	err = validators.ValidateEmail(user.Email)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	err = validators.ValidatePassword(user.Password)
 	if err != nil {
-		return err
+		return "",err
 	}
 
 	if user.Role == "therapist" || user.Role == "psychiatrist" {
 		err = validators.ValidateAge(user.Age, user.Role)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
 	err = validators.ValidateCpf(user.Cpf)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	hashPassword, err := validators.HashPassword(user.Password)
 	if err != nil {
-		return ErrInvalidPassword
+		return "", ErrInvalidPassword
 	}
 
 	user.Password = hashPassword
 
-	return u.Repo.CreateUserWithProfile(&user, &patient, &therapist, &psychiatrist)
+	err = s.Repo.CreateUserWithProfile(&user, &patient, &therapist, &psychiatrist)
+	if err != nil {
+		return "", err
+	}
+
+	cfg := configs.LoadDBConfig()
+
+	token, err := auth.CreateJWT(s.Secret, user.ID, cfg.JWTExpirationInSeconds)
+	if err != nil {
+		return "", ErrTokenFailed
+	}
+
+	return token, nil
+
 }
 
 func (s *UserService) Login(email string, password string) (models.User, string, error) {
