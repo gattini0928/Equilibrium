@@ -64,6 +64,11 @@ templ SignupPage(form models.SignupForm) {
             <span class="error">{form.Errors["image"]}</span>
         }
     </div>
+
+    if form.General != "" {
+        <div class="error">{ form.General }</div>
+    }
+
     <button type="submit">Criar Conta</button>
 </form>
 }

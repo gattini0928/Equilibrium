@@ -10,10 +10,6 @@ templ LoginPage(form models.LoginForm, msg string) {
         <div class="message"> {msg} </div>
     }
 
-    if form.General != "" {
-        <div class="error">{ form.General }</div>
-    }
-
     <form 
         hx-post="/login" 
         hx-target="body" 
@@ -32,6 +28,10 @@ templ LoginPage(form models.LoginForm, msg string) {
                 <span class="error">{ form.Errors["password"] }</span>
             }
         </div>
+
+        if form.General != "" {
+            <div class="error">{ form.General }</div>
+        }
 
         <button type="submit">Entrar</button>
     </form>

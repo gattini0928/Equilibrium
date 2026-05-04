@@ -188,19 +188,37 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Request) {
+	form := models.TherapistForm{
+		Errors: make(map[string]string),
+	}
+
 	switch r.Method {
-	case http.MethodGet:
-		_ = views.CompleteTherapistInfoPage().Render(r.Context(), w)
 	case http.MethodPost:
 		specialty := r.FormValue("specialty")
 		description := r.FormValue("description")
+
+		if err := validators.ValidateSpecialty(specialty); err != nil {
+			form.Errors["specialty"] = err.Error()
+		}
+
+		if err := validators.ValidateDescription(description); err != nil {
+			form.Errors["description"] = err.Error()
+		}
+
+		if len(form.Errors) > 0 {
+			_ = views.CompleteTherapistInfoPage(form).Render(r.Context(), w)
+			return
+		}
+
 		userID, ok := utils.CheckJWT(w, r.Context())
 		if !ok {
 			return
 		}
-		err := h.Service.CompleteTherapistSignUp(userID, specialty , description)
+
+		err := h.Service.CompleteTherapistSignUp(userID, specialty, description)
 		if err != nil {
-			_ = views.CompleteTherapistInfoPage().Render(r.Context(), w)
+			form.General = err.Error()
+			_ = views.CompleteTherapistInfoPage(form).Render(r.Context(), w)
 			return
 		}
 	}
@@ -209,19 +227,37 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 }
 
 func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.Request) {
+	form := models.PsychiatristForm{
+		Errors: make(map[string]string),
+	}
+
 	switch r.Method {
-	case http.MethodGet:
-		_ = views.CompletePsychiatristInfoPage().Render(r.Context(), w)
-	case http.MethodPost:
+		case http.MethodPost:
 		crm := r.FormValue("crm")
 		description := r.FormValue("description")
+
+		if err := validators.ValidateCrm(crm); err != nil {
+			form.Errors["crm"] = err.Error()
+		}
+
+		if err := validators.ValidateDescription(description); err != nil {
+			form.Errors["description"] = err.Error()
+		}
+
+		if len(form.Errors) > 0 {
+			_ = views.CompletePsychiatristInfoPage(form).Render(r.Context(), w)
+			return
+		}
+
 		userID, ok := utils.CheckJWT(w, r.Context())
 		if !ok {
 			return
 		}
-		err := h.Service.CompletePsychiatristSignUp(userID, crm , description)
+
+		err := h.Service.CompletePsychiatristSignUp(userID, crm, description)
 		if err != nil {
-			_ = views.CompletePsychiatristInfoPage().Render(r.Context(), w)
+			form.General = err.Error()
+			_ = views.CompletePsychiatristInfoPage(form).Render(r.Context(), w)
 			return
 		}
 	}

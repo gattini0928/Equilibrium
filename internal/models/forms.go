@@ -23,10 +23,12 @@ type TherapistForm struct {
 	Specialty string
 	Description string
 	Errors map[string]string
+	General string
 }
 
 type PsychiatristForm struct {
 	CRM string
 	Description string
 	Errors map[string]string
+	General string
 }

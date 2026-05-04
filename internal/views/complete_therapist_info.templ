@@ -1,6 +1,8 @@
 package views
 
-templ CompleteTherapistInfoPage() {
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ CompleteTherapistInfoPage(form models.TherapistForm) {
     @Layout("Completar Informações", false) {
     <h2>Complete suas informações</h2>
     <form 
@@ -11,12 +13,22 @@ templ CompleteTherapistInfoPage() {
         <div>
             <label for="specialty">Especialidade:</label>
             <input type="text" name="specialty" placeholder="Sua Especialidade" required>
+            if form.Errors["specialty"] != "" {
+                <span class="error">{ form.Errors["specialty"] }</span>
+            }
         </div>
 
         <div>
             <label for="description">Breve descrição sobre você:</label>
             <input type="text" name="description" placeholder="Descrição" required>
+            if form.Errors["description"] != "" {
+                <span class="error">{ form.Errors["description"] }</span>
+            }
         </div>
+
+        if form.General != "" {
+            <div class="error">{ form.General }</div>
+        }
 
         <button type="submit">Completar Cadastro</button>
     </form>

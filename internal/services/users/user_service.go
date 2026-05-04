@@ -127,11 +127,31 @@ func (s *UserService) Login(email string, password string) (models.User, string,
 
 // Completar cadastro do therapeuta
 func (s *UserService) CompleteTherapistSignUp(userID int, specialty string, description string) error {
+	err := validators.ValidateSpecialty(specialty)
+	if err != nil {
+		return err
+	}
+
+	err = validators.ValidateDescription(description)
+	if err != nil {
+		return err
+	}
+
 	return s.Repo.CompleteTherapist(userID, specialty, description)
 }
 
 // Completar cadastro do psiquiatra
 func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, description string) error {
+	err := validators.ValidateCrm(crm)
+	if err != nil {
+		return err
+	}
+
+	err = validators.ValidateDescription(description)
+	if err != nil {
+		return err
+	}
+
 	return s.Repo.CompletePsychiatrist(userID, crm, description)
 }
 
