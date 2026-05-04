@@ -12,8 +12,8 @@
  imagem, nome, email, idade, especialidade SE terapeuta --> ✅
 <!-- imagem, nome, email, idade SE psiquiatra --> ✅
 <!-- adicionar coluna image na tabela users --> ✅
-<!-- Pacientes podem ter apenas 1 psiquiatra e 1 terapeuta -->
-<!-- 1 terapeuta ou 1 psiquitra podem ter varios pacientes -->
+<!-- Pacientes podem ter apenas 1 psiquiatra e 1 terapeuta --> ✅
+<!-- 1 terapeuta ou 1 psiquitra podem ter varios pacientes --> ✅
 
 <!-- Detalhes e começo da consulta -->
     <!-- Image, Descrição, Valor da Consulta, Agenda(Horários -> Dia, Hora) -->
