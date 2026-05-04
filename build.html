@@ -1,0 +1,36 @@
+<form hx-post="/signup" 
+        hx-target="body" 
+        hx-swap="outerHTML">
+    <div class="inputs-labels">
+        <label for="name">Nome:</label>
+        <input type="text" name="name" placeholder="Nome Completo" required>
+    </div>
+    <div class="inputs-labels">
+        <label for="email">Email:</label>
+        <input type="email" name="email" placeholder="Email" required>
+    </div>
+    <div class="inputs-labels">
+        <label for="age">Idade:</label>
+        <input type="number" name="age" placeholder="Idade" required>
+    </div>
+    <div class="role-options">
+        <label>
+            <input type="radio" name="role" value="patient" required> Paciente
+        </label>
+        <label>
+            <input type="radio" name="role" value="therapist"> Terapeuta
+        </label>
+        <label>
+            <input type="radio" name="role" value="psychiatrist"> Psiquiatra
+        </label>
+    </div>
+    <div class="inputs-labels">
+        <label for="image">Image:</label>
+        <input type="image" name="image" placeholder="Foto de Perfil" required>
+    </div>
+    <div class="inputs-labels">
+        <label for="password">Senha:</label>
+        <input type="password" name="password" placeholder="Senha" required>
+    </div>
+    <button type="submit">Criar Conta</button>
+</form>

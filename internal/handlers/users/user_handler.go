@@ -5,16 +5,20 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"fmt"
+	"io"
+	"time"
+	"os"	
 
 	"html/template"
 
+	"github.com/gattini0928/Equilibrium/internal/configs"
 	"github.com/gattini0928/Equilibrium/internal/models"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
+	validators "github.com/gattini0928/Equilibrium/internal/services/validators"
+
 	"github.com/gattini0928/Equilibrium/internal/utils"
 	"github.com/gattini0928/Equilibrium/internal/views"
-	"github.com/gattini0928/Equilibrium/internal/configs"
-
-
 )
 
 func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
@@ -27,47 +31,152 @@ func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
-	var req models.CreateUserRequest
-
-	err := utils.ParseJSON(r, &req)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
-		return
+	form := models.SignupForm{
+		Errors: make(map[string]string),
 	}
 
-	user := models.User{
-		Name: req.Name,
-		Email: req.Email,
-		Password: req.Password,
-		Age: req.Age,
-		Cpf: req.Cpf,
-		Role: req.Role,
-		Image: req.Image,
+	switch r.Method {
+
+	case http.MethodGet:
+		_ = views.SignupPage(form).Render(r.Context(), w)
+
+	case http.MethodPost:
+		name := r.FormValue("name")
+		email := r.FormValue("email")
+		ageStr := r.FormValue("age")
+		cpf := r.FormValue("cpf")
+		role := r.FormValue("role")
+		password := r.FormValue("password")
+
+		age, _ := strconv.Atoi(ageStr)
+
+		if err := validators.ValidateName(name); err != nil {
+			form.Errors["name"] = err.Error()
+		}
+		if err := validators.ValidateEmail(email); err != nil {
+			form.Errors["email"] = err.Error()
+		}
+		if err := validators.ValidateCpf(cpf); err != nil {
+			form.Errors["cpf"] = err.Error()
+		}
+		if err := validators.ValidatePassword(password); err != nil {
+			form.Errors["password"] = err.Error()
+		}
+
+		if len(form.Errors) > 0 {
+			_ = views.SignupPage(form).Render(r.Context(), w)
+			return
+		}
+
+		err := r.ParseMultipartForm(10 << 20)
+		if err != nil {
+			form.Errors["image"] = "Erro ao processar imagem"
+		}
+
+		file, handler, err := r.FormFile("image")
+		if err != nil {
+			form.Errors["image"] = "Imagem obrigatória"
+		} else {
+			defer file.Close()
+		}
+
+		var filename string
+
+		if err == nil {
+			filename = fmt.Sprintf("%d_%s", time.Now().Unix(), handler.Filename)
+		}
+
+		filepath := "./static/uploads/" + filename
+
+		dst, err := os.Create(filepath)
+		if err != nil {
+			form.Errors["image"] = "Erro ao salvar imagem"
+		} else {
+			defer dst.Close()
+		}
+
+		if file != nil {
+			_, err = io.Copy(dst, file)
+			if err != nil {
+				form.Errors["image"] = "Erro ao salvar imagem"
+			}
+		}
+
+		if filename == "" {
+    		form.Errors["image"] = "Imagem inválida"
+		}		
+
+		if len(form.Errors) > 0 {
+			_ = views.SignupPage(form).Render(r.Context(), w)
+			return
+		}
+
+		user := models.User{
+			Name:     name,
+			Email:    email,
+			Password: password,
+			Age:      age,
+			Cpf:      cpf,
+			Role:     role,
+			Image:    "/static/uploads/" + filename,
+		}
+
+		var patient models.Patient
+		var therapist models.Therapist
+		var psychiatrist models.Psychiatrist
+
+		switch role {
+		case "therapist":
+		if err := validators.ValidateAge(age, "therapist"); err != nil {
+				form.Errors["age"] = err.Error()
+			}
+			therapist.Specialty = r.FormValue("specialty")
+			therapist.Description = r.FormValue("description")
+
+		case "psychiatrist":
+			if err := validators.ValidateAge(age, "psychiatrist"); err != nil {
+				form.Errors["age"] = err.Error()
+			}
+			psychiatrist.CRM = r.FormValue("crm")
+			psychiatrist.Description = r.FormValue("description")
+		}
+		
+		if len(form.Errors) > 0 {
+			_ = views.SignupPage(form).Render(r.Context(), w)
+			return
+		}
+
+		err = h.Service.CreateUser(user, patient, therapist, psychiatrist)
+		if err != nil {
+			form.General = err.Error()
+			_ = views.SignupPage(form).Render(r.Context(), w)
+			return
+		}
+
+		switch user.Role {
+		case "therapist":
+			http.SetCookie(w, &http.Cookie{
+				Name:  "flash",
+				Value: "Conta criada, complete seu perfil de terapeuta",
+				Path:  "/",
+			})
+			http.Redirect(w, r, "/therapists/profile", http.StatusSeeOther)
+			return
+
+		case "psychiatrist":
+			http.SetCookie(w, &http.Cookie{
+				Name:  "flash",
+				Value: "Conta criada, complete seu perfil de psiquiatra",
+				Path:  "/",
+			})
+			http.Redirect(w, r, "/psychiatrists/profile", http.StatusSeeOther)
+			return
+
+		default:
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
 	}
-
-	var patient models.Patient
-	var therapist models.Therapist
-	var psychiatrist models.Psychiatrist
-
-	switch req.Role {
-	case "therapist":
-		therapist.Specialty = req.Specialty
-		therapist.Description = req.Description
-
-	case "psychiatrist":
-		psychiatrist.CRM = req.CRM
-		psychiatrist.Description = req.Description
-	}
-
-	err = h.Service.CreateUser(user, patient, therapist, psychiatrist)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	utils.WriteJSON(w, http.StatusCreated, map[string]string{
-		"message": "Usuário criado com sucesso",
-	})
 }
 
 
@@ -136,65 +245,111 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 	utils.WriteJSON(w, http.StatusOK, resp)
 }
 
+
 func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
-	var input models.LoginRequest
-	err := utils.ParseJSON(r, &input)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
-		return
+	form := models.LoginForm{
+		Errors: make(map[string]string),
 	}
 
-	user, token, err := h.Service.Login(input.Email, input.Password)
-	if err != nil {
+	switch r.Method {
 
-		if errors.Is(err, serviceUsers.ErrInvalidPassword) ||
-			errors.Is(err, serviceUsers.ErrUserNotFound) {
+	case http.MethodGet:
+		_ = views.LoginPage(form, "").Render(r.Context(), w)
 
-			utils.WriteError(w, http.StatusUnauthorized, errors.New("email ou senha inválidos"))
+	case http.MethodPost:
+		form.Email = r.FormValue("email")
+		form.Password = r.FormValue("password")
+
+		if form.Email == "" {
+			form.Errors["email"] = "Email obrigatório"
+		}
+		if form.Password == "" {
+			form.Errors["password"] = "Senha obrigatória"
+		}
+
+		if len(form.Errors) > 0 {
+			_ = views.LoginPage(form,"").Render(r.Context(), w)
 			return
 		}
 
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
+		_, token, err := h.Service.Login(form.Email, form.Password)
+		if err != nil {
+
+			if errors.Is(err, serviceUsers.ErrInvalidPassword) ||
+				errors.Is(err, serviceUsers.ErrUserNotFound) {
+
+				form.General = "Email ou senha inválidos"
+			} else {
+				form.General = "Erro interno"
+			}
+
+			_ = views.LoginPage(form,"").Render(r.Context(), w)
+			return
+		}
+
+		cfg := configs.LoadDBConfig()
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "token",
+			Value:    token,
+			Path:     "/",
+			HttpOnly: true,
+			MaxAge:   int(cfg.JWTExpirationInSeconds),
+		})
+
+		cookie, err := r.Cookie("flash")
+		var msg string
+
+		if err == nil {
+			msg = cookie.Value
+			http.SetCookie(w, &http.Cookie{
+				Name:   "flash",
+				Value:  "",
+				Path:   "/",
+				MaxAge: -1,
+			})
+		}
+
+		_ = views.LoginPage(form, msg).Render(r.Context(), w)
+
+		http.SetCookie(w, &http.Cookie{
+		Name:  "flash",
+		Value: "Login realizado com sucesso",
+		Path:  "/",
+		})
+
+		http.Redirect(w, r, "/me", http.StatusSeeOther)
 	}
-
-	res := models.UserResponse{
-		ID: user.ID,
-		Name: user.Name,
-		Email: user.Email,
-		Age: user.Age,
-		Role: user.Role,
-		Image: user.Image,
-		Token: token,
-	}
-
-	cfg := configs.LoadDBConfig()
-
-	http.SetCookie(w, &http.Cookie{
-    Name:     "token",
-    Value:    token,
-    Path:     "/",
-    HttpOnly: true,
-    MaxAge:   int(cfg.JWTExpirationInSeconds),
-	})
-
-	utils.WriteJSON(w, http.StatusOK, res)
 }
 
 
 func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
+
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return
 	}
 
+	cookie, err := r.Cookie("flash")
+	var msg string
+
+	if err == nil {
+		msg = cookie.Value
+		http.SetCookie(w, &http.Cookie{
+			Name:   "flash",
+			Value:  "",
+			Path:   "/",
+			MaxAge: -1,
+		})
+	}
+
 	perfil, err := h.Service.Perfil(userID)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		http.Error(w, "erro", 500)
 		return
 	}
-	
-	utils.WriteJSON(w, http.StatusOK, perfil)
+
+	_ = views.ProfilePage(msg, perfil).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request) {

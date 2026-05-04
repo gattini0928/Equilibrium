@@ -19,13 +19,13 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	mux.HandleFunc("GET /{$}", h.HandleHome)
 
 	// AUTH
-	mux.HandleFunc("POST /signup", h.HandleSignup)
-	mux.HandleFunc("POST /login", h.HandleLogin)
+	mux.HandleFunc("/signup", h.HandleSignup)
+	mux.HandleFunc("/login", h.HandleLogin)
 
 	// COMPLETAR PERFIL (JWT)
-	mux.Handle("POST /therapists/profile",
+	mux.Handle("/therapists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompleteTherapist)))
-	mux.Handle("POST /psychiatrists/profile",
+	mux.Handle("/psychiatrists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompletePsychiatrist)))
 
 	// Perfil

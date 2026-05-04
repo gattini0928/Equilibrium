@@ -1,5 +1,69 @@
 package views
 
-templ SignupPage() {
-    <h1>SignupPage</h1>
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ SignupPage(form models.SignupForm) {
+    <h2>Criar Conta</h2>
+
+    <form hx-post="/signup" 
+        hx-target="body" 
+        hx-swap="outerHTML"
+        enctype="multipart/form-data">
+
+    <div class="inputs-labels">
+        <label for="name">Nome:</label>
+        <input type="text" name="name" placeholder="Nome Completo" required>
+        if form.Errors["name"] != "" {
+            <span class="error">{form.Errors["name"]}</span>
+        }
+    </div>
+    <div class="inputs-labels">
+        <label for="email">Email:</label>
+        <input type="email" name="email" placeholder="Email" required>
+        if form.Errors["email"] != "" {
+            <span class="error">{form.Errors["email"]}</span>
+        }
+    </div>
+    <div class="inputs-labels">
+        <label for="age">Idade:</label>
+        <input type="number" name="age" placeholder="Idade" required>
+        if form.Errors["age"] != "" {
+            <span class="error">{form.Errors["age"]}</span>
+        }
+    </div>
+
+    <div class="inputs-labels">
+        <label for="cpf">Cpf:</label>
+        <input type="text" name="cpf" placeholder="Cpf" required>
+        if form.Errors["cpf"] != "" {
+            <span class="error">{form.Errors["cpf"]}</span>
+        }
+    </div>
+    <div class="inputs-labels">
+        <label for="password">Senha:</label>
+        <input type="password" name="password" placeholder="Senha" required>
+        if form.Errors["password"] != "" {
+            <span class="error">{form.Errors["password"]}</span>
+        }
+    </div>
+    <div class="role-options">
+        <label>
+            <input type="radio" name="role" value="patient" required> Paciente
+        </label>
+        <label>
+            <input type="radio" name="role" value="therapist"> Terapeuta
+        </label>
+        <label>
+            <input type="radio" name="role" value="psychiatrist"> Psiquiatra
+        </label>
+    </div>
+    <div class="inputs-labels">
+        <label for="image">Foto:</label>
+        <input type="file" name="image" placeholder="Foto de Perfil" required>
+        if form.Errors["image"] != "" {
+            <span class="error">{form.Errors["image"]}</span>
+        }
+    </div>
+    <button type="submit">Criar Conta</button>
+</form>
 }

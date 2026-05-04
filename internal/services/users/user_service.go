@@ -330,7 +330,6 @@ func (s *UserService) Perfil(userID int) (any, error) {
 	}
 }
 
-
 func (s *UserService) ReserveTherapistAgenda(patientUserID, therapistID, agendaID int) error {
 	patientID, err := s.Repo.GetPatientIDByUserID(patientUserID)
 	if err != nil {

@@ -1,5 +1,39 @@
 package views
 
-templ LoginPage() {
-    <h1>Login</h1>
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ LoginPage(form models.LoginForm, msg string) {
+    @Layout("Login", false) {
+    <h2>Login</h2>
+
+    if msg != "" {
+        <div class="message"> {msg} </div>
+    }
+
+    if form.General != "" {
+        <div class="error">{ form.General }</div>
+    }
+
+    <form 
+        hx-post="/login" 
+        hx-target="body" 
+        hx-swap="outerHTML">
+
+        <div>
+            <input name="email" value={ form.Email } placeholder="Email">
+            if form.Errors["email"] != "" {
+                <span class="error">{ form.Errors["email"] }</span>
+            }
+        </div>
+
+        <div>
+            <input type="password" name="password" placeholder="Senha">
+            if form.Errors["password"] != "" {
+                <span class="error">{ form.Errors["password"] }</span>
+            }
+        </div>
+
+        <button type="submit">Entrar</button>
+    </form>
+}
 }

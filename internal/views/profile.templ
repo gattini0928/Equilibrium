@@ -1,0 +1,13 @@
+package views
+
+templ ProfilePage(msg string, perfil any) {
+  @Layout("Perfil", true) {
+    <h2>Perfil</h2>
+
+    if msg != "" {
+      <div class="message">{ msg }</div>
+    }
+  }
+}
+
+
