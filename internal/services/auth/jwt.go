@@ -23,3 +23,21 @@ func CreateJWT(secret []byte, userID int, expirationSec int64) (string, error) {
 	return tokenString, nil
 }
 
+func ValidateJWT(secret string, tokenString string) (int, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	if err != nil || !token.Valid {
+		return 0, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return 0, err
+	}
+
+	userIDFloat := claims["user_id"].(float64)
+	return int(userIDFloat), nil
+}
+

@@ -2,32 +2,32 @@ package views
 
 import "github.com/gattini0928/Equilibrium/internal/models"
 
-templ CompletePsychiatristInfoPage(form models.PsychiatristForm) {
-    @Layout("Completar Informações", false) {
+templ CompletePsychiatristInfoPage(data models.PsychiatristView) {
+    @Layout("Completar Informações", data.isAuth) {
     <h2>Complete suas informações</h2>
     <form 
         hx-post="/psychiatrist/profile" 
         hx-target="body" 
         hx-swap="outerHTML">
 
-        <div>
+        <div class="inputs-labels">
             <label for="crm">CRM:</label>
             <input type="text" name="crm" placeholder="Seu CRM" required>
-            if form.Errors["crm"] != "" {
-                <span class="error">{ form.Errors["crm"] }</span>
+            if data.Form.Errors["crm"] != "" {
+                <span class="error">{ data.Form.Errors["crm"] }</span>
             }
         </div>
 
-        <div>
+        <div class="inputs-labels">
             <label for="description">Breve descrição sobre você:</label>
             <input type="text" name="description" placeholder="Descrição" required>
-            if form.Errors["description"] != "" {
-                <span class="error">{ form.Errors["description"] }</span>
+            if data.Form.Errors["description"] != "" {
+                <span class="error">{ data.Form.Errors["description"] }</span>
             }
         </div>
 
-        if form.General != "" {
-            <div class="error">{ form.General }</div>
+        if data.Form.General != "" {
+            <div class="error">{ data.Form.General }</div>
         }
     
         <button type="submit">Completar Cadastro</button>

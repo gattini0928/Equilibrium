@@ -2,7 +2,8 @@ package views
 
 import "github.com/gattini0928/Equilibrium/internal/models"
 
-templ SignupPage(form models.SignupForm) {
+templ SignupPage(data SignupView) {
+    @Layout("Criar Conta", data.isAuth) {
     <h2>Criar Conta</h2>
 
     <form hx-post="/signup" 
@@ -13,37 +14,37 @@ templ SignupPage(form models.SignupForm) {
     <div class="inputs-labels">
         <label for="name">Nome:</label>
         <input type="text" name="name" placeholder="Nome Completo" required>
-        if form.Errors["name"] != "" {
-            <span class="error">{form.Errors["name"]}</span>
+        if data.Form.Errors["name"] != "" {
+            <span class="error">{data.Form.Errors["name"]}</span>
         }
     </div>
     <div class="inputs-labels">
         <label for="email">Email:</label>
         <input type="email" name="email" placeholder="Email" required>
-        if form.Errors["email"] != "" {
-            <span class="error">{form.Errors["email"]}</span>
+        if data.Form.Errors["email"] != "" {
+            <span class="error">{data.Form.Errors["email"]}</span>
         }
     </div>
     <div class="inputs-labels">
         <label for="age">Idade:</label>
         <input type="number" name="age" placeholder="Idade" required>
-        if form.Errors["age"] != "" {
-            <span class="error">{form.Errors["age"]}</span>
+        if data.Form.Errors["age"] != "" {
+            <span class="error">{data.Form.Errors["age"]}</span>
         }
     </div>
 
     <div class="inputs-labels">
         <label for="cpf">Cpf:</label>
         <input type="text" name="cpf" placeholder="Cpf" required>
-        if form.Errors["cpf"] != "" {
-            <span class="error">{form.Errors["cpf"]}</span>
+        if data.Form.Errors["cpf"] != "" {
+            <span class="error">{data.Form.Errors["cpf"]}</span>
         }
     </div>
     <div class="inputs-labels">
         <label for="password">Senha:</label>
         <input type="password" name="password" placeholder="Senha" required>
-        if form.Errors["password"] != "" {
-            <span class="error">{form.Errors["password"]}</span>
+        if data.Form.Errors["password"] != "" {
+            <span class="error">{data.Form.Errors["password"]}</span>
         }
     </div>
     <div class="role-options">
@@ -60,15 +61,16 @@ templ SignupPage(form models.SignupForm) {
     <div class="inputs-labels">
         <label for="image">Foto:</label>
         <input type="file" name="image" placeholder="Foto de Perfil" required>
-        if form.Errors["image"] != "" {
-            <span class="error">{form.Errors["image"]}</span>
+        if data.Form.Errors["image"] != "" {
+            <span class="error">{data.Form.Errors["image"]}</span>
         }
     </div>
 
-    if form.General != "" {
-        <div class="error">{ form.General }</div>
+    if data.Form.General != "" {
+        <div class="error">{ data.Form.General }</div>
     }
 
     <button type="submit">Criar Conta</button>
 </form>
+}
 }

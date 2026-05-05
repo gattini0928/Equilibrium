@@ -32,3 +32,28 @@ type PsychiatristForm struct {
 	Errors map[string]string
 	General string
 }
+
+type ViewData struct {
+    IsAuth bool
+}
+
+type LoginView struct {
+    ViewData
+    Form LoginForm
+	Msg string
+}
+
+type SignupView struct {
+    ViewData
+    Form SignupForm
+}
+
+type TherapistView struct {
+	ViewData
+    Form TherapistForm
+}
+
+type PyschiatristView struct {
+	ViewData
+    Form PsychiatristForm
+}

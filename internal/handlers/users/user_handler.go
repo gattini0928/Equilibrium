@@ -19,15 +19,13 @@ import (
 
 	"github.com/gattini0928/Equilibrium/internal/utils"
 	"github.com/gattini0928/Equilibrium/internal/views"
+	"github.com/gattini0928/Equilibrium/internal/middleware"
+
 )
 
 func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
-	isAuth := true 
-
-	err := views.IndexPage(isAuth).Render(r.Context(), w)
-	if err != nil {
-		http.Error(w, "erro", 500)
-	}
+    isAuth := middleware.IsAuthenticated(r)
+    middleware.Render(w, r, views.IndexPage(isAuth))
 }
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
@@ -35,10 +33,17 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		Errors: make(map[string]string),
 	}
 
+	data := models.SignupView{
+		ViewData: models.ViewData{
+			IsAuth: middleware.IsAuthenticated(r),
+		},
+		Form: form,
+	}
+
 	switch r.Method {
 
 	case http.MethodGet:
-		_ = views.SignupPage(form).Render(r.Context(), w)
+		_ = views.SignupPage(data).Render(r.Context(), w)
 
 	case http.MethodPost:
 		name := r.FormValue("name")
@@ -64,7 +69,8 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(form.Errors) > 0 {
-			_ = views.SignupPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
 		}
 
@@ -73,32 +79,29 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			form.Errors["image"] = "Erro ao processar imagem"
 		}
 
+		var filename string
+
 		file, handler, err := r.FormFile("image")
+
 		if err != nil {
 			form.Errors["image"] = "Imagem obrigatória"
 		} else {
 			defer file.Close()
-		}
 
-		var filename string
-
-		if err == nil {
 			filename = fmt.Sprintf("%d_%s", time.Now().Unix(), handler.Filename)
-		}
 
-		filepath := "./static/uploads/" + filename
+			filepath := "./static/uploads/" + filename
 
-		dst, err := os.Create(filepath)
-		if err != nil {
-			form.Errors["image"] = "Erro ao salvar imagem"
-		} else {
-			defer dst.Close()
-		}
-
-		if file != nil {
-			_, err = io.Copy(dst, file)
+			dst, err := os.Create(filepath)
 			if err != nil {
 				form.Errors["image"] = "Erro ao salvar imagem"
+			} else {
+				defer dst.Close()
+
+				_, err = io.Copy(dst, file)
+				if err != nil {
+					form.Errors["image"] = "Erro ao salvar imagem"
+				}
 			}
 		}
 
@@ -107,7 +110,8 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		}		
 
 		if len(form.Errors) > 0 {
-			_ = views.SignupPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
 		}
 
@@ -128,7 +132,7 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		switch role {
 		case "therapist":
 		if err := validators.ValidateAge(age, "therapist"); err != nil {
-				form.Errors["age"] = err.Error()
+			form.Errors["age"] = err.Error()
 			}
 			therapist.Specialty = r.FormValue("specialty")
 			therapist.Description = r.FormValue("description")
@@ -142,15 +146,17 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		}
 		
 		if len(form.Errors) > 0 {
-			_ = views.SignupPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
 		}
 		
 
 		token, err := h.Service.CreateUser(user, patient, therapist, psychiatrist)
 		if err != nil {
+			data.Form = form
 			form.General = err.Error()
-			_ = views.SignupPage(form).Render(r.Context(), w)
+			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
 		}	
 
@@ -192,7 +198,16 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		Errors: make(map[string]string),
 	}
 
+	data := models.TherapistView{
+		ViewData: models.ViewData{
+			IsAuth: middleware.IsAuthenticated(r),
+		},
+		Form: form,
+	}
+
 	switch r.Method {
+	case http.MethodGet:
+		_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
 	case http.MethodPost:
 		specialty := r.FormValue("specialty")
 		description := r.FormValue("description")
@@ -206,7 +221,8 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		}
 
 		if len(form.Errors) > 0 {
-			_ = views.CompleteTherapistInfoPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
 			return
 		}
 
@@ -218,7 +234,8 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		err := h.Service.CompleteTherapistSignUp(userID, specialty, description)
 		if err != nil {
 			form.General = err.Error()
-			_ = views.CompleteTherapistInfoPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
 			return
 		}
 	}
@@ -231,8 +248,17 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		Errors: make(map[string]string),
 	}
 
+	data := models.PyschiatristView{
+		ViewData: models.ViewData{
+			IsAuth: middleware.IsAuthenticated(r),
+		},
+		Form: form,
+	}
+
 	switch r.Method {
-		case http.MethodPost:
+	case http.MethodGet:
+		_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
+	case http.MethodPost:
 		crm := r.FormValue("crm")
 		description := r.FormValue("description")
 
@@ -245,7 +271,8 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		}
 
 		if len(form.Errors) > 0 {
-			_ = views.CompletePsychiatristInfoPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
 			return
 		}
 
@@ -257,7 +284,8 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		err := h.Service.CompletePsychiatristSignUp(userID, crm, description)
 		if err != nil {
 			form.General = err.Error()
-			_ = views.CompletePsychiatristInfoPage(form).Render(r.Context(), w)
+			data.Form = form
+			_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
 			return
 		}
 	}
@@ -269,10 +297,28 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		Errors: make(map[string]string),
 	}
 
+	data := models.LoginView{
+		ViewData: models.ViewData{
+			IsAuth: middleware.IsAuthenticated(r),
+		},
+		Form: form,
+	}
+
 	switch r.Method {
 
 	case http.MethodGet:
-		_ = views.LoginPage(form, "").Render(r.Context(), w)
+		if cookie, err := r.Cookie("flash"); err == nil {
+			data.Msg = cookie.Value
+
+			http.SetCookie(w, &http.Cookie{
+				Name:   "flash",
+				Value:  "",
+				Path:   "/",
+				MaxAge: -1,
+			})
+		}
+
+		_ = views.LoginPage(data).Render(r.Context(), w)
 
 	case http.MethodPost:
 		form.Email = r.FormValue("email")
@@ -286,7 +332,8 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if len(form.Errors) > 0 {
-			_ = views.LoginPage(form,"").Render(r.Context(), w)
+			data.Form = form
+			_ = views.LoginPage(data).Render(r.Context(), w)
 			return
 		}
 
@@ -301,7 +348,8 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 				form.General = "Erro interno"
 			}
 
-			_ = views.LoginPage(form,"").Render(r.Context(), w)
+			data.Form = form
+			_ = views.LoginPage(data).Render(r.Context(), w)
 			return
 		}
 
@@ -315,25 +363,10 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 			MaxAge:   int(cfg.JWTExpirationInSeconds),
 		})
 
-		cookie, err := r.Cookie("flash")
-		var msg string
-
-		if err == nil {
-			msg = cookie.Value
-			http.SetCookie(w, &http.Cookie{
-				Name:   "flash",
-				Value:  "",
-				Path:   "/",
-				MaxAge: -1,
-			})
-		}
-
-		_ = views.LoginPage(form, msg).Render(r.Context(), w)
-
 		http.SetCookie(w, &http.Cookie{
-		Name:  "flash",
-		Value: "Login realizado com sucesso",
-		Path:  "/",
+			Name:  "flash",
+			Value: "Login realizado com sucesso",
+			Path:  "/",
 		})
 
 		http.Redirect(w, r, "/me", http.StatusSeeOther)

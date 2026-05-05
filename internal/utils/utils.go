@@ -36,7 +36,7 @@ func CheckID(pathID string, r *http.Request) (int, error) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("id inválido")
 	}
 
 	return id, nil

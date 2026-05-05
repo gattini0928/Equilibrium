@@ -2,12 +2,12 @@ package views
 
 import "github.com/gattini0928/Equilibrium/internal/models"
 
-templ LoginPage(form models.LoginForm, msg string) {
-    @Layout("Login", false) {
+templ LoginPage(data models.LoginView) {
+    @Layout("Login", data.IsAuth) {
     <h2>Login</h2>
 
     if msg != "" {
-        <div class="message"> {msg} </div>
+        <div class="message"> {data.Msg} </div>
     }
 
     <form 
@@ -15,22 +15,24 @@ templ LoginPage(form models.LoginForm, msg string) {
         hx-target="body" 
         hx-swap="outerHTML">
 
-        <div>
-            <input name="email" value={ form.Email } placeholder="Email">
+        <div class="inputs-labels">
+            <label for="email">Email: </label>
+            <input name="email" value={ data.Form.Email } placeholder="Seu Email">
             if form.Errors["email"] != "" {
-                <span class="error">{ form.Errors["email"] }</span>
+                <span class="error">{ data.Form.Errors["email"] }</span>
             }
         </div>
 
-        <div>
-            <input type="password" name="password" placeholder="Senha">
-            if form.Errors["password"] != "" {
-                <span class="error">{ form.Errors["password"] }</span>
+        <div class="inputs-labels">
+            <label for="email">Senha: </label>
+            <input type="password" name="password" placeholder="Sua senha">
+            if data.Form.Errors["password"] != "" {
+                <span class="error">{ data.Form.Errors["password"] }</span>
             }
         </div>
 
-        if form.General != "" {
-            <div class="error">{ form.General }</div>
+        if data.Form.General != "" {
+            <div class="error">{ data.Form.General }</div>
         }
 
         <button type="submit">Entrar</button>
