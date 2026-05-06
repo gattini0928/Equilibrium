@@ -1,0 +1,34 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ PsychiatristsPage(psychiatrists []models.DoctorWithUser, isAuth bool) {
+    @Layout("Psiquiatras", isAuth) {
+    <main>
+        if len(psychiatrists) == 0 {
+            <span class="msg">Por enquanto não possuímos nenhum psiquiatra</span>
+        }
+        <div class="cards">       
+            for _, psychiatrist := range psychiatrists {
+                <div class="card">
+                    <div class="img-wrapper">
+                        <img src="{psychiatrist.Image}" alt="Foto de Perfil do Psiquiatra">                  
+                    </div>
+                    <div class="infos">
+                        <span class="name">{psychiatrist.Name}</span>
+                        <span class="email">{psychiatrist.Email}</span>
+                        <span class="email">{psychiatrist.Age} anos</span>
+                        <span class="crm">{psychiatrist.CRM}</span>
+                    </div>
+                    <div class="description">
+                        <h3>Um pouco sobre mim</h3>
+                        <p>{psychiatrist.Description}</p>
+                    </div>
+                    <a href="" class="psychiatrist-link">Ver Agenda</a>
+                    <!-- <a href="/psychiatrist/1" target="_blank" class="psychiatrist-link">Ver Agenda</a> -->
+                </div>              
+            }
+        </div>
+    </main>
+    }
+}

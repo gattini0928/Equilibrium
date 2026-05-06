@@ -1,4 +1,13 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ TherapistsPage(therapists []models.DoctorWithUser, isAuth bool) {
+    @Layout("Terapeutas", isAuth) {
     <main>
+        if len(therapists) == 0 {
+            <span class="msg">Por enquanto não possuímos nenhum terapeuta</span>
+        }
         <div class="cards">       
             for _, therapist := range therapists {
                 <div class="card">
@@ -21,3 +30,5 @@
             }
         </div>
     </main>
+    }
+}

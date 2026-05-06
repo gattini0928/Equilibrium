@@ -407,24 +407,26 @@ func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request
 
 	therapists, err := h.Service.ListAllTherapists()
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		http.Error(w, "erro", 500)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, therapists)
+	isAuth := middleware.IsAuthenticated(r)
+	_ = views.TherapistsPage(therapists, isAuth).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Request) {
 
 	psychiatrists, err := h.Service.ListAllPsychiatrists()
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		http.Error(w, "erro", 500)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, psychiatrists)
-}
+	isAuth := middleware.IsAuthenticated(r)
+	_ = views.PsychiatristsPage(psychiatrists, isAuth).Render(r.Context(), w)
 
+}
 func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Request) {
 	id, err :=  utils.CheckID("id", r)
 	if err != nil {
