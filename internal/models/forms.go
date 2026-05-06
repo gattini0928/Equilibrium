@@ -53,7 +53,7 @@ type TherapistView struct {
     Form TherapistForm
 }
 
-type PyschiatristView struct {
+type PsychiatristView struct {
 	ViewData
     Form PsychiatristForm
 }

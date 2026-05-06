@@ -6,7 +6,7 @@ templ LoginPage(data models.LoginView) {
     @Layout("Login", data.IsAuth) {
     <h2>Login</h2>
 
-    if msg != "" {
+    if data.Msg != "" {
         <div class="message"> {data.Msg} </div>
     }
 
@@ -18,7 +18,7 @@ templ LoginPage(data models.LoginView) {
         <div class="inputs-labels">
             <label for="email">Email: </label>
             <input name="email" value={ data.Form.Email } placeholder="Seu Email">
-            if form.Errors["email"] != "" {
+            if data.Form.Errors["email"] != "" {
                 <span class="error">{ data.Form.Errors["email"] }</span>
             }
         </div>

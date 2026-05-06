@@ -159,6 +159,7 @@ func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, descrip
 func (s *UserService) ListAllTherapists() ([]models.DoctorWithUser, error) {
 	return s.Repo.GetAllTherapists()
 }
+
 // Listagem de todos psiquiatras
 func (s *UserService) ListAllPsychiatrists() ([]models.DoctorWithUser, error) {
 	return s.Repo.GetAllPsychiatrists()

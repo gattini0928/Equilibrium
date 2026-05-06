@@ -47,7 +47,7 @@ func LoginPage(data models.LoginView) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if msg != "" {
+			if data.Msg != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"message\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -83,7 +83,7 @@ func LoginPage(data models.LoginView) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if form.Errors["email"] != "" {
+			if data.Form.Errors["email"] != "" {
 				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span class=\"error\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

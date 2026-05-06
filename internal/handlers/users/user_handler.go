@@ -25,7 +25,7 @@ import (
 
 func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
     isAuth := middleware.IsAuthenticated(r)
-    middleware.Render(w, r, views.IndexPage(isAuth))
+    _ = views.IndexPage(isAuth).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
@@ -248,7 +248,7 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		Errors: make(map[string]string),
 	}
 
-	data := models.PyschiatristView{
+	data := models.PsychiatristView{
 		ViewData: models.ViewData{
 			IsAuth: middleware.IsAuthenticated(r),
 		},

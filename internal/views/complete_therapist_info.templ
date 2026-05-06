@@ -2,8 +2,8 @@ package views
 
 import "github.com/gattini0928/Equilibrium/internal/models"
 
-templ CompleteTherapistInfoPage(data.TherapistView) {
-    @Layout("Completar Informações", data.isAuth) {
+templ CompleteTherapistInfoPage(data models.TherapistView) {
+    @Layout("Completar Informações", data.IsAuth) {
     <h2>Complete suas informações</h2>
     <form 
         hx-post="/therapists/profile" 

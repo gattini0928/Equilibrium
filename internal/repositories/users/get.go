@@ -195,6 +195,10 @@ func (r *UserRepository) GetAllTherapists() ([]models.DoctorWithUser, error) {
 		therapists = append(therapists, t)
 	}
 
+	if therapists == nil {
+    	therapists = []models.DoctorWithUser{}
+	}
+
 	return therapists, nil
 }
 
@@ -238,6 +242,10 @@ func (r *UserRepository) GetAllPsychiatrists() ([]models.DoctorWithUser, error) 
 		}
 
 		psychiatrists = append(psychiatrists, p)
+	}
+
+	if psychiatrists == nil {
+    	psychiatrists = []models.DoctorWithUser{}
 	}
 
 	return psychiatrists, nil

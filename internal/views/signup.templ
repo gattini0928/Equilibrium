@@ -2,8 +2,8 @@ package views
 
 import "github.com/gattini0928/Equilibrium/internal/models"
 
-templ SignupPage(data SignupView) {
-    @Layout("Criar Conta", data.isAuth) {
+templ SignupPage(data models.SignupView) {
+    @Layout("Criar Conta", data.IsAuth) {
     <h2>Criar Conta</h2>
 
     <form hx-post="/signup" 
