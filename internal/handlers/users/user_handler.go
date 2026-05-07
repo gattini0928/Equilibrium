@@ -163,7 +163,13 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 
 		token, err := h.Service.CreateUser(user, patient, therapist, psychiatrist)
 		if err != nil {
-			form.General = err.Error()
+			if strings.Contains(err.Error(), "users_email_key") {
+				form.Errors["email"] = "Email já cadastrado"
+			}
+			if strings.Contains(err.Error(), "users_cpf_key") {
+				form.Errors["cpf"] = "CPF já cadastrado"
+			}
+			form.General = "Erro ao criar conta"
 			data.Form = form
 			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
@@ -266,7 +272,7 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 
 		err := h.Service.CompleteTherapistSignUp(userID, specialty, description)
 		if err != nil {
-			form.General = err.Error()
+			form.General = "Erro ao completar informações"
 			data.Form = form
 			_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
 			return
@@ -331,7 +337,7 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 
 		err := h.Service.CompletePsychiatristSignUp(userID, crm, description)
 		if err != nil {
-			form.General = err.Error()
+			form.General = "Erro ao completar informações"
 			data.Form = form
 			_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
 			return

@@ -12,7 +12,7 @@ templ TherapistsPage(therapists []models.DoctorWithUser, isAuth bool) {
             for _, therapist := range therapists {
                 <div class="card">
                     <div class="img-wrapper">
-                        <img src="{therapist.Image}" alt="Foto de Perfil do Terapeuta">                  
+                        <img src={therapist.Image} alt="Foto de Perfil do Terapeuta">             
                     </div>
                     <div class="infos">
                         <span class="name">{therapist.Name}</span>
