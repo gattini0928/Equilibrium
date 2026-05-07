@@ -25,9 +25,6 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	// COMPLETAR PERFIL (JWT)
 	mux.Handle("/therapists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompleteTherapist)))
-		
-	// mux.Handle("/therapists/profile",
-	// 	http.HandlerFunc(h.HandleCompletePsychiatrist))
 	mux.Handle("/psychiatrists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompletePsychiatrist)))
 

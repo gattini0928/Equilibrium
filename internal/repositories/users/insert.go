@@ -31,6 +31,8 @@ func (r *UserRepository) CreateUserWithProfile(
 		return err
 	}
 
+	user.ID = userID
+
 	switch user.Role {
 
 	case "patient":
