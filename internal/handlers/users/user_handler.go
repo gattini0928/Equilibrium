@@ -3,12 +3,13 @@ package users
 import (
 	"database/sql"
 	"errors"
-	"net/http"
-	"strconv"
 	"fmt"
 	"io"
+	"net/http"
+	"os"
+	"strconv"
 	"time"
-	"os"	
+	"strings"
 
 	"html/template"
 
@@ -17,10 +18,9 @@ import (
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
 	validators "github.com/gattini0928/Equilibrium/internal/services/validators"
 
+	"github.com/gattini0928/Equilibrium/internal/middleware"
 	"github.com/gattini0928/Equilibrium/internal/utils"
 	"github.com/gattini0928/Equilibrium/internal/views"
-	"github.com/gattini0928/Equilibrium/internal/middleware"
-
 )
 
 func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
@@ -40,20 +40,31 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 		Form: form,
 	}
 
+	cfg := configs.LoadDBConfig()
+
 	switch r.Method {
 
 	case http.MethodGet:
 		_ = views.SignupPage(data).Render(r.Context(), w)
+		return
 
 	case http.MethodPost:
 		name := r.FormValue("name")
 		email := r.FormValue("email")
 		ageStr := r.FormValue("age")
 		cpf := r.FormValue("cpf")
+
+		cpf = strings.ReplaceAll(cpf, ".", "")
+		cpf = strings.ReplaceAll(cpf, "-", "")
+		cpf = strings.ReplaceAll(cpf, " ", "")
+
 		role := r.FormValue("role")
 		password := r.FormValue("password")
 
-		age, _ := strconv.Atoi(ageStr)
+		age, err := strconv.Atoi(ageStr)
+		if err != nil {
+			form.Errors["age"] = "Idade inválida"
+		}
 
 		if err := validators.ValidateName(name); err != nil {
 			form.Errors["name"] = err.Error()
@@ -74,7 +85,7 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err := r.ParseMultipartForm(10 << 20)
+		err = r.ParseMultipartForm(10 << 20)
 		if err != nil {
 			form.Errors["image"] = "Erro ao processar imagem"
 		}
@@ -91,7 +102,6 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			filename = fmt.Sprintf("%d_%s", time.Now().Unix(), handler.Filename)
 
 			filepath := "./static/uploads/" + filename
-
 			dst, err := os.Create(filepath)
 			if err != nil {
 				form.Errors["image"] = "Erro ao salvar imagem"
@@ -150,12 +160,11 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
 		}
-		
 
 		token, err := h.Service.CreateUser(user, patient, therapist, psychiatrist)
 		if err != nil {
-			data.Form = form
 			form.General = err.Error()
+			data.Form = form
 			_ = views.SignupPage(data).Render(r.Context(), w)
 			return
 		}	
@@ -165,6 +174,8 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 			Value:    token,
 			Path:     "/",
 			HttpOnly: true,
+			MaxAge:   int(cfg.JWTExpirationInSeconds),
+			SameSite: http.SameSiteLaxMode,
 		})
 
 		switch user.Role {
@@ -173,6 +184,9 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 				Name:  "flash",
 				Value: "Conta criada, complete seu perfil de terapeuta",
 				Path:  "/",
+				HttpOnly: true,
+				MaxAge:   int(cfg.JWTExpirationInSeconds),
+				SameSite: http.SameSiteLaxMode,
 			})
 			http.Redirect(w, r, "/therapists/profile", http.StatusSeeOther)
 			return
@@ -182,6 +196,9 @@ func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {
 				Name:  "flash",
 				Value: "Conta criada, complete seu perfil de psiquiatra",
 				Path:  "/",
+				SameSite: http.SameSiteLaxMode,
+				HttpOnly: true,
+				MaxAge:   int(cfg.JWTExpirationInSeconds),
 			})
 			http.Redirect(w, r, "/psychiatrists/profile", http.StatusSeeOther)
 			return
@@ -198,16 +215,32 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		Errors: make(map[string]string),
 	}
 
+	var msg string
+	
+	if cookie, err := r.Cookie("flash"); err == nil {
+		msg = cookie.Value
+
+		http.SetCookie(w, &http.Cookie{
+			Name:   "flash",
+			Value:  "",
+			Path:   "/",
+			MaxAge: -1,
+		})
+	}
+
+
 	data := models.TherapistView{
 		ViewData: models.ViewData{
 			IsAuth: middleware.IsAuthenticated(r),
 		},
 		Form: form,
+		Msg: msg,
 	}
 
 	switch r.Method {
 	case http.MethodGet:
 		_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
+		return
 	case http.MethodPost:
 		specialty := r.FormValue("specialty")
 		description := r.FormValue("description")
@@ -248,16 +281,31 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		Errors: make(map[string]string),
 	}
 
+	var msg string
+
+	if cookie, err := r.Cookie("flash"); err == nil {
+		msg = cookie.Value
+
+		http.SetCookie(w, &http.Cookie{
+			Name:   "flash",
+			Value:  "",
+			Path:   "/",
+			MaxAge: -1,
+		})
+	}
+
 	data := models.PsychiatristView{
 		ViewData: models.ViewData{
 			IsAuth: middleware.IsAuthenticated(r),
 		},
 		Form: form,
+		Msg: msg,
 	}
 
 	switch r.Method {
 	case http.MethodGet:
 		_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
+		return
 	case http.MethodPost:
 		crm := r.FormValue("crm")
 		description := r.FormValue("description")
@@ -289,6 +337,7 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 			return
 		}
 	}
+
 	http.Redirect(w, r, "/me", http.StatusSeeOther)
 }
 
@@ -315,10 +364,12 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 				Value:  "",
 				Path:   "/",
 				MaxAge: -1,
+				SameSite: http.SameSiteLaxMode,
 			})
 		}
 
 		_ = views.LoginPage(data).Render(r.Context(), w)
+		return
 
 	case http.MethodPost:
 		form.Email = r.FormValue("email")
@@ -361,18 +412,22 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 			Path:     "/",
 			HttpOnly: true,
 			MaxAge:   int(cfg.JWTExpirationInSeconds),
+			SameSite: http.SameSiteLaxMode,
 		})
 
 		http.SetCookie(w, &http.Cookie{
 			Name:  "flash",
 			Value: "Login realizado com sucesso",
 			Path:  "/",
+			HttpOnly: true,
+			MaxAge:   int(cfg.JWTExpirationInSeconds),
+			SameSite: http.SameSiteLaxMode,
 		})
 
 		http.Redirect(w, r, "/me", http.StatusSeeOther)
+		return
 	}
 }
-
 
 func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 
@@ -391,6 +446,7 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 			Value:  "",
 			Path:   "/",
 			MaxAge: -1,
+			SameSite: http.SameSiteLaxMode,
 		})
 	}
 

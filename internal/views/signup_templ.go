@@ -43,7 +43,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h2>Criar Conta</h2><form hx-post=\"/signup\" hx-target=\"body\" hx-swap=\"outerHTML\" enctype=\"multipart/form-data\"><div class=\"inputs-labels\"><label for=\"name\">Nome:</label> <input type=\"text\" name=\"name\" placeholder=\"Nome Completo\" required> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h2>Criar Conta</h2><form method=\"POST\" action=\"/signup\" enctype=\"multipart/form-data\"><div class=\"inputs-labels\"><label for=\"name\">Nome:</label> <input type=\"text\" name=\"name\" placeholder=\"Nome Completo\" required> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -55,7 +55,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.Errors["name"])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 18, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 15, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -78,7 +78,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.Errors["email"])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 25, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 22, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -101,7 +101,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.Errors["age"])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 32, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 29, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -124,7 +124,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.Errors["cpf"])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 40, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 37, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -147,7 +147,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.Errors["password"])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 47, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 44, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -170,7 +170,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.Errors["image"])
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 65, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 62, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -193,7 +193,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(data.Form.General)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 70, Col: 46}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/signup.templ`, Line: 67, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {

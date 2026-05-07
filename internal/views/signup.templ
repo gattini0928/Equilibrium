@@ -6,10 +6,7 @@ templ SignupPage(data models.SignupView) {
     @Layout("Criar Conta", data.IsAuth) {
     <h2>Criar Conta</h2>
 
-    <form hx-post="/signup" 
-        hx-target="body" 
-        hx-swap="outerHTML"
-        enctype="multipart/form-data">
+    <form method="POST" action="/signup" enctype="multipart/form-data">
 
     <div class="inputs-labels">
         <label for="name">Nome:</label>

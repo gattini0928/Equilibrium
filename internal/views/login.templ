@@ -10,11 +10,7 @@ templ LoginPage(data models.LoginView) {
         <div class="message"> {data.Msg} </div>
     }
 
-    <form 
-        hx-post="/login" 
-        hx-target="body" 
-        hx-swap="outerHTML">
-
+    <form method="POST" action="/login">
         <div class="inputs-labels">
             <label for="email">Email: </label>
             <input name="email" value={ data.Form.Email } placeholder="Seu Email">

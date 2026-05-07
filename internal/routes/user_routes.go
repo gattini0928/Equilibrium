@@ -25,6 +25,9 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	// COMPLETAR PERFIL (JWT)
 	mux.Handle("/therapists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompleteTherapist)))
+		
+	// mux.Handle("/therapists/profile",
+	// 	http.HandlerFunc(h.HandleCompletePsychiatrist))
 	mux.Handle("/psychiatrists/profile",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleCompletePsychiatrist)))
 
@@ -37,8 +40,8 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)
 
 	// DETALHES(Clique no card)
-	mux.HandleFunc("GET /therapists/{id}", h.HandleTherapistDetail)
-	mux.HandleFunc("GET /psychiatrists/{id}", h.HandlePsychiatristDetail)
+	mux.HandleFunc("GET /therapists/id/{id}", h.HandleTherapistDetail)
+	mux.HandleFunc("GET /psychiatrists/id/{id}", h.HandlePsychiatristDetail)
 
 	mux.Handle("POST /therapists/{therapist_id}/agendas/{agenda_id}/reserve", 
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleReserveTherapistAgenda)))

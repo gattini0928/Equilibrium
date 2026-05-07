@@ -51,9 +51,11 @@ type SignupView struct {
 type TherapistView struct {
 	ViewData
     Form TherapistForm
+	Msg string
 }
 
 type PsychiatristView struct {
 	ViewData
     Form PsychiatristForm
+	Msg string
 }

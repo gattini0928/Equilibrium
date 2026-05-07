@@ -1,6 +1,7 @@
 package middleware
 
 import ("net/http"
+		"log"
 		"context"
 		"github.com/gattini0928/Equilibrium/internal/services/auth"
 	)
@@ -14,9 +15,17 @@ func AuthMiddleware(secret string, next http.Handler) http.Handler {
 
 		cookie, err := r.Cookie("token")
 		if err != nil {
-			next.ServeHTTP(w, r)
+			log.Println("COOKIE NAO ENCONTRADO")
+
+		} else {
+			log.Println("COOKIE:", cookie.Value)
 			return
 		}
+
+		// if err != nil {
+		// 	next.ServeHTTP(w, r)
+		// 	return
+		// }
 
 		userID, err := auth.ValidateJWT(secret, cookie.Value)
 		if err != nil {

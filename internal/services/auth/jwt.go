@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,7 +10,7 @@ func CreateJWT(secret []byte, userID int, expirationSec int64) (string, error) {
 	expiration := time.Second * time.Duration(expirationSec)
 	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userID": strconv.Itoa(userID),
+		"userID": userID,
 		"exp": time.Now().Add(expiration).Unix(),
 	})
 
@@ -37,7 +36,7 @@ func ValidateJWT(secret string, tokenString string) (int, error) {
 		return 0, err
 	}
 
-	userIDFloat := claims["user_id"].(float64)
+	userIDFloat := claims["userID"].(float64)
 	return int(userIDFloat), nil
 }
 
