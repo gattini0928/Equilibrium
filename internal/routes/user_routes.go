@@ -5,6 +5,8 @@ import (
 
 	handlerUsers "github.com/gattini0928/Equilibrium/internal/handlers/users"
 	"github.com/gattini0928/Equilibrium/internal/services/auth"
+	"github.com/gattini0928/Equilibrium/internal/middleware"
+
 )
 
 
@@ -16,11 +18,27 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 		),
 	)			
 
-	mux.HandleFunc("GET /{$}", h.HandleHome)
+	mux.Handle("GET /{$}",
+		middleware.AuthMiddleware(
+			string(secret),
+			http.HandlerFunc(h.HandleHome),
+		),
+	)
 
 	// AUTH
-	mux.HandleFunc("/signup", h.HandleSignup)
-	mux.HandleFunc("/login", h.HandleLogin)
+	mux.Handle("/signup",
+		middleware.AuthMiddleware(
+			string(secret),
+			http.HandlerFunc(h.HandleSignup),
+		),
+	)
+	
+	mux.Handle("/login",
+		middleware.AuthMiddleware(
+			string(secret),
+			http.HandlerFunc(h.HandleLogin),
+		),
+	)
 
 	// COMPLETAR PERFIL (JWT)
 	mux.Handle("/therapists/profile",
@@ -33,8 +51,18 @@ func UserRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) 
 	auth.JWTMiddleware(secret, http.HandlerFunc(h.HandlePerfil)))
 
 	// LISTAGEM PÚBLICA
-	mux.HandleFunc("GET /therapists", h.HandleAllTherapists)
-	mux.HandleFunc("GET /psychiatrists", h.HandleAllPsychiatrists)
+	mux.Handle("GET /therapists",
+		middleware.AuthMiddleware(
+			string(secret),
+			http.HandlerFunc(h.HandleAllTherapists),
+		),
+	)
+	mux.Handle("GET /psychiatrists",
+		middleware.AuthMiddleware(
+			string(secret),
+			http.HandlerFunc(h.HandleAllPsychiatrists),
+		),
+	)
 
 	// DETALHES(Clique no card)
 	mux.HandleFunc("GET /therapists/id/{id}", h.HandleTherapistDetail)

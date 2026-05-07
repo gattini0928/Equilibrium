@@ -25,7 +25,7 @@ import (
 
 func (h *UserHandler) HandleHome(w http.ResponseWriter, r *http.Request) {
     isAuth := middleware.IsAuthenticated(r)
-    _ = views.IndexPage(isAuth).Render(r.Context(), w)
+	_ = views.IndexPage(isAuth).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandleSignup(w http.ResponseWriter, r *http.Request) {

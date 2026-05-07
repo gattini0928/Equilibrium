@@ -4,70 +4,67 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ SignupPage(data models.SignupView) {
     @Layout("Criar Conta", data.IsAuth) {
-    <h2>Criar Conta</h2>
-
-    <form method="POST" action="/signup" enctype="multipart/form-data">
-
-    <div class="inputs-labels">
-        <label for="name">Nome:</label>
-        <input type="text" name="name" placeholder="Nome Completo" required>
-        if data.Form.Errors["name"] != "" {
-            <span class="error">{data.Form.Errors["name"]}</span>
+    <main>
+        <h2>Criar Conta</h2>
+        <form method="POST" action="/signup" enctype="multipart/form-data">
+        <div class="inputs-labels">
+            <label for="name">Nome:</label>
+            <input type="text" name="name" placeholder="Nome Completo" required>
+            if data.Form.Errors["name"] != "" {
+                <span class="error">{data.Form.Errors["name"]}</span>
+            }
+        </div>
+        <div class="inputs-labels">
+            <label for="email">Email:</label>
+            <input type="email" name="email" placeholder="Email" required>
+            if data.Form.Errors["email"] != "" {
+                <span class="error">{data.Form.Errors["email"]}</span>
+            }
+        </div>
+        <div class="inputs-labels">
+            <label for="age">Idade:</label>
+            <input type="number" name="age" placeholder="Idade" required>
+            if data.Form.Errors["age"] != "" {
+                <span class="error">{data.Form.Errors["age"]}</span>
+            }
+        </div>
+        <div class="inputs-labels">
+            <label for="cpf">Cpf:</label>
+            <input type="text" name="cpf" placeholder="Cpf" required>
+            if data.Form.Errors["cpf"] != "" {
+                <span class="error">{data.Form.Errors["cpf"]}</span>
+            }
+        </div>
+        <div class="inputs-labels">
+            <label for="password">Senha:</label>
+            <input type="password" name="password" placeholder="Senha" required>
+            if data.Form.Errors["password"] != "" {
+                <span class="error">{data.Form.Errors["password"]}</span>
+            }
+        </div>
+        <div class="role-options">
+            <label>
+                <input type="radio" name="role" value="patient" required> Paciente
+            </label>
+            <label>
+                <input type="radio" name="role" value="therapist"> Terapeuta
+            </label>
+            <label>
+                <input type="radio" name="role" value="psychiatrist"> Psiquiatra
+            </label>
+        </div>
+        <div class="inputs-labels">
+            <label for="image">Foto:</label>
+            <input type="file" name="image" placeholder="Foto de Perfil" required>
+            if data.Form.Errors["image"] != "" {
+                <span class="error">{data.Form.Errors["image"]}</span>
+            }
+        </div>
+        if data.Form.General != "" {
+            <div class="error">{ data.Form.General }</div>
         }
-    </div>
-    <div class="inputs-labels">
-        <label for="email">Email:</label>
-        <input type="email" name="email" placeholder="Email" required>
-        if data.Form.Errors["email"] != "" {
-            <span class="error">{data.Form.Errors["email"]}</span>
-        }
-    </div>
-    <div class="inputs-labels">
-        <label for="age">Idade:</label>
-        <input type="number" name="age" placeholder="Idade" required>
-        if data.Form.Errors["age"] != "" {
-            <span class="error">{data.Form.Errors["age"]}</span>
-        }
-    </div>
-
-    <div class="inputs-labels">
-        <label for="cpf">Cpf:</label>
-        <input type="text" name="cpf" placeholder="Cpf" required>
-        if data.Form.Errors["cpf"] != "" {
-            <span class="error">{data.Form.Errors["cpf"]}</span>
-        }
-    </div>
-    <div class="inputs-labels">
-        <label for="password">Senha:</label>
-        <input type="password" name="password" placeholder="Senha" required>
-        if data.Form.Errors["password"] != "" {
-            <span class="error">{data.Form.Errors["password"]}</span>
-        }
-    </div>
-    <div class="role-options">
-        <label>
-            <input type="radio" name="role" value="patient" required> Paciente
-        </label>
-        <label>
-            <input type="radio" name="role" value="therapist"> Terapeuta
-        </label>
-        <label>
-            <input type="radio" name="role" value="psychiatrist"> Psiquiatra
-        </label>
-    </div>
-    <div class="inputs-labels">
-        <label for="image">Foto:</label>
-        <input type="file" name="image" placeholder="Foto de Perfil" required>
-        if data.Form.Errors["image"] != "" {
-            <span class="error">{data.Form.Errors["image"]}</span>
-        }
-    </div>
-
-    if data.Form.General != "" {
-        <div class="error">{ data.Form.General }</div>
-    }
-
-    <button type="submit">Criar Conta</button>
-</form>
+        <button type="submit">Criar Conta</button>
+        </form>
+    </main>
 }
 }

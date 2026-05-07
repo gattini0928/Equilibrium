@@ -1,13 +1,12 @@
 package middleware
 
 import ("net/http"
-		"log"
 		"context"
 		"github.com/gattini0928/Equilibrium/internal/services/auth"
 	)
 
 func IsAuthenticated(r *http.Request) bool {
-    return r.Context().Value("user_id") != nil
+    return r.Context().Value(auth.UserIDKey) != nil
 }
 
 func AuthMiddleware(secret string, next http.Handler) http.Handler {
@@ -15,17 +14,9 @@ func AuthMiddleware(secret string, next http.Handler) http.Handler {
 
 		cookie, err := r.Cookie("token")
 		if err != nil {
-			log.Println("COOKIE NAO ENCONTRADO")
-
-		} else {
-			log.Println("COOKIE:", cookie.Value)
+			next.ServeHTTP(w, r)
 			return
 		}
-
-		// if err != nil {
-		// 	next.ServeHTTP(w, r)
-		// 	return
-		// }
 
 		userID, err := auth.ValidateJWT(secret, cookie.Value)
 		if err != nil {
@@ -33,7 +24,7 @@ func AuthMiddleware(secret string, next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "user_id", userID)
+		ctx := context.WithValue(r.Context(), auth.UserIDKey, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
