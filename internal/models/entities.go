@@ -120,7 +120,6 @@ type Agenda struct {
 	Reserved       bool   `json:"reserved"`
 }
 
-
 type DoctorWithUser struct {
 	ID          int
 	Name        string
@@ -139,32 +138,16 @@ type PatientWithUser struct {
 	Email       string
 	Image       string
 	Age         int
-	CurrentDiagnosis *string
+	CurrentDiagnosis string
 	Books       []Book
 	Remedies []Remedy
 }
 
-type CreateUserRequest struct {
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Password string `json:"password"`
-	Age int `json:"age"`
-	Cpf string `json:"cpf"`
-	Role string `json:"role"`
-	Image string `json:"image"`
- 
-	Specialty string `json:"specialty"`
-	CRM string `json:"crm"`
-	Description string `json:"description"`
-}
-
-type LoginRequest struct {
-	Email string `json:"email"`
-	Password string `json:"password"`
-}
 
 type DoctorDashboard struct {
 	Perfil   UserPerfil   `json:"perfil"`
 	Agendas  []Agenda     `json:"agendas"`
+	Patients []PatientWithUser
+	Consultations []ConsultationDetail
 }
 

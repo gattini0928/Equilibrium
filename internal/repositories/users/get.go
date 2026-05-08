@@ -1,6 +1,8 @@
 package users
 
 import (
+	"database/sql"
+
 	"github.com/gattini0928/Equilibrium/internal/models"
 )
 
@@ -76,6 +78,7 @@ func (r *UserRepository) GetPatientPerfil(userID int) (models.UserPerfil, error)
 		WHERE p.user_id = $1
 	`
 	var patient models.UserPerfil
+	var currentDiagnosis sql.NullString
 
 	row := r.DB.QueryRow(query, userID)
 	err := row.Scan(
@@ -84,11 +87,15 @@ func (r *UserRepository) GetPatientPerfil(userID int) (models.UserPerfil, error)
 		&patient.Email,
 		&patient.Age,
 		&patient.Image,
-		&patient.CurrentDiagnosis,
+		&currentDiagnosis,
 	)
 
 	if err != nil {
 		return models.UserPerfil{}, err
+	}
+
+	if currentDiagnosis.Valid {
+		patient.CurrentDiagnosis = currentDiagnosis.String
 	}
 
 	return patient, nil
@@ -102,6 +109,7 @@ func (r *UserRepository) GetTherapistPerfil(userID int) (models.UserPerfil, erro
 		WHERE t.user_id = $1
 	`
 	var therapist models.UserPerfil
+	var price sql.NullFloat64
 
 	row := r.DB.QueryRow(query, userID)
 	err := row.Scan(
@@ -113,11 +121,15 @@ func (r *UserRepository) GetTherapistPerfil(userID int) (models.UserPerfil, erro
 		&therapist.Role,
 		&therapist.Specialty,
 		&therapist.Description,
-		&therapist.Price,
+		&price,
 	)
 
 	if err != nil {
 		return models.UserPerfil{}, err
+	}
+
+	if price.Valid {
+		therapist.Price = price.Float64
 	}
 
 	return therapist, nil
@@ -131,6 +143,7 @@ func (r *UserRepository) GetPsychiatristPerfil(userID int) (models.UserPerfil, e
 		WHERE p.user_id = $1
 	`
 	var psychiatrist models.UserPerfil
+	var price sql.NullFloat64
 
 	row := r.DB.QueryRow(query, userID)
 	err := row.Scan(
@@ -142,11 +155,15 @@ func (r *UserRepository) GetPsychiatristPerfil(userID int) (models.UserPerfil, e
 		&psychiatrist.Role,
 		&psychiatrist.CRM,
 		&psychiatrist.Description,
-		&psychiatrist.Price,
+		&price,
 	)
 
 	if err != nil {
 		return models.UserPerfil{}, err
+	}
+
+	if price.Valid {
+		psychiatrist.Price = price.Float64
 	}
 
 	return psychiatrist, nil
@@ -315,9 +332,12 @@ func (r *UserRepository) GetTherapistAgenda(therapistID int) ([]models.Agenda, e
 		agendas = append(agendas, a)
 	}
 
+	if agendas == nil {
+		return []models.Agenda{}, nil
+	}
+
 	return agendas, nil
 }
-
 
 func (r *UserRepository) GetTherapistPrivateAgenda(userID int) ([]models.Agenda, error ) {
 	query := `
@@ -345,6 +365,10 @@ func (r *UserRepository) GetTherapistPrivateAgenda(userID int) ([]models.Agenda,
 			return nil, err
 		}
 		agendas = append(agendas, a)
+	}
+
+	if agendas == nil {
+		return []models.Agenda{}, nil
 	}
 
 	return agendas, nil
@@ -413,6 +437,10 @@ func (r *UserRepository) GetPsychiatristAgenda(psychiatristID int) ([]models.Age
 		agendas = append(agendas, a)
 	}
 
+	if agendas == nil {
+		return []models.Agenda{}, nil
+	}
+
 	return agendas, nil
 }
 
@@ -442,6 +470,10 @@ func (r *UserRepository) GetPsychiatristPrivateAgenda(userID int) ([]models.Agen
 			return nil, err
 		}
 		agendas = append(agendas, a)
+	}
+
+	if agendas == nil {
+		return []models.Agenda{}, nil
 	}
 
 	return agendas, nil
@@ -557,13 +589,19 @@ func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWi
 	defer rows.Close()
 
 	var patients []models.PatientWithUser
+	var currentDiagnosis sql.NullString
 
 	for rows.Next() {
 		var p models.PatientWithUser
-		err := rows.Scan(&p.ID, &p.Name, &p.Email, &p.Age, &p.Image, &p.CurrentDiagnosis)
+		err := rows.Scan(&p.ID, &p.Name, &p.Email, &p.Age, &p.Image, &currentDiagnosis)
 		if err != nil {
 			return nil, err
 		}
+
+		if currentDiagnosis.Valid {
+			p.CurrentDiagnosis = currentDiagnosis.String
+		}
+
 		patients = append(patients, p)
 	}
 
