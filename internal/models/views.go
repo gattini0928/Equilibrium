@@ -65,3 +65,10 @@ type PerfilView struct {
 	Messages []string
 	Perfil any	
 }
+
+type StatusView struct {
+	ViewData
+	StatusCode int
+	StatusMessage string
+
+}

@@ -1,13 +1,18 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
-	"errors"
-	"context"
+
+	"github.com/gattini0928/Equilibrium/internal/middleware"
+	"github.com/gattini0928/Equilibrium/internal/models"
 	"github.com/gattini0928/Equilibrium/internal/services/auth"
+	"github.com/gattini0928/Equilibrium/internal/views"
 )
 
 func ParseJSON(r *http.Request, payload any) error {
@@ -54,3 +59,34 @@ func CheckJWT(w http.ResponseWriter, ctx context.Context) (int, bool) {
 	return userID, true
 }
 
+func RenderStatusPage(
+    w http.ResponseWriter,
+    r *http.Request,
+    err error,
+    statusCode int,
+) {
+
+    log.Println("Erro:", err)
+
+    data := models.StatusView{
+        ViewData: models.ViewData{
+            IsAuth: middleware.IsAuthenticated(r),
+        },
+        StatusCode: statusCode,
+    }
+
+    switch statusCode {
+
+    case http.StatusInternalServerError:
+        data.StatusMessage = "Ocorreu um erro no servidor"
+
+        w.WriteHeader(statusCode)
+        _ = views.Status500Page(data).Render(r.Context(), w)
+
+    case http.StatusNotFound:
+        data.StatusMessage = "Página não encontrada"
+
+        w.WriteHeader(statusCode)
+        _ = views.Status404Page(data).Render(r.Context(), w)
+    }
+}

@@ -466,7 +466,7 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 
 	perfil, err := h.Service.Perfil(userID)
 	if err != nil {
-		http.Error(w, "erro", 500)
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return
 	}
 

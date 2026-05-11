@@ -1,0 +1,13 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ Status404Page(data models.StatusView) {
+    @Layout("Página não encontrada", data.isAuth) {
+        <div class="status-container">
+            <h1>{data.StatusCode}</h1>
+            <p>{data.StatusMessage}</p>
+            <a href="/">Voltar ao início</a>
+        </div>
+    }
+}

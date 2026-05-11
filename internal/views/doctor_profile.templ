@@ -1,0 +1,15 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
+  @Layout("Perfil", data.isAuth) {
+    <h2>Seu perfil - {p.Perfil.Name}</h2>
+
+    for _, msg := range data.Messages {
+      <span>{msg}</span>
+    }
+  }
+}
+
+
