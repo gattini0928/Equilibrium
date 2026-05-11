@@ -436,7 +436,6 @@ func (h *UserHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
-
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return

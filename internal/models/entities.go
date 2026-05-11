@@ -14,110 +14,99 @@ type User struct {
 }
 
 type UserPerfil struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Age int `json:"age"`
-	Role string `json:"role"`
-	Image string `json:"image"`
-	CurrentDiagnosis string `json:"current_diagnosis"`
-	Specialty   string `json:"specialty"`
-	CRM string `json:"crm"`
-	Description string `json:"description"`
-	Price float64 `json:"price"`
+	ID int
+	Name string
+	Email string
+	Age int
+	Role string
+	Image string
+	CurrentDiagnosis string
+	Specialty   string
+	CRM string
+	Description string
+	Price float64
 }
 
 type Patient struct {
-	ID               int    `json:"id"`
-	UserID           int    `json:"user_id"`
-	TherapistID      *int   `json:"therapist_id"`
-	PsychiatristID   *int   `json:"psychiatrist_id"`
-	CurrentDiagnosis string `json:"current_diagnosis"`
-	Therapist *TherapistInfo `json:"therapist_info"`
-	Psychiatrist *PsychiatristInfo `json:"psychiatrist_info"`
+	ID               int 
+	UserID           int   
+	TherapistID      *int  
+	PsychiatristID   *int 
+	CurrentDiagnosis string
+	Therapist *TherapistInfo
+	Psychiatrist *PsychiatristInfo 
 }
 
 type Therapist struct {
-	ID          int    `json:"id"`
-	UserID      int    `json:"user_id"`
-	Specialty   string `json:"specialty"`
-	Description string `json:"description"`
-	Price float64 `json:"price"`
+	ID          int    
+	UserID      int    
+	Specialty   string
+	Description string
+	Price float64
 }
 
 type Psychiatrist struct {
-	ID     int    `json:"id"`
-	UserID int    `json:"user_id"`
-	CRM    string `json:"crm"`
-	Description string `json:"description"`
-	Price float64 `json:"price"`
+	ID     int   
+	UserID int   
+	CRM    string
+	Description string
+	Price float64
 }
 
 type TherapistInfo struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Age int `json:"age"`
-	Image string `json:"image"`
-	Specialty string `json:"specialty"`
-	Description string `json:"description"`
+	ID int
+	Name string
+	Email string
+	Age int
+	Image string 
+	Specialty string
+	Description string
 }
 
 type PsychiatristInfo struct {
-	ID int `json:"id"`
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Age int `json:"age"`
-	Image string `json:"image"`
-	Description string `json:"description"`
+	ID int 
+	Name string
+	Email string
+	Age int
+	Image string
+	Description string
 }
 
 type Consultation struct {
-	ID               int     `json:"id"`
-	PatientID        int     `json:"patient_id"`
-	TherapistID   int     `json:"therapist_id"`
-	PsychiatristID string  `json:"psychiatrist_id"`
-	Date             time.Time  `json:"date"`
-	Price            float64 `json:"price"`
-	Annotation       string  `json:"annotation"`
-	AgendaID int `json:"agenda_id"`
-	Status 			string `json:"status"`
-}
-
-type ConsultationDetail struct {
-	ID              int
-	PatientID       int
-	TherapistID     *int
-	PsychiatristID  *int
-	Date            time.Time
-	Price           float64
-	Annotation      string
-	Status          string
-
+	ID               int
+	PatientID        int    
+	TherapistID   *int    
+	PsychiatristID *int  
+	Date             time.Time 
+	Price            float64 
+	Annotation       string  
+	AgendaID int 
+	Status 			string 
 	Books    []Book
 	Remedies []Remedy
 }
 
+
 type Book struct {
-	ID     int    `json:"id"`
-	Author string `json:"author"`
-	Title  string `json:"title"`
+	ID     int  
+	Author string
+	Title  string
 }
 
 type Remedy struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Dosage   string `json:"dosage"`
-	Quantity int    `json:"quantity"`
+	ID       int   
+	Name     string
+	Dosage   string
+	Quantity int   
 }
 
 type Agenda struct {
-	ID             int    `json:"id"`
-	ProfessionalID int    `json:"professional_id"`
-	Day            int    `json:"day"`
-	Month          int    `json:"month"`
-	Hour           string `json:"hour"`
-	Reserved       bool   `json:"reserved"`
+	ID             int
+	ProfessionalID int
+	Day            int  
+	Month          int 
+	Hour           string
+	Reserved       bool  
 }
 
 type DoctorWithUser struct {
@@ -145,9 +134,9 @@ type PatientWithUser struct {
 
 
 type DoctorDashboard struct {
-	Perfil   UserPerfil   `json:"perfil"`
-	Agendas  []Agenda     `json:"agendas"`
+	Perfil   UserPerfil 
+	Agendas  []Agenda     
 	Patients []PatientWithUser
-	Consultations []ConsultationDetail
+	Consultations []Consultation
 }
 

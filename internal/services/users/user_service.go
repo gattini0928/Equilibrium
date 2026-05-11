@@ -16,7 +16,7 @@ var (
 	ErrTokenFailed = errors.New("token failed")
 )
 
-func (s *UserService) validateConsultationAccess(userID int, c models.ConsultationDetail, role string) error {
+func (s *UserService) validateConsultationAccess(userID int, c models.Consultation, role string) error {
 	switch role {
 
 	case "therapist":
@@ -340,9 +340,32 @@ func (s *UserService) Perfil(userID int) (any, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		patientID, err := s.Repo.GetPatientIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		patients,  err := s.Repo.GetTherapistPatients(patientID)
+		if err != nil {
+			return nil, err
+		}
+
+		therapistID, err := s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		consultations, err := s.Repo.GetTherapistConsultations(therapistID)
+		if err != nil {
+			return nil, err
+		}
+
 		return models.DoctorDashboard{
 			Perfil: perfil,
 			Agendas: agendas,
+			Patients: patients,
+			Consultations: consultations,
 		}, nil
 
 	case "psychiatrist":
@@ -354,9 +377,31 @@ func (s *UserService) Perfil(userID int) (any, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		patientID, err := s.Repo.GetPatientIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		patients,  err := s.Repo.GetPsychiatristPatients(patientID)
+		if err != nil {
+			return nil, err
+		}
+
+		therapistID, err := s.Repo.GetPsychiatristIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		consultations, err := s.Repo.GetPsychiatristConsultations(therapistID)
+		if err != nil {
+			return nil, err
+		}
 		return models.DoctorDashboard{
 			Perfil: perfil,
 			Agendas: agendas,
+			Patients: patients,
+			Consultations: consultations,
 		}, nil
 
 	default:
@@ -470,7 +515,7 @@ func (s *UserService) ShowConsultations(userID int) ([]models.Consultation, erro
 		if err != nil {
 			return nil, err
 		}
-		return s.Repo.GetTherapistsConsultations(therapistID)
+		return s.Repo.GetTherapistConsultations(therapistID)
 	case "psychiatrist":
 		psychiatristID, err := s.Repo.GetPsychiatristIDByUserID(userID)
 		if err != nil {
@@ -481,15 +526,15 @@ func (s *UserService) ShowConsultations(userID int) ([]models.Consultation, erro
 	return nil, errors.New("invalid role")
 }
 
-func (s *UserService) ShowConsultation(userID, consultationID int) (models.ConsultationDetail, error) {
+func (s *UserService) ShowConsultation(userID, consultationID int) (models.Consultation, error) {
 	user, err := s.Repo.GetUserByID(userID)
 	if err != nil {
-		return models.ConsultationDetail{}, err
+		return models.Consultation{}, err
 	}
 
 	c, err := s.Repo.GetConsultationByID(consultationID)
 	if err != nil {
-		return models.ConsultationDetail{}, err
+		return models.Consultation{}, err
 	}
 
 	switch user.Role {
@@ -497,32 +542,32 @@ func (s *UserService) ShowConsultation(userID, consultationID int) (models.Consu
 	case "patient":
 		patientID, err := s.Repo.GetPatientIDByUserID(userID)
 		if err != nil {
-			return models.ConsultationDetail{}, err
+			return models.Consultation{}, err
 		}
 		if c.PatientID != patientID {
-			return models.ConsultationDetail{}, errors.New("forbidden")
+			return models.Consultation{}, errors.New("forbidden")
 		}
 
 	case "therapist":
 		therapistID, err := s.Repo.GetTherapistIDByUserID(userID)
 		if err != nil {
-			return models.ConsultationDetail{}, err
+			return models.Consultation{}, err
 		}
 		if c.TherapistID == nil || *c.TherapistID != therapistID {
-			return models.ConsultationDetail{}, errors.New("forbidden")
+			return models.Consultation{}, errors.New("forbidden")
 		}
 
 	case "psychiatrist":
 		psychiatristID, err := s.Repo.GetPsychiatristIDByUserID(userID)
 		if err != nil {
-			return models.ConsultationDetail{}, err
+			return models.Consultation{}, err
 		}
 		if c.PsychiatristID == nil || *c.PsychiatristID != psychiatristID {
-			return models.ConsultationDetail{}, errors.New("forbidden")
+			return models.Consultation{}, errors.New("forbidden")
 		}
 
 	default:
-		return models.ConsultationDetail{}, errors.New("invalid role")
+		return models.Consultation{}, errors.New("invalid role")
 	}
 
 	return c, nil

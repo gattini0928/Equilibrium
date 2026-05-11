@@ -605,6 +605,10 @@ func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWi
 		patients = append(patients, p)
 	}
 
+	if patients == nil {
+		return []models.PatientWithUser{}, nil
+	}
+
 	return patients, nil
 }
 
@@ -636,6 +640,11 @@ func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWi
 		}
 
 		patients = append(patients, p)
+	}
+
+	
+	if patients == nil {
+		return []models.PatientWithUser{}, nil
 	}
 
 	return patients, nil
@@ -817,11 +826,15 @@ func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consul
 		consultations = append(consultations, consultation)
 	}
 
+	if consultations == nil {
+		return []models.Consultation{}, nil
+	}
+
 	return consultations, nil
 
 }
 
-func (r *UserRepository) GetTherapistsConsultations(therapistID int) ([]models.Consultation,error) {
+func (r *UserRepository) GetTherapistConsultations(therapistID int) ([]models.Consultation,error) {
 	query := `
 		SELECT id, patient_id, date
 		FROM consultations
@@ -847,6 +860,11 @@ func (r *UserRepository) GetTherapistsConsultations(therapistID int) ([]models.C
 
 		consultations = append(consultations, consultation)
 	}
+
+	if consultations == nil {
+		return []models.Consultation{}, nil
+	}
+
 	return consultations, nil
 
 }
@@ -879,12 +897,16 @@ func (r *UserRepository) GetPsychiatristConsultations(psychiatristID int) ([]mod
 		consultations = append(consultations, consultation)
 	}
 
+	if consultations == nil {
+		return []models.Consultation{}, nil
+	}
+
 	return consultations, nil
 
 }
 
-func (r *UserRepository) GetConsultationByID(consultationID int) (models.ConsultationDetail, error) {
-	var c models.ConsultationDetail
+func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consultation, error) {
+	var c models.Consultation
 
 	err := r.DB.QueryRow(`
 		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation, status
@@ -901,7 +923,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 		&c.Status,
 	)
 	if err != nil {
-		return models.ConsultationDetail{}, err
+		return models.Consultation{}, err
 	}
 
 	bookRows, err := r.DB.Query(`
@@ -911,7 +933,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 		WHERE cb.consultation_id = $1
 	`, consultationID)
 	if err != nil {
-		return models.ConsultationDetail{}, err
+		return models.Consultation{}, err
 	}
 	defer bookRows.Close()
 
@@ -919,7 +941,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 		var b models.Book
 		err := bookRows.Scan(&b.ID, &b.Author, &b.Title)
 		if err != nil {
-			return models.ConsultationDetail{}, err
+			return models.Consultation{}, err
 		}
 		c.Books = append(c.Books, b)
 	}
@@ -931,7 +953,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 		WHERE cr.consultation_id = $1
 	`, consultationID)
 	if err != nil {
-		return models.ConsultationDetail{}, err
+		return models.Consultation{}, err
 	}
 	defer remedyRows.Close()
 
@@ -939,7 +961,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 		var rm models.Remedy
 		err := remedyRows.Scan(&rm.ID, &rm.Name, &rm.Dosage, &rm.Quantity)
 		if err != nil {
-			return models.ConsultationDetail{}, err
+			return models.Consultation{}, err
 		}
 		c.Remedies = append(c.Remedies, rm)
 	}
