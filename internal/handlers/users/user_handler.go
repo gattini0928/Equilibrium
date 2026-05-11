@@ -441,11 +441,20 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var messages []string
+
+	data := models.PerfilView{
+		ViewData: models.ViewData{
+			IsAuth: middleware.IsAuthenticated(r),
+		},
+		Messages: messages,
+		Perfil: models.UserPerfil{},
+	}
+	
 	cookie, err := r.Cookie("flash")
-	var msg string
 
 	if err == nil {
-		msg = cookie.Value
+		messages = append(messages, cookie.Value)
 		http.SetCookie(w, &http.Cookie{
 			Name:   "flash",
 			Value:  "",
@@ -461,7 +470,36 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = views.ProfilePage(msg, perfil).Render(r.Context(), w)
+	switch p := perfil.(type) {
+	case models.PatientDashboard:
+		if p.Therapist == nil {
+			messages = append(messages, "Você ainda não tem nenhum terapeuta")
+		}
+		if p.Psychiatrist == nil{
+			messages = append(messages,"Você ainda não tem nenhum terapeuta")
+		}
+		if len(p.Consultations) == 0 {
+			messages = append(messages,"Você ainda não tem nenhuma consulta")
+		}
+
+		data.Messages = messages
+		_ = views.PatientProfilePage(data, p).Render(r.Context(), w)
+
+	case models.DoctorDashboard:
+		if len(p.Agendas) == 0 {
+			messages = append(messages, "Você ainda não tem nenhuma agenda")
+		}
+
+		if len(p.Patients) == 0 {
+			messages = append(messages, "Você ainda não tem nenhum paciente")
+		}
+		if len(p.Consultations) == 0 {
+			messages = append(messages, "Você ainda não tem nenhuma consulta")
+		}
+
+		data.Messages = messages
+		_ = views.DoctorProfilePage(data, p).Render(r.Context(), w)
+	}
 }
 
 func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request) {

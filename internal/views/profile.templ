@@ -1,11 +1,11 @@
 package views
 
-templ ProfilePage(msg string, perfil any) {
+templ ProfilePage(data models.PerfilView) {
   @Layout("Perfil", true) {
     <h2>Perfil</h2>
 
-    if msg != "" {
-      <div class="message">{ msg }</div>
+    for _, msg := range messages {
+      <span>{msg}</span>
     }
   }
 }

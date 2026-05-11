@@ -650,7 +650,7 @@ func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWi
 	return patients, nil
 }
 
-func (r *UserRepository) GetPatientTherapist(userID int) (models.DoctorWithUser, error) {
+func (r *UserRepository) GetPatientTherapist(userID int) (*models.DoctorWithUser, error) {
 	var therapist models.DoctorWithUser
 
 	query := `
@@ -679,14 +679,18 @@ func (r *UserRepository) GetPatientTherapist(userID int) (models.DoctorWithUser,
 		&therapist.Description,
 	)
 
-	if err != nil {
-		return models.DoctorWithUser{}, err
+	if err == sql.ErrNoRows {
+		return nil, nil
 	}
 
-	return therapist, nil
+	if err != nil {
+		return nil, err
+	}
+
+	return &therapist, nil
 }
 
-func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUser, error) {
+func (r *UserRepository) GetPatientPsychiatrist(userID int) (*models.DoctorWithUser, error) {
 	var psychiatrist models.DoctorWithUser
 
 	query := `
@@ -713,11 +717,15 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (models.DoctorWithUs
 		&psychiatrist.Description,
 	)
 
-	if err != nil {
-		return models.DoctorWithUser{}, err
+	if err == sql.ErrNoRows {
+		return nil, nil
 	}
 
-	return psychiatrist, nil
+	if err != nil {
+		return nil, err
+	}
+
+	return &psychiatrist, nil
 }
 
 func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error){

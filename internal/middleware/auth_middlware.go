@@ -3,10 +3,20 @@ package middleware
 import ("net/http"
 		"context"
 		"github.com/gattini0928/Equilibrium/internal/services/auth"
-	)
+		"github.com/gattini0928/Equilibrium/internal/models"
+)
+
+type contextKey string
+
+const userKey contextKey = "user"
 
 func IsAuthenticated(r *http.Request) bool {
     return r.Context().Value(auth.UserIDKey) != nil
+}
+
+func GetUser(r *http.Request) (*models.User, bool) {
+    user, ok := r.Context().Value(userKey).(*models.User)
+    return user, ok
 }
 
 func AuthMiddleware(secret string, next http.Handler) http.Handler {

@@ -59,3 +59,9 @@ type PsychiatristView struct {
     Form PsychiatristForm
 	Msg string
 }
+
+type PerfilView struct {
+	ViewData
+	Messages []string
+	Perfil any	
+}

@@ -244,12 +244,12 @@ func (s *UserService) GetPatientDetail(patientID, doctorID int) (models.PatientW
 }	
 
 // Detalhes do Terapeuta do Paciente
-func (s *UserService) PatientTherapistDetail(userID int) (models.DoctorWithUser, error) {
+func (s *UserService) PatientTherapistDetail(userID int) (*models.DoctorWithUser, error) {
 	return s.Repo.GetPatientTherapist(userID)
 }
 
 // Detalhes do Psiquiatra do Paciente
-func (s *UserService) PatientPsiquiatristDetail(userID int) (models.DoctorWithUser, error) {
+func (s *UserService) PatientPsiquiatristDetail(userID int) (*models.DoctorWithUser, error) {
 	return s.Repo.GetPatientPsychiatrist(userID) 
 }
 
@@ -329,7 +329,39 @@ func (s *UserService) Perfil(userID int) (any, error) {
 
 	switch user.Role {
 	case "patient":
-		return s.Repo.GetPatientPerfil(userID)
+
+		therapist, err := s.Repo.GetPatientTherapist(userID)
+		if err != nil {
+			return models.DoctorWithUser{}, err
+		}
+
+		psychiatrist, err := s.Repo.GetPatientPsychiatrist(userID)
+		if err != nil {
+			return models.DoctorWithUser{}, err
+		}
+
+		patientID, err := s.Repo.GetPatientIDByUserID(userID)
+		if err != nil {
+			return models.DoctorWithUser{}, err
+		}
+
+		consultations, err := s.Repo.GetPatientConsultations(patientID)
+		if err != nil {
+			return models.DoctorWithUser{}, err
+		}
+
+		perfil, err := s.Repo.GetPatientPerfil(userID)
+		if err != nil {
+			return models.PatientDashboard{}, err
+		}
+
+		return models.PatientDashboard{
+			Perfil: perfil,
+			Role: "patient",
+			Therapist: therapist,
+			Psychiatrist: psychiatrist,
+			Consultations: consultations,
+		}, nil
 
 	case "therapist":
 		perfil, err := s.Repo.GetTherapistPerfil(userID)
@@ -341,17 +373,12 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			return nil, err
 		}
 
-		patientID, err := s.Repo.GetPatientIDByUserID(userID)
-		if err != nil {
-			return nil, err
-		}
-
-		patients,  err := s.Repo.GetTherapistPatients(patientID)
-		if err != nil {
-			return nil, err
-		}
-
 		therapistID, err := s.Repo.GetTherapistIDByUserID(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		patients,  err := s.Repo.GetTherapistPatients(therapistID)
 		if err != nil {
 			return nil, err
 		}
@@ -363,6 +390,7 @@ func (s *UserService) Perfil(userID int) (any, error) {
 
 		return models.DoctorDashboard{
 			Perfil: perfil,
+			Role: "doctor",
 			Agendas: agendas,
 			Patients: patients,
 			Consultations: consultations,
@@ -378,22 +406,17 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			return nil, err
 		}
 
-		patientID, err := s.Repo.GetPatientIDByUserID(userID)
+		psychiatristID , err := s.Repo.GetPsychiatristIDByUserID(userID)
 		if err != nil {
 			return nil, err
 		}
 
-		patients,  err := s.Repo.GetPsychiatristPatients(patientID)
+		patients,  err := s.Repo.GetPsychiatristPatients(psychiatristID)
 		if err != nil {
 			return nil, err
 		}
 
-		therapistID, err := s.Repo.GetPsychiatristIDByUserID(userID)
-		if err != nil {
-			return nil, err
-		}
-
-		consultations, err := s.Repo.GetPsychiatristConsultations(therapistID)
+		consultations, err := s.Repo.GetPsychiatristConsultations(psychiatristID)
 		if err != nil {
 			return nil, err
 		}

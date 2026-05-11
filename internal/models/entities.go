@@ -132,9 +132,17 @@ type PatientWithUser struct {
 	Remedies []Remedy
 }
 
+type PatientDashboard struct {
+	Perfil UserPerfil
+	Role string
+	Therapist *DoctorWithUser
+	Psychiatrist *DoctorWithUser
+	Consultations []Consultation
+}
 
 type DoctorDashboard struct {
-	Perfil   UserPerfil 
+	Perfil   UserPerfil
+	Role string 
 	Agendas  []Agenda     
 	Patients []PatientWithUser
 	Consultations []Consultation
