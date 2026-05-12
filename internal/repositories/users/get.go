@@ -617,7 +617,7 @@ func (r *UserRepository) GetPsychiatristPatient(patiendID int) (models.PatientWi
 	SELECT p.id, u.name, u.email, u.age, u.image, p.current_diagnosis
 	FROM patients p
 	JOIN users u ON u.id = p.user_id
-	JOIN psychiatrists ps ON t.id = p.psychiastrid_id
+	JOIN psychiatrists ps ON p.id = p.psychiastrid_id
 	WHERE ps.user_id = $1
 	`
 
