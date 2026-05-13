@@ -3,6 +3,6 @@ tmp/
 *.exe
 translate.py
 static/uploads/
-doctor_perfil.html
-patient_perfil.html
+
+
 

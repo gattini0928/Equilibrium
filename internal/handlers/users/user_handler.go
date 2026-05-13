@@ -506,7 +506,7 @@ func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request
 
 	therapists, err := h.Service.ListAllTherapists()
 	if err != nil {
-		http.Error(w, "erro", 500)
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -518,7 +518,7 @@ func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Requ
 
 	psychiatrists, err := h.Service.ListAllPsychiatrists()
 	if err != nil {
-		http.Error(w, "erro", 500)
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return
 	}
 

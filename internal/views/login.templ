@@ -4,34 +4,31 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ LoginPage(data models.LoginView) {
     @Layout("Login", data.IsAuth) {
-    <h2>Login</h2>
-
     if data.Msg != "" {
         <div class="message"> {data.Msg} </div>
     }
-
-    <form method="POST" action="/login">
-        <div class="inputs-labels">
-            <label for="email">Email: </label>
-            <input name="email" value={ data.Form.Email } placeholder="Seu Email">
-            if data.Form.Errors["email"] != "" {
-                <span class="error">{ data.Form.Errors["email"] }</span>
+    <main>
+        <h2>Login</h2>
+        <form method="POST" action="/login">
+            <div class="inputs-labels">
+                <label for="email">Email: </label>
+                <input name="email" value={ data.Form.Email } placeholder="Seu Email">
+                if data.Form.Errors["email"] != "" {
+                    <span class="error">{ data.Form.Errors["email"] }</span>
+                }
+            </div>
+            <div class="inputs-labels">
+                <label for="email">Senha: </label>
+                <input type="password" name="password" placeholder="Sua senha">
+                if data.Form.Errors["password"] != "" {
+                    <span class="error">{ data.Form.Errors["password"] }</span>
+                }
+            </div>
+            if data.Form.General != "" {
+                <div class="error">{ data.Form.General }</div>
             }
-        </div>
-
-        <div class="inputs-labels">
-            <label for="email">Senha: </label>
-            <input type="password" name="password" placeholder="Sua senha">
-            if data.Form.Errors["password"] != "" {
-                <span class="error">{ data.Form.Errors["password"] }</span>
-            }
-        </div>
-
-        if data.Form.General != "" {
-            <div class="error">{ data.Form.General }</div>
-        }
-
-        <button type="submit">Entrar</button>
-    </form>
+            <button type="submit">Entrar</button>
+        </form>
+    </main>
 }
 }

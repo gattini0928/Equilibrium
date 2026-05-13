@@ -28,7 +28,7 @@ func (r *UserRepository) CompletePsychiatrist(userID int, crm string, descriptio
 
 func (r *UserRepository) AddTherapistToPatient(patientID int, therapistID int) error {
 	_, err := r.DB.Exec(`
-		UPDATE public.patients 
+		UPDATE patients
 		SET therapist_id = $1
 		WHERE user_id = $2;
 	`, therapistID, patientID)
