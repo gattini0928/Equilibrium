@@ -24,8 +24,7 @@ templ PsychiatristsPage(psychiatrists []models.DoctorWithUser, isAuth bool) {
                         <h3>Um pouco sobre mim</h3>
                         <p>{psychiatrist.Description}</p>
                     </div>
-                    <a href="" class="psychiatrist-link">Ver Agenda</a>
-                    <!-- <a href="/psychiatrist/1" target="_blank" class="psychiatrist-link">Ver Agenda</a> -->
+                    <a href="/psychiatrist/id/{psychiatrist.ID}" target="_blank" class="psychiatrist-link">Ver Agenda</a>
                 </div>              
             }
         </div>

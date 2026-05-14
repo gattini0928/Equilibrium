@@ -529,27 +529,20 @@ func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Requ
 func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Request) {
 	id, err :=  utils.CheckID("id", r)
 	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
+		utils.RenderStatusPage(w, r, err ,http.StatusBadRequest)
 		return
 	}
 
-	therapist, agendas,err := h.Service.TherapistDetail(id)
+	therapist, agendas, err := h.Service.TherapistDetail(id)
+
 	if errors.Is(err, sql.ErrNoRows) {
-		utils.WriteError(w, http.StatusNotFound, err)
+		utils.RenderStatusPage(w, r, err, http.StatusNotFound)
 		return
 	}
 
-	resp := models.DoctorDetailResponse {
-		Name: therapist.Name,
-		Email: therapist.Email,
-		Age: therapist.Age,
-		Image: therapist.Image,
-		Specialty: therapist.Specialty,
-		Description: therapist.Description,
-		Agendas: agendas,
-	}
+	isAuth := middleware.IsAuthenticated(r)
+	_ = views.TherapistDetailPage(therapist, agendas, isAuth)
 
-	utils.WriteJSON(w, http.StatusOK, resp)
 }
 
 func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Request) {

@@ -136,7 +136,7 @@ func TherapistsPage(therapists []models.DoctorWithUser, isAuth bool) templ.Compo
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div><a href=\"\" class=\"therapist-link\">Ver Agenda</a><!-- <a href=\"/therapists/id/1\" target=\"_blank\" class=\"therapist-link\">Ver Agenda</a> --></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div><a href=\"/therapists/id/{therapist.ID}\" target=\"_blank\" class=\"therapist-link\">Ver Agenda</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
