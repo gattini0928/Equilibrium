@@ -1,0 +1,48 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ PsychiatristDetailPage(psychiatrist models.DoctorWithUser, agendas []models.Agenda, isAuth bool) {
+    @Layout(psychiatrist.Name, isAuth) {
+    <main>
+        <section class="card doctor-card">
+        <img 
+            src={psychiatrist.Image}
+            alt="Foto Doutor"
+        />
+
+        <h1>{psychiatrist.Name}</h1>
+
+        <div class="doctor-info">
+            <span>Email: {psychiatrist.Email}</span>
+            <span>Idade: {psychiatrist.Age} anos</span>
+            <span>Especialidade: {psychiatrist.CRM}</span>
+
+            <p>
+                {psychiatrist.Description}
+            </p>
+        </div>
+
+        </section>
+
+        <section class="card schedule-card">
+
+        <h2>Agendas</h2>
+
+        if agendas == nil {
+            <span>Psiquiatra sem agenda disponível no momento</span>
+            } else {
+                <div class="schedule-list">
+                    for _, agenda := range agendas {
+                        <div class="schedule-item">
+                            <span class="date">{agenda.Day}/{agenda.Month} - {agenda.Hour}</span>
+                            <a href="#">Reservar Horário</a>
+                        </div>
+                    }
+                    <span class="price">R${psychiatrist.Price}</span>
+                </div>
+            }
+        </section>
+  </main>
+    }
+}

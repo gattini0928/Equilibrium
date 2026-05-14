@@ -85,8 +85,13 @@ func RenderStatusPage(
 
     case http.StatusNotFound:
         data.StatusMessage = "Página não encontrada"
-
+	
         w.WriteHeader(statusCode)
         _ = views.Status404Page(data).Render(r.Context(), w)
+	
+	case http.StatusBadRequest:
+		data.StatusMessage = "Há um problema com o que você enviou"
+		w.WriteHeader(statusCode)
+		_ = views.Status400Page(data).Render(r.Context(), w)
     }
 }

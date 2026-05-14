@@ -503,7 +503,6 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request) {
-
 	therapists, err := h.Service.ListAllTherapists()
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
@@ -515,7 +514,6 @@ func (h *UserHandler) HandleAllTherapists(w http.ResponseWriter, r *http.Request
 }
 
 func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Request) {
-
 	psychiatrists, err := h.Service.ListAllPsychiatrists()
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
@@ -524,8 +522,8 @@ func (h *UserHandler) HandleAllPsychiatrists(w http.ResponseWriter, r *http.Requ
 
 	isAuth := middleware.IsAuthenticated(r)
 	_ = views.PsychiatristsPage(psychiatrists, isAuth).Render(r.Context(), w)
-
 }
+
 func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Request) {
 	id, err :=  utils.CheckID("id", r)
 	if err != nil {
@@ -534,7 +532,6 @@ func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Reque
 	}
 
 	therapist, agendas, err := h.Service.TherapistDetail(id)
-
 	if errors.Is(err, sql.ErrNoRows) {
 		utils.RenderStatusPage(w, r, err, http.StatusNotFound)
 		return
@@ -542,33 +539,23 @@ func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Reque
 
 	isAuth := middleware.IsAuthenticated(r)
 	_ = views.TherapistDetailPage(therapist, agendas, isAuth)
-
 }
 
 func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := utils.CheckID("id", r)
 	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
 
 	psychiatrist, agendas,  err := h.Service.PsychiatristDetail(id)
 	if errors.Is(err, sql.ErrNoRows) {
-		utils.WriteError(w, http.StatusNotFound, err)
+		utils.RenderStatusPage(w, r, err, http.StatusNotFound)
 		return
 	}
 
-	resp := models.DoctorDetailResponse {
-		Name: psychiatrist.Name,
-		Email: psychiatrist.Email,
-		Age: psychiatrist.Age,
-		Image: psychiatrist.Image,
-		CRM: psychiatrist.CRM,
-		Description: psychiatrist.Description,
-		Agendas: agendas,
-	}
-
-	utils.WriteJSON(w, http.StatusOK, resp)
+	isAuth := middleware.IsAuthenticated(r)
+	_ = views.PsychiatristDetailPage(psychiatrist, agendas, isAuth).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandleAddTherapistToPatient(w http.ResponseWriter, r *http.Request) {
