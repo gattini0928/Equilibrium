@@ -7,7 +7,7 @@ templ LoginPage(data models.LoginView) {
     if data.Msg != "" {
         <div class="message"> {data.Msg} </div>
     }
-    <main>
+    <main class="form-page">
         <h2>Login</h2>
         <form method="POST" action="/login">
             <div class="inputs-labels">

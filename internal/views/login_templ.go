@@ -62,7 +62,7 @@ func LoginPage(data models.LoginView) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " <main><h2>Login</h2><form method=\"POST\" action=\"/login\"><div class=\"inputs-labels\"><label for=\"email\">Email: </label> <input name=\"email\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " <main class=\"form-page\"><h2>Login</h2><form method=\"POST\" action=\"/login\"><div class=\"inputs-labels\"><label for=\"email\">Email: </label> <input name=\"email\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

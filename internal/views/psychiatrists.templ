@@ -7,21 +7,22 @@ import (
 
 templ PsychiatristsPage(psychiatrists []models.DoctorWithUser, isAuth bool) {
     @Layout("Psiquiatras", isAuth) {
-    <main>
+     <main class="doctors-page">
+        <h2>Nossos Psiquiatras</h2> 
         if len(psychiatrists) == 0 {
             <span class="msg">Por enquanto não possuímos nenhum psiquiatra</span>
         }
         <div class="cards">       
             for _, psychiatrist := range psychiatrists {
                 <div class="card">
-                    <div class="img-wrapper">
+                    <div class="img-wrapper-doctor">
                         <img src={psychiatrist.Image} alt="Foto de Perfil do Psiquiatra">                  
                     </div>
                     <div class="infos">
                         <span class="name">{psychiatrist.Name}</span>
                         <span class="email">{psychiatrist.Email}</span>
-                        <span class="email">{psychiatrist.Age} anos</span>
-                        <span class="crm">{psychiatrist.CRM}</span>
+                        <span class="email">Idade: {psychiatrist.Age} anos</span>
+                        <span class="crm">CRM: {psychiatrist.CRM}</span>
                     </div>
                     <div class="description">
                         <h3>Um pouco sobre mim</h3>

@@ -4,7 +4,7 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ PsychiatristDetailPage(psychiatrist models.DoctorWithUser, agendas []models.Agenda, isAuth bool) {
     @Layout(psychiatrist.Name, isAuth) {
-    <main>
+    <main class="doctor-detail-page">
         <section class="card doctor-card">
         <img 
             src={psychiatrist.Image}

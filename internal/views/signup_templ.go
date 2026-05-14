@@ -43,7 +43,7 @@ func SignupPage(data models.SignupView) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main><h2>Criar Conta</h2><form method=\"POST\" action=\"/signup\" enctype=\"multipart/form-data\"><div class=\"inputs-labels\"><label for=\"name\">Nome:</label> <input type=\"text\" name=\"name\" placeholder=\"Nome Completo\" required> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"form-page\"><h2>Criar Conta</h2><form method=\"POST\" action=\"/signup\" enctype=\"multipart/form-data\"><div class=\"inputs-labels\"><label for=\"name\">Nome:</label> <input type=\"text\" name=\"name\" placeholder=\"Nome Completo\" required> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

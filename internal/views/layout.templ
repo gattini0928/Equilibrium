@@ -13,13 +13,15 @@ templ Layout(title string, isAuth bool) {
       <link rel="stylesheet" href="/static/css/homepage.css">
       <link rel="stylesheet" href="/static/css/forms.css">
       <link rel="stylesheet" href="/static/css/doctor_detail.css">
+      <link rel="stylesheet" href="/static/css/doctors.css">
     </head>
     <body>
       <header>
         <div class="img-wrapper">
-          <img src="/static/images/equilibriumclean.png" alt="Equilibrium Logo" class="logo">
+          <a href="/">
+            <img src="/static/images/equilibriumclean.png" alt="Equilibrium Logo" class="logo">
+          </a>
         </div>
-
         <nav>
           if isAuth {
             <div class="nav-link-icon">

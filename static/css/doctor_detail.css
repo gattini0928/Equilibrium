@@ -1,10 +1,10 @@
-main {
+.doctor-detail-page {
       width: 100%;
-      max-width: 1100px;
-
+    margin: 0 auto;
       display: grid;
       grid-template-columns: 320px 1fr;
       gap: 24px;
+      padding: 2rem;
     }
 
     .card {

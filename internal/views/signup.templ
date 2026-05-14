@@ -4,7 +4,7 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ SignupPage(data models.SignupView) {
     @Layout("Criar Conta", data.IsAuth) {
-    <main>
+    <main class="form-page">
         <h2>Criar Conta</h2>
         <form method="POST" action="/signup" enctype="multipart/form-data">
         <div class="inputs-labels">

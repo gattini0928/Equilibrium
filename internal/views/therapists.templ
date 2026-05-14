@@ -7,21 +7,22 @@ import (
 
 templ TherapistsPage(therapists []models.DoctorWithUser, isAuth bool) {
     @Layout("Terapeutas", isAuth) {
-    <main>
+    <main class="doctors-page">
+        <h2>Nossos Terapeutas</h2>                                  
         if len(therapists) == 0 {
             <span class="msg">Por enquanto não possuímos nenhum terapeuta</span>
         }
         <div class="cards">       
             for _, therapist := range therapists {
                 <div class="card">
-                    <div class="img-wrapper">
+                    <div class="img-wrapper-doctor">
                         <img src={therapist.Image} alt="Foto de Perfil do Terapeuta">             
                     </div>
                     <div class="infos">
                         <span class="name">{therapist.Name}</span>
                         <span class="email">{therapist.Email}</span>
-                        <span class="email">{therapist.Age} anos</span>
-                        <span class="specialty">{therapist.Specialty}</span>
+                        <span class="email">Idade: {therapist.Age} anos</span>
+                        <span class="specialty">Especialidade: {therapist.Specialty}</span>
                     </div>
                     <div class="description">
                         <h3>Um pouco sobre mim</h3>
