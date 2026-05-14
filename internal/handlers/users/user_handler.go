@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 	"strings"
+	"log"
 
 	"html/template"
 
@@ -537,8 +538,13 @@ func (h *UserHandler) HandleTherapistDetail(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
+		return
+	}
+
 	isAuth := middleware.IsAuthenticated(r)
-	_ = views.TherapistDetailPage(therapist, agendas, isAuth)
+	_ = views.TherapistDetailPage(therapist, agendas, isAuth).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Request) {
@@ -547,6 +553,8 @@ func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Re
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
+
+	log.Printf("Buscando psiquiatra com ID: %d", id)
 
 	psychiatrist, agendas,  err := h.Service.PsychiatristDetail(id)
 	if errors.Is(err, sql.ErrNoRows) {

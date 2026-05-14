@@ -1,6 +1,9 @@
 package views
 
-import "github.com/gattini0928/Equilibrium/internal/models"
+import (
+    "fmt"
+    "github.com/gattini0928/Equilibrium/internal/models"
+    )
 
 templ TherapistsPage(therapists []models.DoctorWithUser, isAuth bool) {
     @Layout("Terapeutas", isAuth) {
@@ -24,7 +27,7 @@ templ TherapistsPage(therapists []models.DoctorWithUser, isAuth bool) {
                         <h3>Um pouco sobre mim</h3>
                         <p>{therapist.Description}</p>
                     </div>
-                    <a href="/therapists/id/{therapist.ID}" target="_blank" class="therapist-link">Ver Agenda</a>
+                    <a href={ templ.URL(fmt.Sprintf("/therapists/id/%d", therapist.ID)) } class="therapist-link">Ver Agenda</a>
                 </div>              
             }
         </div>

@@ -29,8 +29,9 @@ templ TherapistDetailPage(therapist models.DoctorWithUser, agendas []models.Agen
 
         <h2>Agendas</h2>
 
-        if agendas == nil {
+        if len(agendas) == 0 {
             <span>Terapeuta sem agenda disponível no momento</span>
+            <span class="price">R${therapist.Price}</span>
             } else {
                 <div class="schedule-list">
                     for _, agenda := range agendas {
