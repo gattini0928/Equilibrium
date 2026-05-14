@@ -391,11 +391,14 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 			u.age,
 			u.image,
 			p.crm,
-			p.description
+			p.description,
+			p.price
 		FROM psychiatrists p
 		JOIN users u ON p.user_id = u.id
 		WHERE p.user_id = $1;
 	`
+
+	var price sql.NullFloat64
 	row := r.DB.QueryRow(query, userID)
 	err := row.Scan(
 		&psychiatrist.ID,
@@ -405,11 +408,15 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 		&psychiatrist.Image,
 		&psychiatrist.CRM,
 		&psychiatrist.Description,
-
+		&price,
 	)
 
 	if err != nil {
 		return models.DoctorWithUser{}, err
+	}
+
+	if price.Valid {
+		psychiatrist.Price = price.Float64
 	}
 
 	return psychiatrist, nil
