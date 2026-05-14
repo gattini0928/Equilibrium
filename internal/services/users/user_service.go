@@ -226,7 +226,7 @@ func (s *UserService) PsychiatristToPatient(patientID, psychiatristID int) error
 }
 
 // Terapeuta ou Psiquiatra vê os detalhes do paciente
-func (s *UserService) GetPatientDetail(patientID, doctorID int) (models.PatientWithUser, error) {
+func (s *UserService) PatientDetail(patientID, doctorID int) (models.PatientWithUser, error) {
 	user, err := s.Repo.GetUserByID(doctorID)
 	if err != nil {
 		return models.PatientWithUser{}, err

@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 	"strings"
-	"log"
 
 	"html/template"
 
@@ -554,8 +553,6 @@ func (h *UserHandler) HandlePsychiatristDetail(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	log.Printf("Buscando psiquiatra com ID: %d", id)
-
 	psychiatrist, agendas,  err := h.Service.PsychiatristDetail(id)
 	if errors.Is(err, sql.ErrNoRows) {
 		utils.RenderStatusPage(w, r, err, http.StatusNotFound)
@@ -671,7 +668,7 @@ func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	patient, err := h.Service.GetPatientDetail(patientID, doctorID)
+	patient, err := h.Service.PatientDetail(patientID, doctorID)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return 

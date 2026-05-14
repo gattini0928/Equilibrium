@@ -283,7 +283,7 @@ func (r *UserRepository) GetTherapistById(userID int) (models.DoctorWithUser, er
 			t.price
 		FROM therapists t
 		JOIN users u ON t.user_id = u.id
-		WHERE t.user_id = $1;	
+		WHERE t.id = $1;	
 		`
 	var price sql.NullFloat64
 
@@ -395,7 +395,7 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 			p.price
 		FROM psychiatrists p
 		JOIN users u ON p.user_id = u.id
-		WHERE p.user_id = $1;
+		WHERE p.id = $1;
 	`
 
 	var price sql.NullFloat64
