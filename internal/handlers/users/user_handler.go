@@ -476,7 +476,7 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 			messages["therapist"] = "Você ainda não tem nenhum terapeuta"
 		}
 		if p.Psychiatrist == nil{
-			messages["psychiatrist"] = "Você ainda não tem nenhum terapeuta"
+			messages["psychiatrist"] = "Você ainda não tem nenhum psiquiatra"
 		}
 		if len(p.Consultations) == 0 {
 			messages["consultations"] = "Você ainda não tem nenhuma consulta"

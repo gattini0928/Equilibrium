@@ -43,10 +43,6 @@
     cursor: pointer;
 }
 
-.card:hover {
-    transform: translateY(-4px);
-}
-
 /* IMAGE */
 
 .img-wrapper-doctor {

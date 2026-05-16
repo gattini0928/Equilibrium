@@ -930,7 +930,7 @@ func (r *UserRepository) GetTherapistConsultations(therapistID int) ([]models.Co
 		FROM consultations c
 		JOIN patients p ON p.id = c.patient_id
 		JOIN users u ON u.id = p.user_id
-		WHERE therapist_id = $1
+		WHERE c.therapist_id = $1
 	`
 	rows, err := r.DB.Query(query, therapistID)
 	if err != nil {
@@ -972,7 +972,7 @@ func (r *UserRepository) GetPsychiatristConsultations(psychiatristID int) ([]mod
 		FROM consultations c
 		JOIN patients p ON p.id = c.patient_id
 		JOIN users u ON u.id = p.user_id
-		WHERE psychiatrist_id = $1
+		WHERE c.psychiatrist_id = $1
 	`
 	rows, err := r.DB.Query(query, psychiatristID)
 	if err != nil {

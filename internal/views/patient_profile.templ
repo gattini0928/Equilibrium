@@ -5,9 +5,6 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
   @Layout("Perfil", data.IsAuth) {
     <main class="patient-profile-page">
-
-      <h2>Seu Perfil - {p.Perfil.Name}</h2>
-
       <section class="grid">
 
         <div class="card profile-card">
@@ -43,6 +40,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
         </div>
 
         <div class="card professional-card">
+          <h2>Terapeuta</h2>
           if p.Therapist == nil {
             <span>{data.Messages["therapist"]}</span>
           } else {
@@ -53,6 +51,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
         </div>
 
         <div class="card professional-card">
+          <h2>Psiquiatra</h2>
           if p.Psychiatrist == nil {
             <span>{data.Messages["psychiatrist"]}</span>
           } else {

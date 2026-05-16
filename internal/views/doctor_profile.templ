@@ -5,12 +5,8 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
   @Layout("Perfil", data.IsAuth) {
     <main class="doctor-profile-page">
-
-      <h2>Seu perfil - {p.Perfil.Name}</h2>
-
       <section class="card doctor">
         <h2>Suas informações</h2>
-
         <img src={p.Perfil.Image} alt="Foto de Perfil do Doutor" />
 
         <div class="infos">
@@ -31,24 +27,24 @@ templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
           {p.Perfil.Description}
         </p>
       </section>
-
-      <h2>Agendas</h2>
-      <a href="">Adicionar Agenda</a>
-
       if len(p.Agendas) == 0 {
         <div class="no-agenda">
+            <h2>Agendas</h2>
+            <a href="">Adicionar Agenda</a>
           <span>{data.Messages["agendas"]}</span>
-          <span class="price">R${p.Perfil.Price}</span>
+          <a href="" class="price">R${p.Perfil.Price}</a>
         </div>
       } else {
         <section class="card">
+          <h2>Agendas</h2>
+          <a href="">Adicionar Agenda</a>
           for _, agenda := range p.Agendas {
             <div class="schedule-list">
               <div class="schedule-item">
                 <span class="date">{agenda.Day}/{agenda.Month} - {agenda.Hour}</span>
                 <a href="#">Deletar</a>
               </div>
-              <span class="price">R${p.Perfil.Price}</span>
+              <a href="" class="price">R${p.Perfil.Price}</a>
             </div>
           }
         </section>
@@ -87,7 +83,6 @@ templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
           }
         }
       </section>
-
     </main>
   }
 }
