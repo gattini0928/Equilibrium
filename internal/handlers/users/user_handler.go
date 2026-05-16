@@ -678,32 +678,46 @@ func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request
 }
 
 func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {
-	var agenda models.Agenda
-
-	err := utils.ParseJSON(r, &agenda)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
-		return 
-	}
-
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return
 	}
 
-	createdAgenda, err := h.Service.AddAgenda(userID, agenda.Day, agenda.Month, agenda.Hour)
+	err := r.ParseForm()
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, createdAgenda)
+	var day int
+	day, err = strconv.Atoi(r.FormValue("day"))
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return
+	}
+
+	var month int
+	month, err = strconv.Atoi(r.FormValue("month"))
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return
+	}
+	hour := r.FormValue("hour")
+
+	_, err = h.Service.AddAgenda(userID, day, month, hour)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError,)
+		return
+	}
+
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
+
 }
 
 func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request) {
 	agendaID, err := utils.CheckID("agenda_id", r)
 	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return 
 	}
 
@@ -714,37 +728,40 @@ func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request)
 
 	err = h.Service.RemoveAgenda(userID, agendaID)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return 
 	}
 	
-	utils.WriteJSON(w, http.StatusOK, map[string]string{
-		"message": "Agenda Deletada com sucesso"})
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
 }
 
 func (h *UserHandler) HandleUpdatePrice(w http.ResponseWriter, r *http.Request) {
-	var req models.UpdatePriceRequest
-
-	err := utils.ParseJSON(r, &req)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
-		return
-	}
-
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return
 	}
 
-	err = h.Service.UpdatePrice(userID, req.Price)
+	err := r.ParseForm()
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]float64{
-		"price": req.Price,
-	})
+	var price float64
+	price, err = strconv.ParseFloat(r.FormValue("price"), 64)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return
+	}
+
+	err = h.Service.UpdatePrice(userID, price)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
+	
 }
 
 func (h *UserHandler) HandleReserveTherapistAgenda(w http.ResponseWriter, r *http.Request) {

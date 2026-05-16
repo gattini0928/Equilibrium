@@ -46,7 +46,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
           } else {
             <h3>Terapeuta - Dr. {p.Therapist.Name}</h3>
             <img src={p.Therapist.Image} alt="Foto de perfil do terapeuta" />
-            <a href="#">Ver Agenda</a>
+            <a href="/me/therapist" class="therapist-link">Ver Agenda</a>
           }
         </div>
 
@@ -57,7 +57,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
           } else {
             <h3>Psiquiatra - Dr. {p.Psychiatrist.Name}</h3>
             <img src={p.Psychiatrist.Image} alt="Foto de perfil do psiquiatra" />
-            <a href="#">Ver Agenda</a>
+            <a href="/me/pyschiatrist" class="therapist-link">Ver Agenda</a>
           }
         </div>
 
