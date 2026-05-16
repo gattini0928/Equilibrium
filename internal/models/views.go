@@ -62,7 +62,7 @@ type PsychiatristView struct {
 
 type PerfilView struct {
 	ViewData
-	Messages []string
+	Messages map[string]string
 	Perfil any	
 }
 

@@ -441,7 +441,7 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var messages []string
+	messages := make(map[string]string)
 
 	data := models.PerfilView{
 		ViewData: models.ViewData{
@@ -454,7 +454,7 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("flash")
 
 	if err == nil {
-		messages = append(messages, cookie.Value)
+		messages["cookie"] = cookie.Value
 		http.SetCookie(w, &http.Cookie{
 			Name:   "flash",
 			Value:  "",
@@ -473,13 +473,13 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 	switch p := perfil.(type) {
 	case models.PatientDashboard:
 		if p.Therapist == nil {
-			messages = append(messages, "Você ainda não tem nenhum terapeuta")
+			messages["therapist"] = "Você ainda não tem nenhum terapeuta"
 		}
 		if p.Psychiatrist == nil{
-			messages = append(messages,"Você ainda não tem nenhum terapeuta")
+			messages["psychiatrist"] = "Você ainda não tem nenhum terapeuta"
 		}
 		if len(p.Consultations) == 0 {
-			messages = append(messages,"Você ainda não tem nenhuma consulta")
+			messages["consultations"] = "Você ainda não tem nenhuma consulta"
 		}
 
 		data.Messages = messages
@@ -487,14 +487,14 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 
 	case models.DoctorDashboard:
 		if len(p.Agendas) == 0 {
-			messages = append(messages, "Você ainda não tem nenhuma agenda")
+			messages["agendas"] = "Você ainda não tem nenhuma agenda"
 		}
 
 		if len(p.Patients) == 0 {
-			messages = append(messages, "Você ainda não tem nenhum paciente")
+			messages["patients"] = "Você ainda não tem nenhum paciente"
 		}
 		if len(p.Consultations) == 0 {
-			messages = append(messages, "Você ainda não tem nenhuma consulta")
+			messages["consultations"] = "Você ainda não tem nenhuma consulta"
 		}
 
 		data.Messages = messages

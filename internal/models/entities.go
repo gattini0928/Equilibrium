@@ -74,7 +74,10 @@ type PsychiatristInfo struct {
 
 type Consultation struct {
 	ID               int
-	PatientID        int    
+	PatientID        int
+	PatientName string
+	DoctorName string
+	DoctorRole string
 	TherapistID   *int    
 	PsychiatristID *int  
 	Date             time.Time 

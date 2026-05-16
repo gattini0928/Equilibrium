@@ -56,28 +56,9 @@ func PatientProfilePage(data models.PerfilView, p models.PatientDashboard) templ
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><main><h2>Seu Perfil - Gabriel Gattini</h2><section class=\"grid\"><div class=\"card profile-card\"><img src=\"https://placehold.co/200x200\"> <span>Gabriel Gattini</span> <span>gabriel@email.com</span> <span>23 anos</span> <span>Diagnóstico: Bipolar</span></div><div class=\"card\"><h2>Consultas</h2><div class=\"consultation\"><span>Dr. Ricardo Almeida</span> <span>14/05 - 09:00</span> <a href=\"#\">Ver Detalhes</a></div><div class=\"consultation\"><span>Dra. Ana Souza</span> <span>16/05 - 14:30</span> <a href=\"#\">Ver Detalhes</a></div></div><!-- ================= COLUNA 3 - PROFISSIONAIS ================= --><div class=\"card\"><!-- TERAPEUTA --><div class=\"card professional-card\"><h3>Terapeuta - Dr. Ricardo</h3><img src=\"https://placehold.co/120x120\"> <a href=\"#\">Ver Agenda</a></div><!-- PSIQUIATRA --><div class=\"card professional-card\"><h3>Psiquiatra - Dra. Ana</h3><img src=\"https://placehold.co/120x120\"> <a href=\"#\">Ver Agenda</a></div></div></section></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
-			}
-			for _, msg := range data.Messages {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(msg)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/patient_profile.templ`, Line: 10, Col: 16}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
 			}
 			return nil
 		})

@@ -816,26 +816,91 @@ func (r *UserRepository) GetPsychiatristIDByUserID(userID int) (int, error) {
 	return id, nil
 }
 
-func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consultation,error) {
-	query := `
-		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation, agenda_id
-		FROM consultations
-		WHERE patient_id = $1
-	`
-	rows, err := r.DB.Query(query, patientID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+// func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consultation,error) {
+// 	query := `
+// 		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation, agenda_id
+// 		FROM consultations
+// 		WHERE patient_id = $1
+// 	`
+// 	rows, err := r.DB.Query(query, patientID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
 
-	var consultations []models.Consultation
-	for rows.Next() {
-		var consultation models.Consultation
-		err := rows.Scan(
+// 	var consultations []models.Consultation
+// 	for rows.Next() {
+// 		var consultation models.Consultation
+// 		err := rows.Scan(
+// 			&consultation.ID,
+// 			&consultation.PatientID,
+// 			&consultation.TherapistID,
+// 			&consultation.PsychiatristID,
+// 			&consultation.Date,
+// 			&consultation.Price,
+// 			&consultation.Annotation,
+// 			&consultation.AgendaID,
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		consultations = append(consultations, consultation)
+// 	}
+
+// 	if consultations == nil {
+// 		return []models.Consultation{}, nil
+// 	}
+
+// 	return consultations, nil
+
+// }
+
+func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consultation, error) {
+	query := `
+	SELECT 
+		c.id,
+		c.patient_id,
+
+		CASE
+			WHEN c.therapist_id IS NOT NULL THEN tu.name
+			WHEN c.psychiatrist_id IS NOT NULL THEN pu.name
+		END as doctor_name,
+
+		CASE
+			WHEN c.therapist_id IS NOT NULL THEN 'therapist'
+			WHEN c.psychiatrist_id IS NOT NULL THEN 'psychiatrist'
+		END as doctor_role,
+
+			c.date,
+			c.price,
+			c.annotation,
+			c.agenda_id
+
+		FROM consultations c
+
+		LEFT JOIN therapists t ON t.id = c.therapist_id
+		LEFT JOIN users tu ON tu.id = t.user_id
+
+		LEFT JOIN psychiatrists p ON p.id = c.psychiatrist_id
+		LEFT JOIN users pu ON pu.id = p.user_id
+
+		WHERE c.patient_id = $1`
+
+ 	rows, err := r.DB.Query(query, patientID)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	defer rows.Close()
+
+ 	var consultations []models.Consultation
+ 	for rows.Next() {
+ 		var consultation models.Consultation
+ 		err := rows.Scan(
 			&consultation.ID,
 			&consultation.PatientID,
-			&consultation.TherapistID,
-			&consultation.PsychiatristID,
+			&consultation.DoctorName,
+			&consultation.DoctorRole,
 			&consultation.Date,
 			&consultation.Price,
 			&consultation.Annotation,
@@ -843,23 +908,28 @@ func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consul
 		)
 		if err != nil {
 			return nil, err
-		}
+	}
 
-		consultations = append(consultations, consultation)
+	consultations = append(consultations, consultation)
 	}
 
 	if consultations == nil {
 		return []models.Consultation{}, nil
-	}
+}
 
 	return consultations, nil
-
 }
 
 func (r *UserRepository) GetTherapistConsultations(therapistID int) ([]models.Consultation,error) {
 	query := `
-		SELECT id, patient_id, date
-		FROM consultations
+		SELECT 
+			c.id,
+			c.patient_id,
+			u.name,
+			c.date
+		FROM consultations c
+		JOIN patients p ON p.id = c.patient_id
+		JOIN users u ON u.id = p.user_id
 		WHERE therapist_id = $1
 	`
 	rows, err := r.DB.Query(query, therapistID)
@@ -874,6 +944,7 @@ func (r *UserRepository) GetTherapistConsultations(therapistID int) ([]models.Co
 		err := rows.Scan(
 			&consultation.ID,
 			&consultation.PatientID,
+			&consultation.PatientName,
 			&consultation.Date,
 		)
 		if err != nil {
@@ -893,8 +964,14 @@ func (r *UserRepository) GetTherapistConsultations(therapistID int) ([]models.Co
 
 func (r *UserRepository) GetPsychiatristConsultations(psychiatristID int) ([]models.Consultation,error) {
 	query := `
-		SELECT id, patient_id, date, annotation
-		FROM consultations
+		SELECT
+			c.id,
+			c.patient_id,
+			u.name,
+			c.date
+		FROM consultations c
+		JOIN patients p ON p.id = c.patient_id
+		JOIN users u ON u.id = p.user_id
 		WHERE psychiatrist_id = $1
 	`
 	rows, err := r.DB.Query(query, psychiatristID)
@@ -909,8 +986,8 @@ func (r *UserRepository) GetPsychiatristConsultations(psychiatristID int) ([]mod
 		err := rows.Scan(
 			&consultation.ID,
 			&consultation.PatientID,
+			&consultation.PatientName,
 			&consultation.Date,
-			&consultation.Annotation,
 		)
 		if err != nil {
 			return nil, err
