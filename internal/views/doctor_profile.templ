@@ -68,9 +68,14 @@ templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
                         {fmt.Sprintf("%02d/%02d - %s", agenda.Day, agenda.Month, agenda.Hour)}
                     </span>
 
-                    <a href={ templ.URL(fmt.Sprintf("/me/agenda/%d", agenda.ID)) }>
-                      Deletar
-                    </a>
+                    <form 
+                        method="POST"
+                        action={ templ.URL(fmt.Sprintf("/me/agenda/%d", agenda.ID)) }
+                        >
+                        <button type="submit">
+                            Deletar
+                        </button>
+                    </form>
                 </div>
             </div>
         }

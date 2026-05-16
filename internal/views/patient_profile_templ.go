@@ -242,7 +242,7 @@ func PatientProfilePage(data models.PerfilView, p models.PatientDashboard) templ
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" alt=\"Foto de perfil do terapeuta\"> <a href=\"#\">Ver Agenda</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\" alt=\"Foto de perfil do terapeuta\"> <a href=\"/me/therapist\" class=\"therapist-link\">Ver Agenda</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -296,7 +296,7 @@ func PatientProfilePage(data models.PerfilView, p models.PatientDashboard) templ
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" alt=\"Foto de perfil do psiquiatra\"> <a href=\"#\">Ver Agenda</a>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" alt=\"Foto de perfil do psiquiatra\"> <a href=\"/me/pyschiatrist\" class=\"therapist-link\">Ver Agenda</a>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

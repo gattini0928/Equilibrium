@@ -1,9 +1,10 @@
 package users
 
 import (
+	"database/sql"
 	"errors"
+
 	"github.com/gattini0928/Equilibrium/internal/models"
-		"database/sql"
 )
 
 func (r *UserRepository) CreateUserWithProfile(

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 	"strings"
+	"log"
 
 	"html/template"
 
@@ -716,6 +717,7 @@ func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request) {
 	agendaID, err := utils.CheckID("agenda_id", r)
+	log.Printf("PATH: %s", r.URL.Path)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return 

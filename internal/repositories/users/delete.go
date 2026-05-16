@@ -13,7 +13,11 @@ func (r *UserRepository) DeleteAgenda(userID int, agendaID int) error {
 		return err
 	}
 
-	rows, _ := res.RowsAffected()
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	
 	if rows == 0 {
 		return errors.New("agenda não encontrada ou não pertence ao usuário")
 	}

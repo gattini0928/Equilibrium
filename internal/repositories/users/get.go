@@ -348,7 +348,7 @@ func (r *UserRepository) GetTherapistAgenda(therapistID int) ([]models.Agenda, e
 
 func (r *UserRepository) GetTherapistPrivateAgenda(userID int) ([]models.Agenda, error ) {
 	query := `
-		SELECT day, month, hour, reserved
+		SELECT id,day, month, hour, reserved
 		FROM agendas
 		WHERE professional_id = $1
 	`
@@ -363,6 +363,7 @@ func (r *UserRepository) GetTherapistPrivateAgenda(userID int) ([]models.Agenda,
 	for rows.Next() {
 		var a models.Agenda
 		err := rows.Scan(
+			&a.ID,
 			&a.Day,
 			&a.Month,
 			&a.Hour,
