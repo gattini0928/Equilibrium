@@ -4,64 +4,67 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
   @Layout("Perfil", data.IsAuth) {
-    <h2>Seu Perfil - {p.Perfil.Name}</h2>
-    <main .class="patient-profile-page">
+    <main class="patient-profile-page">
 
-  <h2>Seu Perfil - Gabriel Gattini</h2>
+      <h2>Seu Perfil - {p.Perfil.Name}</h2>
 
-  <section class="grid">
-    <div class="card profile-card">
+      <section class="grid">
 
-      <img src={p.Perfil.Image} alt="Foto de Perfil"/>
+        <div class="card profile-card">
+          <img src={p.Perfil.Image} alt="Foto de Perfil"/>
+          <span>{p.Perfil.Name}</span>
+          <span>{p.Perfil.Email}</span>
+          <span>{p.Perfil.Age} anos</span>
+          <span>Diagnóstico: {p.Perfil.CurrentDiagnosis}</span>
+        </div>
 
-      <span>{p.Perfil.Name}</span>
-      <span>{p.Perfil.Email}</span>
-      <span>{p.Perfil.Age} anos</span>
-      <span>Diagnóstico: {p.Perfil.CurrentDiagnosis}</span>
+        <div class="card">
+          <h2>Consultas</h2>
 
-    </div>
-    <div class="card">
-      <h2>Consultas</h2>
-      if len(p.Consultations) == 0 {
-        <span>{data.Messages["consultations"]}</span>
-      } else {
-        for _, consultation := p.Consultations {
-          <div class="consultation">
-            if consultation.DoctorRole == "therapist" {
-                <span>Terapueta: {consultation.DoctorName}</span>
+          if len(p.Consultations) == 0 {
+            <span>{data.Messages["consultations"]}</span>
+          } else {
+            for _, consultation := range p.Consultations {
+              <div class="consultation">
+
+                if consultation.DoctorRole == "therapist" {
+                  <span>Terapueta: {consultation.DoctorName}</span>
+                }
+
+                if consultation.DoctorRole == "psychiatrist" {
+                  <span>Psiquiatra: {consultation.DoctorName}</span>
+                }
+
+                <span>{consultation.Date.Format("02/01/2006 15:04")}</span>
+                <a href="#">Ver Detalhes</a>
+              </div>
             }
-            if consultation.DoctorRole == "psychiatrist" {
-                <span>Psiquiatra: {consultation.DoctorName}</span>
-            }
-            <span>{consultation.Date}</span>
-            <a href="#">Ver Detalhes</a>
-          </div>
-        }
-      }
-    </div>
-    <div class="card">
-      <div class="card professional-card">
-        if p.Therapist == nil {
-          <span>{data.Messages["therapist"]}</span>
-        } else {
-          <h3>Terapeuta - Dr. {p.Therapist.Name}</h3>
+          }
+        </div>
+
+        <div class="card professional-card">
+          if p.Therapist == nil {
+            <span>{data.Messages["therapist"]}</span>
+          } else {
+            <h3>Terapeuta - Dr. {p.Therapist.Name}</h3>
             <img src={p.Therapist.Image} alt="Foto de perfil do terapeuta" />
             <a href="#">Ver Agenda</a>
-        }
-      </div>
-      <div class="card professional-card">
-        if p.Psychiatrist == nil {
-          <span>{data.Messages["psychiatrist"]}</span>
-        } else {
-          <h3>Psiquiatra - Dr. {p.Psychiatrist.Name}</h3>
+          }
+        </div>
+
+        <div class="card professional-card">
+          if p.Psychiatrist == nil {
+            <span>{data.Messages["psychiatrist"]}</span>
+          } else {
+            <h3>Psiquiatra - Dr. {p.Psychiatrist.Name}</h3>
             <img src={p.Psychiatrist.Image} alt="Foto de perfil do psiquiatra" />
             <a href="#">Ver Agenda</a>
-        }
-      </div>
-    </div>
-  </section>
+          }
+        </div>
 
-</main>
+      </section>
+
+    </main>
   }
 }
 

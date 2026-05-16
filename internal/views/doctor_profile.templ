@@ -4,82 +4,90 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
   @Layout("Perfil", data.IsAuth) {
-    <h2>Seu perfil - {p.Perfil.Name}</h2>
-
     <main class="doctor-profile-page">
+
+      <h2>Seu perfil - {p.Perfil.Name}</h2>
+
       <section class="card doctor">
-    <h2>Suas informações</h2>
+        <h2>Suas informações</h2>
 
-      <img src={p.Perfil.Image} alt="Foto de Perfil do Doutor" />
-      <div class="infos">
-        <span>{p.Perfil.Name}</span>
-        <span>{p.Perfil.Email}</span>
-        <span>{p.Perfil.Age} anos</span>  
-        if p.Role == "therapist"{
-          <span>{p.Perfil.Specialty}</span>
-        }
-        if p.Role == "psychiatrist" {
-          <span>{p.Perfil.CRM}</span>
-        }
-      </div>
-      <p class="description">
-        {p.Perfil.Description}
-      </p>
-    </section>
+        <img src={p.Perfil.Image} alt="Foto de Perfil do Doutor" />
 
-    <h2>Agendas</h2>
-    <a href="">Adicionar Agenda</a>
-    if len(p.Agendas) == 0 {
-      <div class="no-agenda">
-        <span>{data.Messages["agendas"]}</span>
-        <span class="price">R${p.Perfil.Price}</span>
-      </div>
-    } else {
-      <section class="card">
-      for _, agenda := range p.Agendas {
-        <div class="schedule-list">
-          <div class="schedule-item">
-            <span class="date">{agenda.Day}/{agenda.Month} - {agenda.Hour}</span>
-              <a href="#">Deletar</a>
-          </div>
+        <div class="infos">
+          <span>{p.Perfil.Name}</span>
+          <span>{p.Perfil.Email}</span>
+          <span>{p.Perfil.Age} anos</span>
+
+          if p.Role == "therapist" {
+            <span>{p.Perfil.Specialty}</span>
+          }
+
+          if p.Role == "psychiatrist" {
+            <span>{p.Perfil.CRM}</span>
+          }
+        </div>
+
+        <p class="description">
+          {p.Perfil.Description}
+        </p>
+      </section>
+
+      <h2>Agendas</h2>
+      <a href="">Adicionar Agenda</a>
+
+      if len(p.Agendas) == 0 {
+        <div class="no-agenda">
+          <span>{data.Messages["agendas"]}</span>
           <span class="price">R${p.Perfil.Price}</span>
         </div>
-      }
-    </section>
-    }
-    <section class="card">
-      <h2>Pacientes</h2>
-
-      if len(p.Patients) == 0 {
-        <span>{data.Messages["patients"]</span>
       } else {
-        for _, patient := p.Patients {
-          <div class="patient-card">
-            <div class="patient-left">
-              <img src="{patient.Image}" alt="Foto do Paciente"/>
-              <span>{patient.Name}</span>
+        <section class="card">
+          for _, agenda := range p.Agendas {
+            <div class="schedule-list">
+              <div class="schedule-item">
+                <span class="date">{agenda.Day}/{agenda.Month} - {agenda.Hour}</span>
+                <a href="#">Deletar</a>
+              </div>
+              <span class="price">R${p.Perfil.Price}</span>
             </div>
-            <a href="#">Ver Detalhes</a>
-        </div>
-        }
+          }
+        </section>
       }
-    </section>
 
-    if len(p.Consultations) == 0 {
-      <span>{data.Messages["consultations"]} 
-    } else {
       <section class="card">
-      <h2>Consultas</h2>
+        <h2>Pacientes</h2>
 
-      for _, consultation := range p.Consultations {
-        <div class="consultation-card">
-            <span>{consultation.PatientName}</span>
-            <span>{consultation.Date}</span>
-            <a href="#">Ver Detalhes</a>
-        </div>  
-      }
-    </section>
-    }
+        if len(p.Patients) == 0 {
+          <span>{data.Messages["patients"]}</span>
+        } else {
+          for _, patient := range p.Patients {
+            <div class="patient-card">
+              <div class="patient-left">
+                <img src={patient.Image} alt="Foto do Paciente"/>
+                <span>{patient.Name}</span>
+              </div>
+              <a href="#">Ver Detalhes</a>
+            </div>
+          }
+        }
+      </section>
+
+      <section class="card">
+        <h2>Consultas</h2>
+
+        if len(p.Consultations) == 0 {
+          <span>{data.Messages["consultations"]}</span>
+        } else {
+          for _, consultation := range p.Consultations {
+            <div class="consultation-card">
+              <span>{consultation.PatientName}</span>
+              <span>{consultation.Date.Format("02/01/2006 15:04")}</span>
+              <a href="#">Ver Detalhes</a>
+            </div>
+          }
+        }
+      </section>
+
     </main>
   }
 }

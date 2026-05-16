@@ -4,31 +4,40 @@ import "github.com/gattini0928/Equilibrium/internal/models"
 
 templ CompleteTherapistInfoPage(data models.TherapistView) {
     @Layout("Completar Informações", data.IsAuth) {
-    if data.Msg != "" {
-        <span class="msg">{data.Msg}</span> 
-    }
-    <main class="form-page">
-        <h2>Complete suas informações</h2>
-        <form method="POST" action="/therapists/profile" class="form-complete">
-            <div class="inputs-labels">
-                <label for="specialty">Especialidade:</label>
-                <input type="text" name="specialty" placeholder="Sua Especialidade" required>
-                if data.Form.Errors["specialty"] != "" {
-                    <span class="error">{ data.Form.Errors["specialty"] }</span>
-                }
-            </div>
-            <div class="inputs-labels">
-                <label for="description">Breve descrição sobre você:</label>
-                <input type="text" name="description" placeholder="Descrição" required>
-                if data.Form.Errors["description"] != "" {
-                    <span class="error">{ data.Form.Errors["description"] }</span>
-                }
-            </div>
-            if data.Form.General != "" {
-                <div class="error">{ data.Form.General }</div>
+        <main class="form-page">
+
+            if data.Msg != "" {
+                <span class="msg">{data.Msg}</span>
             }
-            <button type="submit">Completar Cadastro</button>
-        </form>
-        }
-    </main>
+
+            <h2>Complete suas informações</h2>
+
+            <form method="POST" action="/therapists/profile" class="form-complete">
+                <div class="inputs-labels">
+                    <label for="specialty">Especialidade:</label>
+                    <input type="text" name="specialty" placeholder="Sua Especialidade" required>
+
+                    if data.Form.Errors["specialty"] != "" {
+                        <span class="error">{data.Form.Errors["specialty"]}</span>
+                    }
+                </div>
+
+                <div class="inputs-labels">
+                    <label for="description">Breve descrição sobre você:</label>
+                    <input type="text" name="description" placeholder="Descrição" required>
+
+                    if data.Form.Errors["description"] != "" {
+                        <span class="error">{data.Form.Errors["description"]}</span>
+                    }
+                </div>
+
+                if data.Form.General != "" {
+                    <div class="error">{data.Form.General}</div>
+                }
+
+                <button type="submit">Completar Cadastro</button>
+            </form>
+
+        </main>
+    }
 }
