@@ -88,9 +88,9 @@ func main() {
 				OR
 				(therapist_id IS NULL AND psychiatrist_id IS NOT NULL)
 			),
-			date TIMESTAMP,
+			date TIMESTAMP NOT NULL,
 			price REAL,
-			annotation TEXT,
+			annotation TEXT NOT NULL DEFAULT '',
 			agenda_id INTEGER REFERENCES agendas(id),
 			status VARCHAR(20) CHECK (status IN ('scheduled', 'in_progress', 'finished', 'cancelled'))
 		);

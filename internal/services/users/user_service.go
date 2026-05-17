@@ -479,7 +479,7 @@ func (s *UserService) ReserveTherapistAgenda(patientUserID, therapistID, agendaI
 		return err
 	}
 
-	err = s.Repo.MarkAgendaReserved(tx, agendaID)
+	err = s.Repo.MarkAgendaReserved(tx, agendaID, patientID)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -529,7 +529,7 @@ func (s *UserService) ReservePsychiatristAgenda(patientUserID, psychiatristID, a
 		return err
 	}
 
-	err = s.Repo.MarkAgendaReserved(tx, agendaID)
+	err = s.Repo.MarkAgendaReserved(tx, agendaID, patientID)
 	if err != nil {
 		tx.Rollback()
 		return err

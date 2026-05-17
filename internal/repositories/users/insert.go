@@ -94,8 +94,8 @@ func (r *UserRepository) InsertAgenda(userID int, day int, month int, hour strin
 
 func (r *UserRepository) CreateTherapistConsultation(tx *sql.Tx, patientID, therapistID, agendaID int, price float64) error {
 	query := `
-		INSERT INTO consultations (patient_id, therapist_id, agenda_id, price, status)
-		VALUES ($1, $2, $3, $4, 'scheduled')
+		INSERT INTO consultations (patient_id, therapist_id, agenda_id, date, price, status)
+		VALUES ($1, $2, $3, NOW(), $4, 'scheduled')
 		`
 	_, err := tx.Exec(query, patientID, therapistID, agendaID, price)
 	if err != nil {
@@ -107,8 +107,8 @@ func (r *UserRepository) CreateTherapistConsultation(tx *sql.Tx, patientID, ther
 
 func (r *UserRepository) CreatePsychiatristConsultation(tx *sql.Tx, patientID, psychiatristID, agendaID int, price float64) error {
 	query := `
-		INSERT INTO consultations (patient_id, psychiatrist_id, agenda_id, price, status)
-		VALUES ($1, $2, $3, $4, 'scheduled')
+		INSERT INTO consultations (patient_id, psychiatrist_id, agenda_id, data, price, status)
+		VALUES ($1, $2, $3, NOW(), $4,'scheduled')
 		`
 	_, err := tx.Exec(query, patientID, psychiatristID, agendaID, price)
 	if err != nil {

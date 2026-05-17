@@ -68,12 +68,14 @@ func (r *UserRepository) UpdatePsychiatristPrice(userID int, price float64) erro
 	return err
 }
 
-func (r *UserRepository) MarkAgendaReserved(tx *sql.Tx, agendaID int) error {
+func (r *UserRepository) MarkAgendaReserved(tx *sql.Tx, agendaID int, patientID int) error {
 	res, err := tx.Exec(`
 		UPDATE agendas
-		SET reserved = true
-		WHERE id = $1 AND reserved = false
-	`, agendaID)
+		SET reserved = true,
+		    patient_id = $2
+		WHERE id = $1
+		AND reserved = false
+	`, agendaID, patientID)
 	
 	if err != nil {
 		return err
