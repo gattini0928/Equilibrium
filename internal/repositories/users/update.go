@@ -6,22 +6,22 @@ import (
 	"errors"
 )
 
-func (r *UserRepository) CompleteTherapist(userID int, specialty string, description string) error {
+func (r *UserRepository) CompleteTherapist(userID int, specialty string, description string, price float64) error {
 	_, err := r.DB.Exec(`
 		UPDATE therapists
-		SET specialty = $1, description = $2
-		WHERE user_id = $3;
-	`, specialty, description, userID)
+		SET specialty = $1, description = $2, price = $3
+		WHERE user_id = $4;
+	`, specialty, description, price, userID)
 
 	return err
 }
 
-func (r *UserRepository) CompletePsychiatrist(userID int, crm string, description string) error {
+func (r *UserRepository) CompletePsychiatrist(userID int, crm string, description string, price float64) error {
 	_, err := r.DB.Exec(`
 		UPDATE psychiatrists
-		SET crm = $1, description = $2
+		SET crm = $1, description = $2, price = $3
 		WHERE user_id = $3;
-	`, crm, description, userID)
+	`, crm, description, price, userID)
 
 	return err
 }

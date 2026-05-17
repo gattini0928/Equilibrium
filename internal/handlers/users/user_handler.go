@@ -252,6 +252,19 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		specialty := r.FormValue("specialty")
 		description := r.FormValue("description")
 
+		var price float64
+		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
+		if err != nil {
+			form.General = "Erro ao completar informações"
+			data.Form = form
+			_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
+			return
+		}
+
+		if err := validators.ValidatePrice(price); err != nil {
+			form.Errors["price"] = err.Error()
+		}
+
 		if err := validators.ValidateSpecialty(specialty); err != nil {
 			form.Errors["specialty"] = err.Error()
 		}
@@ -271,7 +284,7 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		err := h.Service.CompleteTherapistSignUp(userID, specialty, description)
+		err = h.Service.CompleteTherapistSignUp(userID, specialty, description, price)
 		if err != nil {
 			form.General = "Erro ao completar informações"
 			data.Form = form
@@ -317,6 +330,19 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		crm := r.FormValue("crm")
 		description := r.FormValue("description")
 
+		var price float64
+		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
+		if err != nil {
+			form.General = "Erro ao completar informações"
+			data.Form = form
+			_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
+			return
+		}
+
+		if err := validators.ValidatePrice(price); err != nil {
+			form.Errors["price"] = err.Error()
+		}
+
 		if err := validators.ValidateCrm(crm); err != nil {
 			form.Errors["crm"] = err.Error()
 		}
@@ -336,7 +362,7 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 			return
 		}
 
-		err := h.Service.CompletePsychiatristSignUp(userID, crm, description)
+		err = h.Service.CompletePsychiatristSignUp(userID, crm, description, price)
 		if err != nil {
 			form.General = "Erro ao completar informações"
 			data.Form = form

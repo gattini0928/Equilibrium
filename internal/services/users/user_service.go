@@ -126,7 +126,8 @@ func (s *UserService) Login(email string, password string) (models.User, string,
 }
 
 // Completar cadastro do therapeuta
-func (s *UserService) CompleteTherapistSignUp(userID int, specialty string, description string) error {
+func (s *UserService) CompleteTherapistSignUp(userID int, specialty string, description string, price float64) error {
+
 	err := validators.ValidateSpecialty(specialty)
 	if err != nil {
 		return err
@@ -137,11 +138,17 @@ func (s *UserService) CompleteTherapistSignUp(userID int, specialty string, desc
 		return err
 	}
 
-	return s.Repo.CompleteTherapist(userID, specialty, description)
+	err = validators.ValidatePrice(price)
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.CompleteTherapist(userID, specialty, description, price)
 }
 
 // Completar cadastro do psiquiatra
-func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, description string) error {
+func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, description string, price float64) error {
+
 	err := validators.ValidateCrm(crm)
 	if err != nil {
 		return err
@@ -152,7 +159,12 @@ func (s *UserService) CompletePsychiatristSignUp(userID int, crm string, descrip
 		return err
 	}
 
-	return s.Repo.CompletePsychiatrist(userID, crm, description)
+	err = validators.ValidatePrice(price)
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.CompletePsychiatrist(userID, crm, description, price)
 }
 
 // Listagem de todos terapeutas

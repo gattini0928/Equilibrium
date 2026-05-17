@@ -31,6 +31,15 @@ templ CompleteTherapistInfoPage(data models.TherapistView) {
                     }
                 </div>
 
+                <div class="inputs-labels">
+                    <label for="price">Preço da sua consulta:</label>
+                    <input type="number" step="0.01" name="price" min="0" placeholder="0.00" required>
+
+                    if data.Form.Errors["price"] != "" {
+                        <span class="error">{data.Form.Errors["price"]}</span>
+                    }
+                </div>
+
                 if data.Form.General != "" {
                     <div class="error">{data.Form.General}</div>
                 }
