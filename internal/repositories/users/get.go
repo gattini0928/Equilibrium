@@ -2,6 +2,7 @@ package users
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/gattini0928/Equilibrium/internal/models"
 )
@@ -357,7 +358,7 @@ func (r *UserRepository) GetTherapistById(userID int) (models.DoctorWithUser, er
 
 func (r *UserRepository) GetTherapistAgenda(therapistID int) ([]models.Agenda, error ) {
 	query := `
-		SELECT day, month, hour, reserved
+		SELECT id, day, month, hour, reserved
 		FROM agendas
 		WHERE professional_id = $1
 		AND reserved = false
@@ -373,6 +374,7 @@ func (r *UserRepository) GetTherapistAgenda(therapistID int) ([]models.Agenda, e
 	for rows.Next() {
 		var a models.Agenda
 		err := rows.Scan(
+			&a.ID,
 			&a.Day,
 			&a.Month,
 			&a.Hour,
@@ -456,6 +458,8 @@ func (r *UserRepository) GetTherapistReservedAgendas(therapistID int) ([]models.
 		var a models.Agenda
 		err := rows.Scan(
 			&a.ID,
+			&a.PatientID,
+			&a.PatientName,
 			&a.Day,
 			&a.Month,
 			&a.Hour,
@@ -517,7 +521,7 @@ func (r *UserRepository) GetPsychiatristById(userID int) (models.DoctorWithUser,
 
 func (r *UserRepository) GetPsychiatristAgenda(psychiatristID int) ([]models.Agenda, error ) {
 	query := `
-		SELECT day, month, hour, reserved
+		SELECT id, day, month, hour, reserved
 		FROM agendas
 		WHERE professional_id = $1
 		AND reserved = false
@@ -533,6 +537,7 @@ func (r *UserRepository) GetPsychiatristAgenda(psychiatristID int) ([]models.Age
 	for rows.Next() {
 		var a models.Agenda
 		err := rows.Scan(
+			&a.ID,
 			&a.Day,
 			&a.Month,
 			&a.Hour,
@@ -908,7 +913,7 @@ func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error){
 }
 
 func (r *UserRepository) GetTherapistPrice(therapistID int) (float64, error) {
-	var price float64
+	var price sql.NullFloat64
 
 	err := r.DB.QueryRow(`
 		SELECT price
@@ -916,20 +921,34 @@ func (r *UserRepository) GetTherapistPrice(therapistID int) (float64, error) {
 		WHERE id = $1
 	`, therapistID).Scan(&price)
 
-	return price, err
-}
-
-func (r *UserRepository) GetPsychiatristPrice(psychiastridID int) (float64, error) {
-	var price float64
-	err := r.DB.QueryRow(
-		`SELECT price
-			FROM psychiatrists WHERE id = $1
-			`, psychiastridID).Scan(&price)
 	if err != nil {
 		return 0, err
 	}
 
-	return price, nil
+	if !price.Valid {
+		return 0, errors.New("therapist sem preço definido")
+	}
+
+	return price.Float64, nil
+}
+
+func (r *UserRepository) GetPsychiatristPrice(psychiastridID int) (float64, error) {
+	var price sql.NullFloat64
+
+	err := r.DB.QueryRow(
+		`SELECT price
+			FROM psychiatrists WHERE id = $1
+			`, psychiastridID).Scan(&price)
+
+	if err != nil {
+		return 0, err
+	}
+
+	if !price.Valid {
+		return 0, errors.New("therapist sem preço definido")
+	}
+
+	return price.Float64, nil
 }
 
 func (r *UserRepository) GetTherapistIDByUserID(userID int) (int, error) {

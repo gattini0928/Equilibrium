@@ -801,23 +801,31 @@ func (h *UserHandler) HandleReserveTherapistAgenda(w http.ResponseWriter, r *htt
 	http.Redirect(w, r, "/me", http.StatusSeeOther)
 }
 
-
 func (h *UserHandler) HandleReservePsychiatristAgenda(w http.ResponseWriter, r *http.Request) {
-	psychiatristID, _ := utils.CheckID("psychiatrist_id", r)
-	agendaID, _ := utils.CheckID("agenda_id", r)
+	psychiatristID, err := utils.CheckID("psychiatrist_id", r)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return 
+	}
+	agendaID, err := utils.CheckID("agenda_id", r)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return 
+	}
 
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return
 	}
 
-	err := h.Service.ReservePsychiatristAgenda(userID, psychiatristID, agendaID)
+	err = h.Service.ReserveTherapistAgenda(userID, psychiatristID, agendaID)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		utils.RenderStatusPage(w, r ,err, http.StatusInternalServerError)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, "reservado")
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
+
 }
 
 func (h *UserHandler) HandleAllConsultations(w http.ResponseWriter, r *http.Request) {

@@ -41,13 +41,11 @@ templ TherapistDetailPage(therapist models.DoctorWithUser, agendas []models.Agen
                         <span class="date">
                             {agenda.Day}/{agenda.Month} - {agenda.Hour}
                         </span>
-
-                        <a href={ templ.URL(fmt.Sprintf("/therapists/%d/agendas/%d/reserve", therapist.ID, agenda.ID)) }>
-                            Reservar Horário
-                        </a>
-                    </div>
-                }
-
+                        <form method="POST" action={templ.URL(fmt.Sprintf("/therapists/%d/agendas/%d/reserve", therapist.ID, agenda.ID))}>
+                            <button type="submit">Reservar</button>
+                        </form>
+            </div>
+            }
                 <span class="price">R${therapist.Price}</span>
             </div>
         }
