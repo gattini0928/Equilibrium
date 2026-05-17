@@ -255,6 +255,7 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 		var price float64
 		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
 		if err != nil {
+			log.Println(err)
 			form.General = "Erro ao completar informações"
 			data.Form = form
 			_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
@@ -286,6 +287,7 @@ func (h *UserHandler) HandleCompleteTherapist(w http.ResponseWriter, r *http.Req
 
 		err = h.Service.CompleteTherapistSignUp(userID, specialty, description, price)
 		if err != nil {
+			log.Println(err)
 			form.General = "Erro ao completar informações"
 			data.Form = form
 			_ = views.CompleteTherapistInfoPage(data).Render(r.Context(), w)
@@ -333,6 +335,7 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 		var price float64
 		price, err := strconv.ParseFloat(r.FormValue("price"), 64)
 		if err != nil {
+			log.Println(err)
 			form.General = "Erro ao completar informações"
 			data.Form = form
 			_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)
@@ -364,6 +367,7 @@ func (h *UserHandler) HandleCompletePsychiatrist(w http.ResponseWriter, r *http.
 
 		err = h.Service.CompletePsychiatristSignUp(userID, crm, description, price)
 		if err != nil {
+			log.Println("erro no service:", err)
 			form.General = "Erro ao completar informações"
 			data.Form = form
 			_ = views.CompletePsychiatristInfoPage(data).Render(r.Context(), w)

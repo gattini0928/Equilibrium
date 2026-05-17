@@ -20,7 +20,7 @@ func (r *UserRepository) CompletePsychiatrist(userID int, crm string, descriptio
 	_, err := r.DB.Exec(`
 		UPDATE psychiatrists
 		SET crm = $1, description = $2, price = $3
-		WHERE user_id = $3;
+		WHERE user_id = $4;
 	`, crm, description, price, userID)
 
 	return err
