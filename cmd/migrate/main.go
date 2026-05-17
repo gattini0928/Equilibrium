@@ -71,6 +71,7 @@ func main() {
 		CREATE TABLE IF NOT EXISTS agendas (
 			id SERIAL PRIMARY KEY,
 			professional_id INTEGER,
+			patient_id INTEGER,
 			day INTEGER,
 			month INTEGER,
 			hour TEXT,

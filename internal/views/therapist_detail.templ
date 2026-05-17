@@ -1,6 +1,9 @@
 package views
 
-import "github.com/gattini0928/Equilibrium/internal/models"
+import (
+    "fmt"
+    "github.com/gattini0928/Equilibrium/internal/models"
+    )
 
 templ TherapistDetailPage(therapist models.DoctorWithUser, agendas []models.Agenda, isAuth bool) {
     @Layout(therapist.Name, isAuth) {
@@ -8,7 +11,7 @@ templ TherapistDetailPage(therapist models.DoctorWithUser, agendas []models.Agen
         <section class="card doctor-card">
         <img 
             src={therapist.Image}
-            alt="Foto Doutor"
+            alt="Foto do Terapeuta"
         />
 
         <h1>{therapist.Name}</h1>
@@ -26,24 +29,29 @@ templ TherapistDetailPage(therapist models.DoctorWithUser, agendas []models.Agen
         </section>
 
         <section class="card schedule-card">
-
         <h2>Agendas</h2>
 
         if len(agendas) == 0 {
             <span>Terapeuta sem agenda disponível no momento</span>
             <span class="price">R${therapist.Price}</span>
-            } else {
-                <div class="schedule-list">
-                    for _, agenda := range agendas {
-                        <div class="schedule-item">
-                            <span class="date">{agenda.Day}/{agenda.Month} - {agenda.Hour}</span>
-                            <a href="#">Reservar Horário</a>
-                        </div>
-                    }
-                    <span class="price">R${therapist.Price}</span>
-                </div>
-            }
-        </section>
+        } else {
+            <div class="schedule-list">
+                for _, agenda := range agendas {
+                    <div class="schedule-item">
+                        <span class="date">
+                            {agenda.Day}/{agenda.Month} - {agenda.Hour}
+                        </span>
+
+                        <a href={ templ.URL(fmt.Sprintf("/therapists/%d/agendas/%d/reserve", therapist.ID, agenda.ID)) }>
+                            Reservar Horário
+                        </a>
+                    </div>
+                }
+
+                <span class="price">R${therapist.Price}</span>
+            </div>
+        }
+    </section>
   </main>
     }
 }

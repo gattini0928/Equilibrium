@@ -483,12 +483,20 @@ func (h *UserHandler) HandlePerfil(w http.ResponseWriter, r *http.Request) {
 			messages["consultations"] = "Você ainda não tem nenhuma consulta"
 		}
 
+		if len(p.AgendasReserved) == 0 {
+			messages["reserved_agendas"] = "Você ainda não tem nenhum horário reservado"
+		}
+
 		data.Messages = messages
 		_ = views.PatientProfilePage(data, p).Render(r.Context(), w)
 
 	case models.DoctorDashboard:
 		if len(p.Agendas) == 0 {
 			messages["agendas"] = "Você ainda não tem nenhuma agenda"
+		}
+
+		if len(p.AgendasReserved) == 0 {
+			messages["reserved_agendas"] = "Você ainda não tem nenhum horário reservado"
 		}
 
 		if len(p.Patients) == 0 {
@@ -768,21 +776,29 @@ func (h *UserHandler) HandleUpdatePrice(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *UserHandler) HandleReserveTherapistAgenda(w http.ResponseWriter, r *http.Request) {
-	therapistID, _ := utils.CheckID("therapist_id", r)
-	agendaID, _ := utils.CheckID("agenda_id", r)
+	therapistID, err := utils.CheckID("therapist_id", r)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return 
+	}
+	agendaID, err := utils.CheckID("agenda_id", r)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return 
+	}
 
 	userID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
 		return
 	}
 
-	err := h.Service.ReserveTherapistAgenda(userID, therapistID, agendaID)
+	err = h.Service.ReserveTherapistAgenda(userID, therapistID, agendaID)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		utils.RenderStatusPage(w, r ,err, http.StatusInternalServerError)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, "reservado")
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
 }
 
 

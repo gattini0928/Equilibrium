@@ -101,6 +101,51 @@ func (r *UserRepository) GetPatientPerfil(userID int) (models.UserPerfil, error)
 	return patient, nil
 }
 
+func(r *UserRepository) GetPatientReservedAgendas(patientID int) ([]models.Agenda, error) {
+	query := `
+		SELECT
+			id,
+			professional_id,
+			day,
+			month,
+			hour,
+			reserved
+		FROM agendas
+		WHERE patient_id = $1
+		AND reserved = true
+	`
+
+	rows, err := r.DB.Query(query, patientID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var agendas []models.Agenda
+
+	for rows.Next() {
+		var a models.Agenda
+		err := rows.Scan(
+			&a.ID,
+			&a.ProfessionalID,
+			&a.Day,
+			&a.Month,
+			&a.Hour,
+			&a.Reserved,
+		)
+		if err != nil {
+			return nil, err
+		}
+		agendas = append(agendas, a)
+	}
+
+	if agendas == nil {
+		return []models.Agenda{}, nil
+	}
+
+	return agendas, nil
+}
+
 func (r *UserRepository) GetTherapistPerfil(userID int) (models.UserPerfil, error) {
 	query := `
 		SELECT u.id, u.name, u.email, u.age, u.image, u.role, t.specialty, t.description, t.price
@@ -348,11 +393,58 @@ func (r *UserRepository) GetTherapistAgenda(therapistID int) ([]models.Agenda, e
 
 func (r *UserRepository) GetTherapistPrivateAgenda(userID int) ([]models.Agenda, error ) {
 	query := `
-		SELECT id,day, month, hour, reserved
+		SELECT id, day, month, hour, reserved
 		FROM agendas
 		WHERE professional_id = $1
 	`
 	rows, err := r.DB.Query(query,userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var agendas []models.Agenda
+
+	for rows.Next() {
+		var a models.Agenda
+		err := rows.Scan(
+			&a.ID,
+			&a.Day,
+			&a.Month,
+			&a.Hour,
+			&a.Reserved,
+		)
+		if err != nil {
+			return nil, err
+		}
+		agendas = append(agendas, a)
+	}
+
+	if agendas == nil {
+		return []models.Agenda{}, nil
+	}
+
+	return agendas, nil
+}
+
+func (r *UserRepository) GetTherapistReservedAgendas(therapistID int) ([]models.Agenda ,error) {
+	query := `
+		SELECT
+			a.id,
+			a.patient_id,
+			u.name,
+			a.day,
+			a.month,
+			a.hour,
+			a.reserved
+		FROM agendas a
+		JOIN patients p ON p.id = a.patient_id
+		JOIN users u ON u.id = p.user_id
+		WHERE a.professional_id = $1
+		AND a.reserved = true
+	`
+
+	rows, err := r.DB.Query(query, therapistID)
 	if err != nil {
 		return nil, err
 	}
@@ -461,9 +553,19 @@ func (r *UserRepository) GetPsychiatristAgenda(psychiatristID int) ([]models.Age
 
 func (r *UserRepository) GetPsychiatristPrivateAgenda(userID int) ([]models.Agenda, error ) {
 	query := `
-		SELECT day, month, hour, reserved
-		FROM agendas
-		WHERE professional_id = $1
+		SELECT
+			a.id,
+			a.patient_id,
+			u.name,
+			a.day,
+			a.month,
+			a.hour,
+			a.reserved
+		FROM agendas a
+		JOIN patients p ON p.id = a.patient_id
+		JOIN users u ON u.id = p.user_id
+		WHERE a.professional_id = $1
+		AND a.reserved = true
 	`
 	rows, err := r.DB.Query(query,userID)
 	if err != nil {
@@ -476,6 +578,47 @@ func (r *UserRepository) GetPsychiatristPrivateAgenda(userID int) ([]models.Agen
 	for rows.Next() {
 		var a models.Agenda
 		err := rows.Scan(
+			&a.ID,
+			&a.PatientID,
+			&a.PatientName,
+			&a.Day,
+			&a.Month,
+			&a.Hour,
+			&a.Reserved,
+		)
+		if err != nil {
+			return nil, err
+		}
+		agendas = append(agendas, a)
+	}
+
+	if agendas == nil {
+		return []models.Agenda{}, nil
+	}
+
+	return agendas, nil
+}
+
+func (r *UserRepository) GetPsychiatristReservedAgendas(psychiatristID int) ([]models.Agenda ,error) {
+	query := `
+		SELECT id, day, month, hour, reserved
+		FROM agendas
+		WHERE professional_id = $1
+		AND reserved = true
+	`
+
+	rows, err := r.DB.Query(query, psychiatristID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var agendas []models.Agenda
+
+	for rows.Next() {
+		var a models.Agenda
+		err := rows.Scan(
+			&a.ID,
 			&a.Day,
 			&a.Month,
 			&a.Hour,

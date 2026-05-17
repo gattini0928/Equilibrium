@@ -350,6 +350,11 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			return models.DoctorWithUser{}, err
 		}
 
+		agendasReserved, err := s.Repo.GetPatientReservedAgendas(userID)
+		if err != nil {
+			return nil, err
+		}
+
 		perfil, err := s.Repo.GetPatientPerfil(userID)
 		if err != nil {
 			return models.PatientDashboard{}, err
@@ -360,6 +365,7 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			Role: "patient",
 			Therapist: therapist,
 			Psychiatrist: psychiatrist,
+			AgendasReserved: agendasReserved,
 			Consultations: consultations,
 		}, nil
 
@@ -369,6 +375,11 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			return nil, err
 		}
 		agendas, err := s.Repo.GetTherapistPrivateAgenda(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		agendasReserved, err := s.Repo.GetTherapistReservedAgendas(userID)
 		if err != nil {
 			return nil, err
 		}
@@ -392,6 +403,7 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			Perfil: perfil,
 			Role: "doctor",
 			Agendas: agendas,
+			AgendasReserved: agendasReserved,
 			Patients: patients,
 			Consultations: consultations,
 		}, nil
@@ -402,6 +414,11 @@ func (s *UserService) Perfil(userID int) (any, error) {
 			return nil, err
 		}
 		agendas, err := s.Repo.GetPsychiatristPrivateAgenda(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		agendasReserved, err := s.Repo.GetPsychiatristReservedAgendas(userID)
 		if err != nil {
 			return nil, err
 		}
@@ -423,6 +440,7 @@ func (s *UserService) Perfil(userID int) (any, error) {
 		return models.DoctorDashboard{
 			Perfil: perfil,
 			Agendas: agendas,
+			AgendasReserved: agendasReserved,
 			Patients: patients,
 			Consultations: consultations,
 		}, nil

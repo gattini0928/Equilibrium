@@ -1,6 +1,9 @@
 package views
 
-import "github.com/gattini0928/Equilibrium/internal/models"
+import (
+    "fmt"
+    "github.com/gattini0928/Equilibrium/internal/models"
+)
 
 templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
   @Layout("Perfil", data.IsAuth) {
@@ -16,6 +19,26 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
         </div>
 
         <div class="card">
+          <h2>Horários Reservados</h2>
+
+          if len(p.AgendasReserved) == 0 {
+            <span>{data.Messages["reserved_agendas"]}</span>
+          } else {
+            for _, agenda := range p.AgendasReserved {
+              <div class="schedule-list">
+                <div class="schedule-item">
+                  <span class="date">
+                    {fmt.Sprintf("%02d/%02d - %s", agenda.Day, agenda.Month, agenda.Hour)}
+                  </span>
+
+                  <a href="#">Desmarcar Consulta</a>
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <div class="card">
           <h2>Consultas</h2>
 
           if len(p.Consultations) == 0 {
@@ -25,7 +48,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
               <div class="consultation">
 
                 if consultation.DoctorRole == "therapist" {
-                  <span>Terapueta: {consultation.DoctorName}</span>
+                  <span>Terapeuta: {consultation.DoctorName}</span>
                 }
 
                 if consultation.DoctorRole == "psychiatrist" {
@@ -33,6 +56,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
                 }
 
                 <span>{consultation.Date.Format("02/01/2006 15:04")}</span>
+
                 <a href="#">Ver Detalhes</a>
               </div>
             }
@@ -41,6 +65,7 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
 
         <div class="card professional-card">
           <h2>Terapeuta</h2>
+
           if p.Therapist == nil {
             <span>{data.Messages["therapist"]}</span>
           } else {
@@ -52,19 +77,17 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
 
         <div class="card professional-card">
           <h2>Psiquiatra</h2>
+
           if p.Psychiatrist == nil {
             <span>{data.Messages["psychiatrist"]}</span>
           } else {
             <h3>Psiquiatra - Dr. {p.Psychiatrist.Name}</h3>
             <img src={p.Psychiatrist.Image} alt="Foto de perfil do psiquiatra" />
-            <a href="/me/pyschiatrist" class="therapist-link">Ver Agenda</a>
+            <a href="/me/psychiatrist" class="therapist-link">Ver Agenda</a>
           }
         </div>
 
       </section>
-
     </main>
   }
 }
-
-

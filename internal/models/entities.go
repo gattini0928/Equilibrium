@@ -106,6 +106,8 @@ type Remedy struct {
 type Agenda struct {
 	ID             int
 	ProfessionalID int
+	PatientID 		int
+	PatientName    string
 	Day            int  
 	Month          int 
 	Hour           string
@@ -140,13 +142,15 @@ type PatientDashboard struct {
 	Role string
 	Therapist *DoctorWithUser
 	Psychiatrist *DoctorWithUser
+	AgendasReserved []Agenda
 	Consultations []Consultation
 }
 
 type DoctorDashboard struct {
 	Perfil   UserPerfil
 	Role string 
-	Agendas  []Agenda     
+	Agendas  []Agenda
+	AgendasReserved []Agenda     
 	Patients []PatientWithUser
 	Consultations []Consultation
 }
