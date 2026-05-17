@@ -660,7 +660,7 @@ func (h *UserHandler) HandleMyPatients(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request) {
 	patientID, err := utils.CheckID("id", r)
 	if err != nil {
-		utils.WriteJSON(w, http.StatusBadRequest, err)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
 
@@ -671,11 +671,12 @@ func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request
 
 	patient, err := h.Service.PatientDetail(patientID, doctorID)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+		utils.RenderStatusPage(w, r, err ,http.StatusInternalServerError)
 		return 
 	}
 
-	utils.WriteJSON(w, http.StatusOK, patient)
+	isAuth := middleware.IsAuthenticated(r)
+	_ = views.PatientDetailPage(patient, isAuth).Render(r.Context(), w)
 }
 
 func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {

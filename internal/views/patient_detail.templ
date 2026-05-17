@@ -1,0 +1,21 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ PatientDetailPage(patient models.PatientWithUser, isAuth bool) {
+    @Layout("Detalhe do Paciente", isAuth) {
+        <main class="patient-detail-page">
+        <div class="card">
+            <img src={patient.Image} />
+
+            <h2>{patient.Name}</h2>
+
+            <span><span class="label">Email:</span> {patient.Email}</span>
+            <span><span class="label">Idade:</span> {patient.Age} anos</span>
+            <span><span class="label">Diagnóstico:</span>{patient.CurrentDiagnosis}</span>
+
+        </div>
+
+        </main>
+    }
+}
