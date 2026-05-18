@@ -1,7 +1,6 @@
 package users
 
 import (
-	"time"
 	"errors"
 )
 
@@ -90,29 +89,6 @@ func (r *UserRepository) MarkAgendaReserved(agendaID int, patientID int) error {
 	}
 
 	return nil
-}
-
-func (r *UserRepository) UpdateConsultationInProgress(consultationID int) error {
-	_, err := r.DB.Exec(`
-		UPDATE consultations
-		SET status = 'in_progress'
-		WHERE id = $1
-	
-	`, consultationID)
-
-	return err
-}
-
-func (r *UserRepository) UpdateConsultationFinished(consultationID int) error {
-	_, err := r.DB.Exec(`
-		UPDATE consultations
-		SET status = 'finished',
-			date = $1
-		WHERE id = $2
-	
-	`, time.Now(), consultationID)
-
-	return err
 }
 
 func (r *UserRepository) UpdateAnnotationConsultation(consultationID int, annotation string) error {

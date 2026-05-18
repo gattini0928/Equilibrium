@@ -348,7 +348,27 @@ func (s *UserService) AddAgenda(userID int, day int, month int, hour string) (mo
 }
 
 func (s *UserService) RemoveAgenda(userID int, agendaID int) error {
-	return s.Repo.DeleteAgenda(userID, agendaID)
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	var professionalID int
+
+	switch user.Role {
+	case "therapist":
+		professionalID, err = s.Repo.GetTherapistIDByUserID(userID)
+	case "psychiatrist":
+		professionalID, err = s.Repo.GetPsychiatristIDByUserID(userID)
+	default:
+		return errors.New("forbidden")
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.DeleteAgenda(agendaID, professionalID)
 }
 
 func (s *UserService) UpdatePrice(userID int, price float64) error {
@@ -552,35 +572,6 @@ func (s *UserService) ReservePsychiatristAgenda(patientUserID, psychiatristID, a
 	return nil
 }
 
-func (s *UserService) ShowConsultations(userID int) ([]models.Consultation, error) {
-	user, err := s.Repo.GetUserByID(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	switch user.Role {
-	case "patient":
-		patientID, err := s.Repo.GetPatientIDByUserID(userID)
-		if err != nil {
-			return nil, err
-		}
-		return s.Repo.GetPatientConsultations(patientID)
-	case "therapist":
-		therapistID, err := s.Repo.GetTherapistIDByUserID(userID)
-		if err != nil {
-			return nil, err
-		}
-		return s.Repo.GetTherapistConsultations(therapistID)
-	case "psychiatrist":
-		psychiatristID, err := s.Repo.GetPsychiatristIDByUserID(userID)
-		if err != nil {
-			return nil, err
-		}
-		return s.Repo.GetPsychiatristConsultations(psychiatristID)
-	}
-	return nil, errors.New("invalid role")
-}
-
 func (s *UserService) ShowConsultation(userID, consultationID int) (models.Consultation, error) {
 	user, err := s.Repo.GetUserByID(userID)
 	if err != nil {
@@ -647,48 +638,65 @@ func (s *UserService) StartConsultation(userID, agendaID int) error {
 		return errors.New("agenda sem paciente")
 	}
 
-	if err := s.validateAgendaAccess(userID, agenda, user.Role); err != nil {
+	err = s.validateAgendaAccess(userID, agenda, user.Role)
+	if err != nil {
 		return err
 	}
 
+	tx, err := s.Repo.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
 	switch user.Role {
+
 	case "therapist":
 		price, err := s.Repo.GetTherapistPrice(agenda.ProfessionalID)
 		if err != nil {
 			return err
 		}
-		return s.Repo.CreateTherapistConsultation(agenda.PatientID, agenda.ProfessionalID, agenda.ID, price)
+
+		err = s.Repo.CreateTherapistConsultation(
+			tx,
+			agenda.PatientID,
+			agenda.ProfessionalID,
+			agenda.ID,
+			price,
+		)
+		if err != nil {
+			return err
+		}
 
 	case "psychiatrist":
 		price, err := s.Repo.GetPsychiatristPrice(agenda.ProfessionalID)
 		if err != nil {
 			return err
 		}
-		return s.Repo.CreatePsychiatristConsultation(agenda.PatientID, agenda.ProfessionalID, agenda.ID, price)
+
+		err = s.Repo.CreatePsychiatristConsultation(
+			tx,
+			agenda.PatientID,
+			agenda.ProfessionalID,
+			agenda.ID,
+			price,
+		)
+		if err != nil {
+			return err
+		}
 
 	default:
 		return errors.New("forbidden")
 	}
+
+	err = s.Repo.DeleteAgendaConsultation(tx, agenda.ID, agenda.ProfessionalID)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
-func (s *UserService) FinishConsultation(userID, consultationID int) error {
-	c, err := s.Repo.GetConsultationByID(consultationID)
-	if err != nil {
-		return err
-	}
-
-	user, err := s.Repo.GetUserByID(userID)
-	if err != nil {
-		return err
-	}
-
-	err = s.validateConsultationAccess(userID, c, user.Role)
-	if err != nil {
-		return err
-	}
-
-	return s.Repo.UpdateConsultationFinished(consultationID)
-}
 
 func (s *UserService) SaveConsultationRemedy(userID, consultationID int, remedyName, remedyDosage string, remedyQuantity int) error {
 	c, err := s.Repo.GetConsultationByID(consultationID)
