@@ -918,7 +918,7 @@ func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http
 	if annotation != "" {
 		err = h.Service.SaveConsultationAnnotation(userID, consultationID, annotation)
 		if err != nil {
-			utils.WriteError(w, http.StatusInternalServerError, err)
+			utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 			return
 		}
 	}
@@ -930,13 +930,13 @@ func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http
 	if remedyName != "" && remedyDosage != "" && remedyQuantityStr != "" {
 		remedyQuantity, err := strconv.Atoi(remedyQuantityStr)
 		if err != nil {
-			utils.WriteError(w, http.StatusBadRequest, err)
+			utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 			return
 		}
 
 		err = h.Service.SaveConsultationRemedy(userID, consultationID, remedyName, remedyDosage, remedyQuantity)
 		if err != nil {
-			utils.WriteError(w, http.StatusInternalServerError, err)
+			utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 			return
 		}
 	}
@@ -945,7 +945,7 @@ func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http
 	if diagnosis != "" {
 		err = h.Service.SaveConsultationDiagnosis(userID, consultationID, diagnosis)
 		if err != nil {
-			utils.WriteError(w, http.StatusInternalServerError, err)
+			utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 			return
 		}
 	}
@@ -956,14 +956,10 @@ func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http
 	if author != "" && title != "" {
 		err = h.Service.SaveConsultationBook(userID, consultationID, author, title)
 		if err != nil {
-			utils.WriteError(w, http.StatusInternalServerError, err)
+			utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 			return
 		}
 	}
-
-	utils.WriteJSON(w, http.StatusOK, map[string]string{
-		"message": "dados da consulta salvos",
-	})
 }
 
 func (h *UserHandler) HandleLogout(w http.ResponseWriter, r *http.Request) {
