@@ -82,7 +82,8 @@ type Consultation struct {
 	PsychiatristID *int  
 	Date             time.Time 
 	Price            float64 
-	Annotation       string  
+	Annotation       string
+	Diagnosis string  
 	AgendaID int 
 	Books    []Book
 	Remedies []Remedy

@@ -91,7 +91,8 @@ func main() {
 			date TIMESTAMP NOT NULL,
 			price REAL,
 			annotation TEXT NOT NULL DEFAULT '',
-			agenda_id INTEGER REFERENCES agendas(id),
+			diagnosis TEXT NOT NULL DEFAULT '',
+			agenda_id INTEGER REFERENCES agendas(id)
 		);
 
 		CREATE TABLE IF NOT EXISTS books (

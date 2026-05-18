@@ -126,6 +126,7 @@ func (r *UserRepository) InsertRemedy(name, dosage string, quantity int) (int, e
 	return id, nil
 }
 
+
 func (r *UserRepository) LinkRemedyToConsultation(consultationID, remedyID int) error {
 	_, err := r.DB.Exec(`
 		INSERT INTO consultation_remedies (consultation_id, remedy_id)

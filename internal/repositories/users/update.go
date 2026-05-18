@@ -1,6 +1,7 @@
 package users
 
 import (
+	"database/sql"
 	"errors"
 )
 
@@ -97,6 +98,26 @@ func (r *UserRepository) UpdateAnnotationConsultation(consultationID int, annota
 		SET annotation = $1
 		WHERE id = $2
 	`, annotation, consultationID)
+
+	return err
+}
+
+func (r *UserRepository) UpdateConsultationDiagnosis(tx *sql.Tx, consultationID int, diagnosis string) error {
+	_, err := tx.Exec(`
+		UPDATE consultations
+		SET diagnosis = $1
+		WHERE id = $2
+	`, diagnosis, consultationID)
+
+	return err
+}
+
+func (r *UserRepository) UpdatePatientDiagnosis(tx *sql.Tx, patientID int, diagnosis string) error {
+	_, err := tx.Exec(`
+		UPDATE patients
+		SET current_diagnosis = $1
+		WHERE id = $2
+	`, diagnosis, patientID)
 
 	return err
 }

@@ -1038,6 +1038,7 @@ func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consul
 			c.date,
 			c.price,
 			c.annotation,
+			c.diagnosis,
 			c.agenda_id
 
 		FROM consultations c
@@ -1067,6 +1068,7 @@ func (r *UserRepository) GetPatientConsultations(patientID int) ([]models.Consul
 			&consultation.Date,
 			&consultation.Price,
 			&consultation.Annotation,
+			&consultation.Diagnosis,
 			&consultation.AgendaID,
 		)
 		if err != nil {
@@ -1171,7 +1173,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 	var c models.Consultation
 
 	err := r.DB.QueryRow(`
-		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation
+		SELECT id, patient_id, therapist_id, psychiatrist_id, date, price, annotation, diagnosis
 		FROM consultations
 		WHERE id = $1
 	`, consultationID).Scan(
@@ -1182,6 +1184,7 @@ func (r *UserRepository) GetConsultationByID(consultationID int) (models.Consult
 		&c.Date,
 		&c.Price,
 		&c.Annotation,
+		&c.Diagnosis,
 	)
 	if err != nil {
 		return models.Consultation{}, err

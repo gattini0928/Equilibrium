@@ -29,7 +29,7 @@ templ ConsultationPage(data models.ConsultationRoomView) {
 
       if data.UserRole == "patient" {
         <div class="patient-view">
-          <a class="end-consultation" href="#">Encerrar Consulta</a>
+          <a class="end-consultation" href="/">Encerrar Consulta</a>
         </div>
       }
 
@@ -53,7 +53,7 @@ templ ConsultationPage(data models.ConsultationRoomView) {
             </div>
           </div>
 
-          <a class="end-consultation" href="#">Encerrar Consulta</a>
+          <a class="end-consultation" href="/">Encerrar Consulta</a>
         </div>
       }
 
@@ -79,7 +79,15 @@ templ ConsultationPage(data models.ConsultationRoomView) {
             </div>
           </div>
 
-          <a class="end-consultation" href="#">Encerrar Consulta</a>
+            <div class="panel">
+              <h2>Diagnóstico</h2>
+              <form action="" method="POST" class="form">
+                <textarea class="textarea"></textarea>
+                <button type="submit" class="btn">Salvar Diagnóstico</button>
+              </form>
+            </div>
+
+          <a class="end-consultation" href="/">Encerrar Consulta</a>
         </div>
       }
     </main>

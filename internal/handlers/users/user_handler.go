@@ -12,8 +12,6 @@ import (
 	"strings"
 	"log"
 
-	"html/template"
-
 	"github.com/gattini0928/Equilibrium/internal/configs"
 	"github.com/gattini0928/Equilibrium/internal/models"
 	serviceUsers "github.com/gattini0928/Equilibrium/internal/services/users"
@@ -663,7 +661,6 @@ func (h *UserHandler) HandlePatientTherapistDetail(w http.ResponseWriter, r *htt
 	utils.WriteJSON(w, http.StatusOK, therapist)
 }
 
-
 func (h *UserHandler) HandlePatientPsychiatristDetail(w http.ResponseWriter, r *http.Request) {
 	patientID, ok := utils.CheckJWT(w, r.Context())
 	if !ok {
@@ -678,22 +675,6 @@ func (h *UserHandler) HandlePatientPsychiatristDetail(w http.ResponseWriter, r *
 
 	utils.WriteJSON(w, http.StatusOK, psychiatrist)
 }
-
-func (h *UserHandler) HandleMyPatients(w http.ResponseWriter, r *http.Request) {
-	id, ok := utils.CheckJWT(w, r.Context())
-	if !ok {
-		return
-	}
-
-	patients, err := h.Service.ListMyPatients(id)
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	utils.WriteJSON(w, http.StatusOK, patients)
-}
-
 
 func (h *UserHandler) HandlePatientDetail(w http.ResponseWriter, r *http.Request) {
 	patientID, err := utils.CheckID("id", r)
@@ -954,6 +935,15 @@ func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http
 		}
 
 		err = h.Service.SaveConsultationRemedy(userID, consultationID, remedyName, remedyDosage, remedyQuantity)
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	diagnosis := r.FormValue("diagnosis")
+	if diagnosis != "" {
+		err = h.Service.SaveConsultationDiagnosis(userID, consultationID, diagnosis)
 		if err != nil {
 			utils.WriteError(w, http.StatusInternalServerError, err)
 			return

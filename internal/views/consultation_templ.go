@@ -102,19 +102,19 @@ func ConsultationPage(data models.ConsultationRoomView) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if data.UserRole == "patient" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"patient-view\"><a class=\"end-consultation\" href=\"#\">Encerrar Consulta</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"patient-view\"><a class=\"end-consultation\" href=\"/\">Encerrar Consulta</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if data.Consultation.DoctorRole == "therapist" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"therapist-view\"><div class=\"panels\"><div class=\"panel\"><h2>Anotação</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Anotação</button></form></div><div class=\"panel\"><h2>Livro</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Livro</button></form></div></div><a class=\"end-consultation\" href=\"#\">Encerrar Consulta</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"therapist-view\"><div class=\"panels\"><div class=\"panel\"><h2>Anotação</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Anotação</button></form></div><div class=\"panel\"><h2>Livro</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Livro</button></form></div></div><a class=\"end-consultation\" href=\"/\">Encerrar Consulta</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if data.Consultation.DoctorRole == "psychiatrist" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"psychiatrist-view\"><div class=\"panels\"><div class=\"panel\"><h2>Anotação</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Anotação</button></form></div><div class=\"panel\"><h2>Receita</h2><form action=\"\" method=\"POST\" class=\"form\"><input placeholder=\"Nome do remédio\" class=\"input\"> <input placeholder=\"Dosagem\" class=\"input\"> <input placeholder=\"Quantidade\" class=\"input\"> <button type=\"submit\" class=\"btn\">Salvar Receita</button></form></div></div><a class=\"end-consultation\" href=\"#\">Encerrar Consulta</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"psychiatrist-view\"><div class=\"panels\"><div class=\"panel\"><h2>Anotação</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Anotação</button></form></div><div class=\"panel\"><h2>Receita</h2><form action=\"\" method=\"POST\" class=\"form\"><input placeholder=\"Nome do remédio\" class=\"input\"> <input placeholder=\"Dosagem\" class=\"input\"> <input placeholder=\"Quantidade\" class=\"input\"> <button type=\"submit\" class=\"btn\">Salvar Receita</button></form></div></div><div class=\"panel\"><h2>Diagnóstico</h2><form action=\"\" method=\"POST\" class=\"form\"><textarea class=\"textarea\"></textarea> <button type=\"submit\" class=\"btn\">Salvar Diagnóstico</button></form></div><a class=\"end-consultation\" href=\"/\">Encerrar Consulta</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
