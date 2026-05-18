@@ -908,9 +908,9 @@ func (h *UserHandler) HandleConsultation(w http.ResponseWriter, r *http.Request)
 
 
 func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Request) {
-	consultationID, err := utils.CheckID("consultation_id", r)
+	agendaID, err := utils.CheckID("agenda_id", r)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
 
@@ -919,16 +919,13 @@ func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = h.Service.StartConsultation(userID, consultationID)
+	err = h.Service.StartConsultation(userID, agendaID)
 	if err != nil {
-		utils.WriteError(w, http.StatusForbidden, err)
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{
-		"message": "consulta em progresso",
-	})
-
+	http.Redirect(w, r, "/consultations", http.StatusSeeOther)
 }
 
 func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http.Request) {

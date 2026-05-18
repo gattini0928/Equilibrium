@@ -1,7 +1,6 @@
 package users
 
 import (
-	"database/sql"
 	"time"
 	"errors"
 )
@@ -68,8 +67,8 @@ func (r *UserRepository) UpdatePsychiatristPrice(userID int, price float64) erro
 	return err
 }
 
-func (r *UserRepository) MarkAgendaReserved(tx *sql.Tx, agendaID int, patientID int) error {
-	res, err := tx.Exec(`
+func (r *UserRepository) MarkAgendaReserved(agendaID int, patientID int) error {
+	res, err := r.DB.Exec(`
 		UPDATE agendas
 		SET reserved = true,
 		    patient_id = $2

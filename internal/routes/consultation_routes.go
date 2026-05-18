@@ -13,7 +13,7 @@ func ConsultationRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret 
 	mux.Handle("GET /consultations",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleConsultation)))
 	// Atualizar para progresso
-	mux.Handle("PUT /consultations/{consultation_id}/start",
+	mux.Handle("POST /consultations/from-agenda/{agenda_id}/start",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleStartConsultation)))
 	// Salvar Infos da Consulta 
 	mux.Handle("PUT /consultations/{consultation_id}",

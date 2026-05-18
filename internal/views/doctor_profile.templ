@@ -96,7 +96,9 @@ templ DoctorProfilePage(data models.PerfilView, p models.DoctorDashboard) {
                   {fmt.Sprintf("%02d/%02d - %s", agenda.Day, agenda.Month, agenda.Hour)}
                 </span>
                 <span>{agenda.PatientName}</span>
-                <a href="">Iniciar Consulta</a>
+                <form method="POST" action={ templ.URL(fmt.Sprintf("/consultations/from-agenda/%d/start", agenda.ID)) }>
+                    <button type="submit">Iniciar Consulta</button>
+                </form>
                 <a href="">Desmarcar Consulta</a>
               </div>
             </div>
