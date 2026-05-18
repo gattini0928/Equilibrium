@@ -1,17 +1,10 @@
-     <section class="card">
-        <h2>Horários Reservados</h2>
-        if len(p.Agendas) == 0 {
-            <span>{data.Messages["reserved_agendas"]}</span>
-        } else {
-            for _, agenda := range p.AgendasReserved {
-            <div class="schedule-list">
-                <div class="schedule-item">
-                    <span class="date">
-                        {fmt.Sprintf("%02d/%02d - %s", agenda.Day, agenda.Month, agenda.Hour)}
-                   </span>
-                   <span>{agenda.Patient.Name}</span>
-                   <a href="">Iniciar Consulta</a>
-                </div>
-            </div>
-        }           
-     </section>
+<div class="panel">
+            <h2>Receita</h2>
+            <form action="">
+                <input placeholder="Nome do remédio" />
+                <input placeholder="Dosagem" />
+                <input placeholder="Quantidade" />
+
+            </form>
+            <button type="submit">Salvar Receita</button>
+        </div>

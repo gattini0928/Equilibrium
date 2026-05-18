@@ -10,8 +10,8 @@ import (
 
 func ConsultationRoutes(mux *http.ServeMux, h *handlerUsers.UserHandler, secret []byte) {
 	// Entrar na consulta
-	mux.Handle("GET /consultations",
-		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleConsultation)))
+	mux.Handle("GET /consultations/{consultation_id}",
+	auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleConsultation)))
 	// Atualizar para progresso
 	mux.Handle("POST /consultations/from-agenda/{agenda_id}/start",
 		auth.JWTMiddleware(secret, http.HandlerFunc(h.HandleStartConsultation)))

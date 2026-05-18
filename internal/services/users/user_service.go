@@ -697,6 +697,27 @@ func (s *UserService) StartConsultation(userID, agendaID int) error {
 	return tx.Commit()
 }
 
+func (s *UserService) ShowConsultationRoom(userID, consultationID int) (models.ConsultationRoomView, error) {
+	c, err := s.Repo.GetConsultationByID(consultationID)
+	if err != nil {
+		return models.ConsultationRoomView{}, err
+	}
+
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return models.ConsultationRoomView{}, err
+	}
+
+	if err := s.validateConsultationAccess(userID, c, user.Role); err != nil {
+		return models.ConsultationRoomView{}, err
+	}
+
+	return models.ConsultationRoomView{
+		UserRole: user.Role,
+		Consultation: c,
+	}, nil
+}
+
 
 func (s *UserService) SaveConsultationRemedy(userID, consultationID int, remedyName, remedyDosage string, remedyQuantity int) error {
 	c, err := s.Repo.GetConsultationByID(consultationID)

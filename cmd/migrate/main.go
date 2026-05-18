@@ -92,7 +92,6 @@ func main() {
 			price REAL,
 			annotation TEXT NOT NULL DEFAULT '',
 			agenda_id INTEGER REFERENCES agendas(id),
-			status VARCHAR(20) CHECK (status IN ('scheduled', 'in_progress', 'finished', 'cancelled'))
 		);
 
 		CREATE TABLE IF NOT EXISTS books (

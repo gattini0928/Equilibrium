@@ -1,0 +1,88 @@
+package views
+
+import "github.com/gattini0928/Equilibrium/internal/models"
+
+templ ConsultationPage(data models.ConsultationRoomView) {
+<html>
+  <head>
+    <title>Consulta</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="stylesheet" href="/static/css/consultation.css">
+  </head>
+
+  <body>
+    <main>
+      if data.UserRole == "patient" {
+        if data.Consultation.DoctorRole == "therapist" {
+          <h1>Consulta com o terapeuta {data.Consultation.DoctorName}</h1>
+        }
+        if data.Consultation.DoctorRole == "psychiatrist" {
+          <h1>Consulta com o psiquiatra {data.Consultation.DoctorName}</h1>
+        }
+      } else {
+        <h1>Consulta com o paciente {data.Consultation.PatientName}</h1>
+      }
+
+      <div class="video-container">
+        JITSI VIDEO HERE
+      </div>
+
+      if data.UserRole == "patient" {
+        <div class="patient-view">
+          <a class="end-consultation" href="#">Encerrar Consulta</a>
+        </div>
+      }
+
+      if data.Consultation.DoctorRole == "therapist" {
+        <div class="therapist-view">
+          <div class="panels">
+            <div class="panel">
+              <h2>Anotação</h2>
+              <form action="" method="POST" class="form">
+                <textarea class="textarea"></textarea>
+                <button type="submit" class="btn">Salvar Anotação</button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <h2>Livro</h2>
+              <form action="" method="POST" class="form">
+                <textarea class="textarea"></textarea>
+                <button type="submit" class="btn">Salvar Livro</button>
+              </form>
+            </div>
+          </div>
+
+          <a class="end-consultation" href="#">Encerrar Consulta</a>
+        </div>
+      }
+
+      if data.Consultation.DoctorRole == "psychiatrist" {
+        <div class="psychiatrist-view">
+          <div class="panels">
+            <div class="panel">
+              <h2>Anotação</h2>
+              <form action="" method="POST" class="form">
+                <textarea class="textarea"></textarea>
+                <button type="submit" class="btn">Salvar Anotação</button>
+              </form>
+            </div>
+
+            <div class="panel">
+              <h2>Receita</h2>
+              <form action="" method="POST" class="form">
+                <input placeholder="Nome do remédio" class="input"/>
+                <input placeholder="Dosagem" class="input"/>
+                <input placeholder="Quantidade" class="input"/>
+                <button type="submit" class="btn">Salvar Receita</button>
+              </form>
+            </div>
+          </div>
+
+          <a class="end-consultation" href="#">Encerrar Consulta</a>
+        </div>
+      }
+    </main>
+  </body>
+</html>
+}

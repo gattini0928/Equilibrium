@@ -880,17 +880,25 @@ func (h *UserHandler) HandleConsultationDetail(w http.ResponseWriter, r *http.Re
 }
 
 func (h *UserHandler) HandleConsultation(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/consultation.html")
+	consultationID, err := utils.CheckID("consultation_id", r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return
 	}
-	err = tmpl.Execute(w, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
 
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	data, err := h.Service.ShowConsultationRoom(userID, consultationID)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
+		return
+	}
+
+	_ = views.ConsultationPage(data).Render(r.Context(), w)
+}
 
 func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Request) {
 	agendaID, err := utils.CheckID("agenda_id", r)

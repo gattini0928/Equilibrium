@@ -84,11 +84,14 @@ type Consultation struct {
 	Price            float64 
 	Annotation       string  
 	AgendaID int 
-	Status 			string 
 	Books    []Book
 	Remedies []Remedy
 }
 
+type ConsultationRoomView struct {
+	UserRole     string
+	Consultation Consultation
+}
 
 type Book struct {
 	ID     int  
