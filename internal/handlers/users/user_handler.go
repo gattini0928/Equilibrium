@@ -878,6 +878,10 @@ func (h *UserHandler) HandleConsultation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	log.Println("CHAMOU CONSULTATION GET")
+	log.Println("path:", r.URL.Path)
+	log.Println("consultation_id:", r.PathValue("consultation_id"))
+
 	_ = views.ConsultationPage(data).Render(r.Context(), w)
 }
 
@@ -892,13 +896,16 @@ func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Req
 	if !ok {
 		return
 	}
+
 	
 	consultationID, err := h.Service.StartConsultation(userID, agendaID)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return
 	}
-
+	log.Println("CHAMOU START")
+	log.Println("consultationID criado:", consultationID)
+	log.Println("redirect:", fmt.Sprintf("/consultations/%d", consultationID))
 	http.Redirect(w, r, fmt.Sprintf("/consultations/%d", consultationID), http.StatusSeeOther)
 }
 

@@ -891,25 +891,28 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (*models.DoctorWithU
 	return &psychiatrist, nil
 }
 
-func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error){
-	var agenda models.Agenda
+func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error) {
+	var a models.Agenda
 
-	query := `
-		SELECT id, professional_id, reserved
+	err := r.DB.QueryRow(`
+		SELECT id, professional_id, patient_id, day, month, hour, reserved
 		FROM agendas
 		WHERE id = $1
-	`
-
-	row := r.DB.QueryRow(query, agendaID)
-	err := row.Scan(
-		&agenda.ID,
-		&agenda.ProfessionalID,
-		&agenda.Reserved,
+	`, agendaID).Scan(
+		&a.ID,
+		&a.ProfessionalID,
+		&a.PatientID,
+		&a.Day,
+		&a.Month,
+		&a.Hour,
+		&a.Reserved,
 	)
+
 	if err != nil {
 		return models.Agenda{}, err
-	}  
-	return agenda, nil
+	}
+
+	return a, nil
 }
 
 func (r *UserRepository) GetTherapistPrice(therapistID int) (float64, error) {
