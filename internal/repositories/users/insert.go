@@ -92,22 +92,24 @@ func (r *UserRepository) InsertAgenda(userID int, day int, month int, hour strin
 	return agenda, nil
 }
 
-func (r *UserRepository) CreateTherapistConsultation(tx *sql.Tx,  patientID, therapistID, agendaID int, price float64) error {
+func (r *UserRepository) CreateTherapistConsultation(tx *sql.Tx,  patientID, therapistID, agendaID int, price float64) (int, error) {
+	var consultationID int
 	query := `
 		INSERT INTO consultations (patient_id, therapist_id, agenda_id, date, price, status)
-		VALUES ($1, $2, $3, NOW(), $4, 'scheduled')
+		VALUES ($1, $2, $3, NOW(), $4, 'scheduled') RETURNING id
 		`
-	_, err := tx.Exec(query, patientID, therapistID, agendaID, price)
-	return err
+	err := tx.QueryRow(query, patientID, therapistID, agendaID, price).Scan(&consultationID)
+	return consultationID, err
 }
 
-func (r *UserRepository) CreatePsychiatristConsultation(tx *sql.Tx, patientID, psychiatristID, agendaID int, price float64) error {
+func (r *UserRepository) CreatePsychiatristConsultation(tx *sql.Tx, patientID, psychiatristID, agendaID int, price float64) (int, error) {
+	var consultationID int
 	query := `
 		INSERT INTO consultations (patient_id, psychiatrist_id, agenda_id, data, price, status)
-		VALUES ($1, $2, $3, NOW(), $4,'scheduled')
+		VALUES ($1, $2, $3, NOW(), $4,'scheduled') RETURNING id
 		`
-	_, err := tx.Exec(query, patientID, psychiatristID, agendaID, price)
-	return err
+	err := tx.QueryRow(query, patientID, psychiatristID, agendaID, price).Scan(&consultationID)
+	return consultationID, err
 }
 
 func (r *UserRepository) InsertRemedy(name, dosage string, quantity int) (int, error) {

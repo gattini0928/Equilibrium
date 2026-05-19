@@ -892,14 +892,14 @@ func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Req
 	if !ok {
 		return
 	}
-
-	err = h.Service.StartConsultation(userID, agendaID)
+	
+	consultationID, err := h.Service.StartConsultation(userID, agendaID)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
-	http.Redirect(w, r, "/consultations", http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/consultations/%d", consultationID), http.StatusSeeOther)
 }
 
 func (h *UserHandler) HandleSaveConsultationInfos(w http.ResponseWriter, r *http.Request) {

@@ -619,45 +619,47 @@ func (s *UserService) ShowConsultation(userID, consultationID int) (models.Consu
 	return c, nil
 }
 
-func (s *UserService) StartConsultation(userID, agendaID int) error {
+func (s *UserService) StartConsultation(userID, agendaID int) (int, error) {
 	user, err := s.Repo.GetUserByID(userID)
 	if err != nil {
-		return err
+		return 0,err
 	}
 
 	agenda, err := s.Repo.GetAgendaByID(agendaID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	if !agenda.Reserved {
-		return errors.New("agenda não está reservada")
+		return 0, errors.New("agenda não está reservada")
 	}
 
 	if agenda.PatientID == 0 {
-		return errors.New("agenda sem paciente")
+		return 0, errors.New("agenda sem paciente")
 	}
 
 	err = s.validateAgendaAccess(userID, agenda, user.Role)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	tx, err := s.Repo.DB.Begin()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer tx.Rollback()
+
+	var consultationID int
 
 	switch user.Role {
 
 	case "therapist":
 		price, err := s.Repo.GetTherapistPrice(agenda.ProfessionalID)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
-		err = s.Repo.CreateTherapistConsultation(
+		consultationID, err = s.Repo.CreateTherapistConsultation(
 			tx,
 			agenda.PatientID,
 			agenda.ProfessionalID,
@@ -665,16 +667,16 @@ func (s *UserService) StartConsultation(userID, agendaID int) error {
 			price,
 		)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 	case "psychiatrist":
 		price, err := s.Repo.GetPsychiatristPrice(agenda.ProfessionalID)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
-		err = s.Repo.CreatePsychiatristConsultation(
+		consultationID, err = s.Repo.CreatePsychiatristConsultation(
 			tx,
 			agenda.PatientID,
 			agenda.ProfessionalID,
@@ -682,19 +684,23 @@ func (s *UserService) StartConsultation(userID, agendaID int) error {
 			price,
 		)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 	default:
-		return errors.New("forbidden")
+		return 0, errors.New("forbidden")
 	}
 
 	err = s.Repo.DeleteAgendaConsultation(tx, agenda.ID, agenda.ProfessionalID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+
+	return consultationID, nil
 }
 
 func (s *UserService) ShowConsultationRoom(userID, consultationID int) (models.ConsultationRoomView, error) {
