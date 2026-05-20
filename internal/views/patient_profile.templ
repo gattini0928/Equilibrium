@@ -31,7 +31,9 @@ templ PatientProfilePage(data models.PerfilView, p models.PatientDashboard) {
                     {fmt.Sprintf("%02d/%02d - %s", agenda.Day, agenda.Month, agenda.Hour)}
                   </span>
 
-                  <a href="#">Desmarcar Consulta</a>
+                  <form method="POST" action={ templ.URL(fmt.Sprintf("/me/agenda/patient/%d", agenda.ID)) }>
+                    <button type="submit">Desmarcar Consulta</button>
+                  </form>
                 </div>
               </div>
             }

@@ -737,7 +737,6 @@ func (h *UserHandler) HandleAddAgenda(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request) {
 	agendaID, err := utils.CheckID("agenda_id", r)
-	log.Printf("PATH: %s", r.URL.Path)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return 
@@ -749,6 +748,27 @@ func (h *UserHandler) HandleDeleteAgenda(w http.ResponseWriter, r *http.Request)
 	}
 
 	err = h.Service.RemoveAgenda(userID, agendaID)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
+		return 
+	}
+	
+	http.Redirect(w, r, "/me", http.StatusSeeOther)
+}
+
+func (h *UserHandler) HandleDeleteAgendaPatient(w http.ResponseWriter, r *http.Request) {
+	agendaID, err := utils.CheckID("agenda_id", r)
+	if err != nil {
+		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
+		return 
+	}
+
+	userID, ok := utils.CheckJWT(w, r.Context())
+	if !ok {
+		return
+	}
+
+	err = h.Service.RemoveAgendaPatient(userID, agendaID)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
 		return 
@@ -792,7 +812,7 @@ func (h *UserHandler) HandleReserveTherapistAgenda(w http.ResponseWriter, r *htt
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return 
 	}
-	
+
 	agendaID, err := utils.CheckID("agenda_id", r)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
@@ -879,10 +899,6 @@ func (h *UserHandler) HandleConsultation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	log.Println("CHAMOU CONSULTATION GET")
-	log.Println("path:", r.URL.Path)
-	log.Println("consultation_id:", r.PathValue("consultation_id"))
-
 	_ = views.ConsultationPage(data).Render(r.Context(), w)
 }
 
@@ -898,7 +914,6 @@ func (h *UserHandler) HandleStartConsultation(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	
 	consultationID, err := h.Service.StartConsultation(userID, agendaID)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusInternalServerError)
