@@ -371,6 +371,24 @@ func (s *UserService) RemoveAgenda(userID int, agendaID int) error {
 	return s.Repo.DeleteAgenda(agendaID, professionalID)
 }
 
+func (s *UserService) RemoveAgendaPatient(userID int, agendaID int) error {
+	user, err := s.Repo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+
+	if user.Role != "patient" {
+		return errors.New("forbidden")
+	}
+
+	patientID, err := s.Repo.GetPatientIDByUserID(userID)
+	if err != nil {
+		return err
+	}
+
+	return s.Repo.UnreserveAgenda(agendaID, patientID)
+}
+
 func (s *UserService) UpdatePrice(userID int, price float64) error {
 	user, err := s.Repo.GetUserByID(userID)
 	if err != nil {
@@ -689,11 +707,6 @@ func (s *UserService) StartConsultation(userID, agendaID int) (int, error) {
 
 	default:
 		return 0, errors.New("forbidden")
-	}
-
-	err = s.Repo.DeleteAgendaConsultation(tx, agenda.ID, agenda.ProfessionalID)
-	if err != nil {
-		return 0, err
 	}
 
 	if err := tx.Commit(); err != nil {

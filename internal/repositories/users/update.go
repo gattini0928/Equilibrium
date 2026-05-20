@@ -92,6 +92,32 @@ func (r *UserRepository) MarkAgendaReserved(agendaID int, patientID int) error {
 	return nil
 }
 
+func (r *UserRepository) UnreserveAgenda(agendaID int, patientID int) error {
+	res, err := r.DB.Exec(`
+		UPDATE agendas
+		SET reserved = false,
+		    patient_id = NULL
+		WHERE id = $1
+		AND patient_id = $2
+		AND reserved = true
+	`, agendaID, patientID)
+
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return errors.New("agenda não encontrada ou não pertence ao paciente")
+	}
+
+	return nil
+}
+
 func (r *UserRepository) UpdateAnnotationConsultation(consultationID int, annotation string) error {
 	_, err := r.DB.Exec(`
 		UPDATE consultations
