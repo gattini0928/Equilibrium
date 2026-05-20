@@ -792,6 +792,7 @@ func (h *UserHandler) HandleReserveTherapistAgenda(w http.ResponseWriter, r *htt
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)
 		return 
 	}
+	
 	agendaID, err := utils.CheckID("agenda_id", r)
 	if err != nil {
 		utils.RenderStatusPage(w, r, err, http.StatusBadRequest)

@@ -893,6 +893,7 @@ func (r *UserRepository) GetPatientPsychiatrist(userID int) (*models.DoctorWithU
 
 func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error) {
 	var a models.Agenda
+	var patientID sql.NullInt64
 
 	err := r.DB.QueryRow(`
 		SELECT id, professional_id, patient_id, day, month, hour, reserved
@@ -901,12 +902,16 @@ func (r *UserRepository) GetAgendaByID(agendaID int) (models.Agenda, error) {
 	`, agendaID).Scan(
 		&a.ID,
 		&a.ProfessionalID,
-		&a.PatientID,
+		&patientID,
 		&a.Day,
 		&a.Month,
 		&a.Hour,
 		&a.Reserved,
 	)
+
+	if patientID.Valid {
+		a.PatientID = int(patientID.Int64)
+	}
 
 	if err != nil {
 		return models.Agenda{}, err
